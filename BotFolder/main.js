@@ -62,12 +62,7 @@ client.on('chat', (channel, userstate, message, self) => {
 	let command = message.split(' ')[0];
 	let args = message.split(' ');
 	args.shift();
-/*	if (message.match(/negro/i || /niger/i || /nigga/i || /niga/i || /n1g3r/i || /n3gro/i || /nigger/i || /n3gr0/i || /knee_grow/i)) {
-		if (autoBanIgnore.indexOf(userstate.username) > -1) return;
-		else {
-			client.say('#nottriz', '!massban ' + userstate.username + ' Racist Comments (' + channel + ')');
-		}
-	}*/ //DomoProtectionMode Un-needed.
+
 	if (channel == '#almostfae') {
     	almostfae.handleChat(channel, userstate, message, self);
     } else if (channel == '#dfearthereaper') {
