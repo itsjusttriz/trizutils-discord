@@ -5,7 +5,6 @@ const client = new twitchjs.client({
 	connection: { reconnect: true, secure: true },
 	identity: { username: 'nottriz', password: 'oauth:' },
 	channels: ['#nottriz']
-//	channels: ['#itsjusttriz', '#nottriz', '#47y_', '#tellik', '#massbanbot', '#dragoness_', '#tarillthemad', '#sephiroth', '#zeta_the_dragon', '#matrixis', '#reninsane', '#zeroxfusionz', '#domosplace', '#rhilou32', '#xobias', '#finncapp', '#jconline', '#theimperialbitgod', '#fatpally', '#ladyvertical', '#vertigo67', '#tonster46346', '#bmwhd1', '#dragonslayer6710', '#duderl', '#joesorensen', '#mrmkd', '#mrzombiefied_taco', '#queenpanduh', '#scarrboros', '#skulldraken3', '#gwinthor', '#ascothero', '#breantique', '#fangnight224', '#jayrockbird', '#sketch', '#robunplanned', '#phoenixdk', '#frosty_chips', '#intimae', '#mrsdanville', '#rabbitriot', '#zelaznyh', '#techyguy', '#jankogoo', '#theawesomater', '#superfraggle', '#almostaimee', '#queenliz09'] // Add more channels here.
 });
 module.exports.client = client;
 
@@ -44,9 +43,9 @@ const zeroxfusionz = require('./channels/zeroxfusionz.js');
 client.connect();
 //client.on('action', (channel, userstate, message, self) => {}
 
-/*client.on('join', function(channel, username, self) {
+client.on('join', function(channel, username, self) {
   if (self) client.say('#nottriz', '[Join] ' + channel);
-});*/
+});
 
 Array.prototype.random = function() {
     return this[Math.floor((Math.random()*this.length))]
@@ -107,9 +106,17 @@ client.on('chat', (channel, userstate, message, self) => {
     	zeroxfusionz.handleChat(channel, userstate, message, self);
     }
 
-	//if (!userstate.mod && channelOwners.indexOf(userstate.username) < 0) return; // Not a Mod & Not a channelOwner.
 //Global Commands.
 	switch(command) {
+		case '?settimer':
+			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+				setTimeout(function CTimer() {
+					client.say(channel, "Time's up!");
+					client.say('#nottriz', '[' + channel + ']' + "Time's up!");
+				}, 1000 * args[0]);
+				client.say(channel, 'Timer set for ' + args[0] + ' seconds.');
+                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
+			break;
 		case '?triztime':
 			if (self) return;
 			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -149,7 +156,7 @@ client.on('chat', (channel, userstate, message, self) => {
                 url: 'https://modlookup.3v.fi/api/user-totals/' + args[0],
                 method: 'GET',
                 headers: {
-                    'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
+                    'Client-ID': '...'
                 }}, (err, res, body) => {
                     if (JSON.parse(body).total > 0) {
                     	let swords = JSON.parse(body).total;
@@ -286,14 +293,14 @@ client.on('chat', (channel, userstate, message, self) => {
 			}
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
 			break;
-		case '?nottriz':
+		case '?n':
 			if (self) return;
 			let botoption = args[0];
 				if (!botoption) {
 					if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
 					else
-						client.say(channel, 'Usage: ?nottriz (status/help/host/shutdown)');
-				} else if (botoption.toLowerCase() == 'status') {
+						client.say(channel, 'Usage: ?n (?/help/host/kill)');
+				} else if (botoption.toLowerCase() == '?') {
 					if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
 					else
 						client.action(channel, 'v4.7 is online! SeemsGood');
@@ -306,7 +313,7 @@ client.on('chat', (channel, userstate, message, self) => {
 						client.say('#itsjusttriz', "!editcom !hosting Triz is currently hosting " + channel.substr(1) + "! Please go check out their channel and join the conversation. It would mean a lot to both himself, and them >> https://twitch.tv/" + channel.substr(1));
 						client.say('#itsjusttriz', '/host ' + channel.substr(1));
 						client.say('#nottriz', '/host ' + channel.substr(1));
-				} else if (botoption.toLowerCase() == 'shutdown') {
+				} else if (botoption.toLowerCase() == 'kill') {
 					if (botAdmin.indexOf(userstate.username) < 0) return;
 					else
 						process.exit(0);
@@ -323,48 +330,6 @@ client.on('chat', (channel, userstate, message, self) => {
 				client.say(channel, 'B R E A K !');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
 			break;
-/*		case '?name':
-			if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			if (!args[0]) {
-				client.say(channel, 'Usage: !name <old/new username>');
-				return;
-			}
-			request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-				if (err) {
-					console.log('Error checking name change: ' + err);
-					client.say(channel, 'Unable to check name.');
-					return;
-				} else {
-					let js = JSON.parse(body);
-					if (js.length == 0) client.say(channel, 'No recent name change.');
-					else client.say(channel, 'Old name was ' + js[0]['username_old'] + ', New name is ' + js[0]['username_new']);
-
-				}
-			});
-			break;*/
-/*		case '!migrate':
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			if (!args[0]) {
-				client.say(channel, 'Usage: !migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
-				return;
-			}
-			request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-				if (err) {
-					console.log('Error checking name change: ' + err);
-					client.say(channel, 'Unable to check name.');
-					return;
-				} else {
-					let js = JSON.parse(body);
-					if (js.length == 0) client.say(channel, 'No recent name change.');
-					else {
-						if (channel == '#CHANNEL') {
-							client.say(channel, '!transfer ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
-						}
-					}
-				}
-			});
-			break;*/
 	}
 });
 
