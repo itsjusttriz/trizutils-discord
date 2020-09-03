@@ -1,12 +1,6 @@
 const twitchjs = require('twitch-js');
 const request = require('request-promise');
-const client = new twitchjs.client({
-	options: { debug: true },
-	connection: { reconnect: true, secure: true },
-	identity: { username: 'nottriz', password: 'oauth:' },
-	channels: ['#nottriz']
-});
-module.exports.client = client;
+const client = require('../config.js').client;
 
 const botAdmin = ['47y_', 'itsjusttriz', 'nottriz', 'tellik', 'rhilou32', 'immp'];
 
