@@ -2,8 +2,9 @@ const request = require('request');
 const getUrls = require('get-urls');
 const client = require('../main.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
+const botAdmin = require('../main.js').botAdmin;
 const packlist = require('../DataPull/packlist.js');
+const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
@@ -29,15 +30,15 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+    let command = message.split(' ')[0];
+    let args = message.split(' ');
+    args.shift();
 
     if (message.match(/respect the grind/i)) {
         client.ban(channel, userstate.username);
     }
 
-	switch(command) {
+    switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;

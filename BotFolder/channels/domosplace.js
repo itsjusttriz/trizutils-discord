@@ -2,8 +2,9 @@ const request = require('request');
 const getUrls = require('get-urls');
 const client = require('../main.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
+const botAdmin = require('../main.js').botAdmin;
 const packlist = require('../DataPull/packlist.js');
+const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let exercise = {'JJs': 0, 'Squats': 0, 'Hoops': 0};

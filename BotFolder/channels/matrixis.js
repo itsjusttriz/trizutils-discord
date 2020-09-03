@@ -45,7 +45,7 @@ function handleChat(channel, userstate, message, self) {
     let args = message.split(' ');
     args.shift();
 
-	switch(command) {
+    switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -56,13 +56,13 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-		case '?sethome':
-			if (self) return;
+        case '?sethome':
+            if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
             if (!args[0]) {
-            	client.say(channel, 'Usage: !sethome <x> <y> <z>');
+                client.say(channel, 'Usage: !sethome <x> <y> <z>');
             } else {
-            	client.say(channel, "!editcom !home Mat's home is at XYZ: " + args.join(' '));
+                client.say(channel, "!editcom !home Mat's home is at XYZ: " + args.join(' '));
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
@@ -177,7 +177,7 @@ function handleChat(channel, userstate, message, self) {
                     if (err) return console.log(err);
                 });
             break;
-	}
+    }
 }
 
 function handleSub(channel, username, method, message, userstate) {

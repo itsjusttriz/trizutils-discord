@@ -2,8 +2,9 @@ const request = require('request');
 const getUrls = require('get-urls');
 const client = require('../main.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
+const botAdmin = require('../main.js').botAdmin;
 const packlist = require('../DataPull/packlist.js');
+const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 //Counters.
@@ -31,11 +32,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+    let command = message.split(' ')[0];
+    let args = message.split(' ');
+    args.shift();
 
-	switch(command) {
+    switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -157,6 +158,19 @@ function handleChat(channel, userstate, message, self) {
                     if (err) return console.log(err);
                 });
             break;
+        /*case '!worm':
+            if (self) return;
+            if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+            if (isOnCooldown(channel, command)) return;
+            else {
+                setCooldown(channel, command, 5);
+                    client.action(channel, "Raid message for Non-Subs:");
+                    client.say(channel, " /me bleedPurple twitchRaid ZERO IS RAIDING YOU! twitchRaid bleedPurple ZERO IS RAIDING YOU! bleedPurple twitchRaid ZERO IS RAIDING YOU! twitchRaid bleedPurple");
+                    client.action(channel, "Raid message for Subs:");
+                    client.say(channel, " /me zeroxWAVE zeroxHEART ZERO IS RAIDING YOU! zeroxHEART zeroxWAVE ZERO IS RAIDING YOU! zeroxHEART zeroxWAVE ZERO IS RAIDING YOU! zeroxHEART zeroxWAVE");
+                }
+                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+            break;*/
     }
 }
 
@@ -170,7 +184,7 @@ function handleSub(channel, username, method, message, userstate) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
-    client.say(channel, '!heartspam');
+    client.say(channel, posthearts);
 //    substhisstream['Normal'] += 1;
 //    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
@@ -186,7 +200,7 @@ function handleResub(channel, username, useless, message, userstate, method) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
     }
-    client.say(channel, '!heartspam');
+    client.say(channel, posthearts);
 //    substhisstream['Normal'] += 1;
 //    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
@@ -200,7 +214,7 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
     } else if (method.plan == '3000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
     }
-    client.say(channel, '!heartspam');
+    client.say(channel, posthearts);
 //    substhisstream['Gifted'] += 1;
 //    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
@@ -215,8 +229,8 @@ function handleCheer(channel, userstate, message) {
 }
 
 function handleRaid(customraid) {
-	client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-	client.say(customraid.channel, '!so ' + customraid.raider);
+    client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
+    client.say(customraid.channel, '!so ' + customraid.raider);
     client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
 }
 

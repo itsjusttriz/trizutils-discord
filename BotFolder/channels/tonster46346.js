@@ -22,9 +22,9 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+    let command = message.split(' ')[0];
+    let args = message.split(' ');
+    args.shift();
 
     switch(channel) {
         case '?commands':

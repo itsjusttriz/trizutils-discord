@@ -22,11 +22,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+    let command = message.split(' ')[0];
+    let args = message.split(' ');
+    args.shift();
 
-	switch(command) {
+    switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -230,7 +230,3 @@ module.exports.handleResub = handleResub;
 module.exports.handleGiftsub = handleGiftsub;
 module.exports.handleCheer = handleCheer;
 module.exports.handleRaid = handleRaid;
-
-//substhisstream['Normal'] += 1;
-//substhisstream['Gifted'] += 1;
-//substhisstream['Combined'] += 1;

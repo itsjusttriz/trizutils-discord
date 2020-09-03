@@ -2,7 +2,8 @@ const request = require('request');
 const getUrls = require('get-urls');
 const client = require('../main.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
+const botAdmin = require('../main.js').botAdmin;
+const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
@@ -44,11 +45,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+    let command = message.split(' ')[0];
+    let args = message.split(' ');
+    args.shift();
 
-	switch(command) {
+    switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -64,60 +65,60 @@ function handleChat(channel, userstate, message, self) {
                 if (!symbol3) {
                     client.say(channel, `Deaths: ${deathctr.Deaths}`);
                 } else if (symbol3 == '+') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                     deathctr['Deaths'] += 1;
                     client.say(channel, '[Increased] ' + `Deaths: ${deathctr.Deaths}`);
-					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased Death counter.');
+                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased Death counter.');
                 } else if (symbol3 == '-') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                     deathctr['Deaths'] += -1;
                     client.say(channel, '[Decreased] ' + `Deaths: ${deathctr.Deaths}`);
-					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased Death counter.');
+                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased Death counter.');
                 } else if (symbol3 == 'reset') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                     deathctr = {'Deaths': 0};
                     client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
-					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
+                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + symbol3);
                 fs.writeFile('./DataPull/Counters/ZeroDeath.txt', deathctr['Deaths'], function (err) {
-				    if (err) return console.log(err);
-				});
+                    if (err) return console.log(err);
+                });
             break;
         case '?setdeath':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                 deathctr = {'Deaths': Number(args[0]) || 0};
                 client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
+                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
                 fs.writeFile('./DataPull/Counters/ZeroDeath.txt', deathctr['Deaths'], function (err) {
-				    if (err) return console.log(err);
-				});
+                    if (err) return console.log(err);
+                });
             break;
         case '?races':
             let symbolmos = args[0];
                 if (!symbolmos) {
                     client.say(channel, `Races: ${mosctr.Current} / ${mosctr.Total}`);
                 } else if (symbolmos == '+') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    	mosctr['Current'] += 1;
-                    	client.say(channel, '[Increased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                    	client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased MoS counter.');
+                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                        mosctr['Current'] += 1;
+                        client.say(channel, '[Increased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
+                        client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased MoS counter.');
                 } else if (symbolmos == '-') {
-		            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-        	            mosctr['Current'] += -1;
-        	            client.say(channel, '[Decreased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-        	            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased MoS counter.');
+                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                        mosctr['Current'] += -1;
+                        client.say(channel, '[Decreased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
+                        client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased MoS counter.');
                 } else if (symbolmos == 'reset') {
-		            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-        	            mosctr = {'Current': 0, 'Total': 0};
-        	            client.say(channel, '[Reset] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-        	            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared MoS counter.');
+                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                        mosctr = {'Current': 0, 'Total': 0};
+                        client.say(channel, '[Reset] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
+                        client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared MoS counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
                 fs.writeFile('./DataPull/Counters/ZeroMosCurrent.txt', mosctr['Current'], function (err) {
-				    if (err) return console.log(err);
-				});
+                    if (err) return console.log(err);
+                });
             break;
         case '?setmos':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -126,44 +127,160 @@ function handleChat(channel, userstate, message, self) {
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set MoS counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args.join(' '));
                 fs.writeFile('./DataPull/Counters/ZeroMosCurrent.txt', mosctr['Current'], function (err) {
-				    if (err) return console.log(err);
-				});
+                    if (err) return console.log(err);
+                });
                 fs.writeFile('./DataPull/Counters/ZeroMosTotal.txt', mosctr['Total'], function (err) {
-				    if (err) return console.log(err);
-				});
+                    if (err) return console.log(err);
+                });
             break;
         case '!play':
-        	if (userstate.username != 'itsjusttriz') return;
-        	else
-	        	if (isOnCooldown(channel, command)) return;
-	        	else {
-	        		setCooldown(channel, command, 5);
-	        		client.say(channel, '!play')
-	        	}
+            if (userstate.username != 'itsjusttriz') return;
+            else
+                if (isOnCooldown(channel, command)) return;
+                else {
+                    setCooldown(channel, command, 5);
+                    client.say(channel, '!play')
+                }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-        	break;
-/*		case '?migrate':
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				if (!args[0]) {
-					client.say(channel, 'Usage: !migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
-					return;
-				}
-				request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-					if (err) {
-						console.log('Error checking name change: ' + err);
-						client.say(channel, 'Unable to check name.');
-						return;
-					} else {
-						let js = JSON.parse(body);
-						if (js.length == 0) client.say(channel, 'No recent name change.');
-						else {
-							client.say(channel, '!transfer ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
-						}
-					}
-				});
-			break;*/
-	}
+            break;
+/*      case '?migrate':
+            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                if (!args[0]) {
+                    client.say(channel, 'Usage: !migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
+                    return;
+                }
+                request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
+                    if (err) {
+                        console.log('Error checking name change: ' + err);
+                        client.say(channel, 'Unable to check name.');
+                        return;
+                    } else {
+                        let js = JSON.parse(body);
+                        if (js.length == 0) client.say(channel, 'No recent name change.');
+                        else {
+                            client.say(channel, '!transfer ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
+                        }
+                    }
+                });
+            break;*
+        case '!worm':
+            if (self) return;
+            if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+            if (isOnCooldown(channel, command)) return;
+            else {
+                setCooldown(channel, command, 5);
+                    client.say(channel, "Raid message for Non-Subs:");
+                    client.say(channel, "!regworm");
+                    setTimeout(function Words() {
+                        client.say(channel, "Raid message for Non-Subs:");
+                        client.say(channel, "!subworm");
+                    }, 1000 * 3);
+                }
+                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+            break;*/
+    }
 }
+
+/*function handleSub(channel, username, method, message, userstate) {
+    request({
+        url: 'https://api.twitch.tv/helix/streams?user_id=43947695',
+        method: 'GET',
+        headers: {
+            'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
+        }}, (err, res, body) => {
+            if (method.plan == '1000') {
+                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                    } else {
+                        client.say('#nottriz', '[' + channel + '] Offline T1 Sub: ' + username);
+                    }
+            } else if (method.plan == '2000') {
+                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
+                    client.say(channel, '!zbucks add ' + username + ' 2000');
+                    } else {
+                        client.say('#nottriz', '[' + channel + '] Offline T2 Sub: ' + username);
+                    }
+            } else if (method.plan == '3000') {
+                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
+                    client.say(channel, '!zbucks add ' + username + ' 3000');
+                    } else {
+                        client.say('#nottriz', '[' + channel + '] Offline T3 Sub: ' + username);
+                    }
+            } else if (method.prime) {
+                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                    } else {
+                        client.say('#nottriz', '[' + channel + '] Offline Prime Sub: ' + username);
+                    }
+            }
+        });
+}*/
+
+/*function handleSub(channel, username, method, message, userstate) {
+    request({
+        url: 'https://api.twitch.tv/helix/streams?user_id=INSERT_ID_HERE',
+        method: 'GET',
+        headers: {
+            'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
+        }}, (err, res, body) => {
+            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
+                if (method.plan == '1000') {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                } else if (method.plan == '2000') {
+                    client.say(channel, '!zbucks add ' + username + ' 2000');
+                } else if (method.plan == '3000') {
+                    client.say(channel, '!zbucks add ' + username + ' 3000');
+                } else if (method.prime) {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                }
+            }
+            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type != 'live') {
+                if (method.plan == '1000') {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                } else if (method.plan == '2000') {
+                    client.say(channel, '!zbucks add ' + username + ' 2000');
+                } else if (method.plan == '3000') {
+                    client.say(channel, '!zbucks add ' + username + ' 3000');
+                } else if (method.prime) {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                }
+            } else
+                return;
+        });
+}
+
+function handleResub(channel, username, useless, message, userstate, method) {
+    request({
+        url: 'https://api.twitch.tv/helix/streams?user_id=INSERT_ID_HERE',
+        method: 'GET',
+        headers: {
+            'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
+        }}, (err, res, body) => {
+            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
+                if (method.plan == '1000') {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                } else if (method.plan == '2000') {
+                    client.say(channel, '!zbucks add ' + username + ' 2000');
+                } else if (method.plan == '3000') {
+                    client.say(channel, '!zbucks add ' + username + ' 3000');
+                } else if (method.prime) {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                }
+            }
+            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type != 'live') {
+                if (method.plan == '1000') {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                } else if (method.plan == '2000') {
+                    client.say(channel, '!zbucks add ' + username + ' 2000');
+                } else if (method.plan == '3000') {
+                    client.say(channel, '!zbucks add ' + username + ' 3000');
+                } else if (method.prime) {
+                    client.say(channel, '!zbucks add ' + username + ' 1000');
+                }
+            } else
+                return;
+        });
+}*/
 
 function handleSub(channel, username, method, message, userstate) {
     if (method.plan == '1000') {
@@ -175,7 +292,7 @@ function handleSub(channel, username, method, message, userstate) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
-    client.say(channel, '!heartspam');
+    client.say(channel, posthearts);
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
@@ -189,7 +306,7 @@ function handleResub(channel, username, useless, message, userstate, method) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
     }
-    client.say(channel, '!heartspam');
+    client.say(channel, posthearts);
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
 }
 
@@ -201,7 +318,7 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
     } else if (method.plan == '3000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
     }
-    client.say(channel, '!heartspam');
+    client.say(channel, posthearts);
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 
