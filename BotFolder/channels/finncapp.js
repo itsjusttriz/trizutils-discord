@@ -10,6 +10,7 @@ let cooldown = {};
 let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 let tools = {'Pickaxes': 0};
 let deathctr = {'Deaths': 0};
+
 fs.readFile('./DataPull/Counters/FinnDeath.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
@@ -243,23 +244,14 @@ function handleResub(channel, username, useless, message, userstate, method) {
 
 function handleGiftsub(channel, gifter, recipient, method, userstate) {
     if (method.plan == '1000') {
-//      client.say(channel,  gifter + ' -> ' + recipient + '! (Tier 1)');
-//      client.say(channel, '!heartspam');
         substhisstream['Gifted'] += 1;
         substhisstream['Combined'] += 1;
     } else if (method.plan == '2000') {
-//      client.say(channel,  gifter + ' -> ' + recipient + '! (Tier 2)');
-//      client.say(channel, '!heartspam');
         substhisstream['Gifted'] += 1;
         substhisstream['Combined'] += 1;
     } else if (method.plan == '3000') {
-//      client.say(channel,  gifter + ' -> ' + recipient + '! (Tier 3)');
-//      client.say(channel, '!heartspam');
         substhisstream['Gifted'] += 1;
         substhisstream['Combined'] += 1;
-    }
-    if (recipient == 'nottriz') {
-        client.say('#nottriz', '!addheart finncaLove');
     }
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }

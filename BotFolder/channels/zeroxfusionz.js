@@ -8,7 +8,6 @@ const posthearts = require('../externalcommands/hearts.js').hearts;
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 let mosctr = {'Current': 0, 'Total': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 
 fs.readFile('./DataPull/Counters/ZeroDeath.txt', 'utf8', function (err, data) {
     if (err) {
@@ -143,144 +142,8 @@ function handleChat(channel, userstate, message, self) {
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-/*      case '?migrate':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                if (!args[0]) {
-                    client.say(channel, 'Usage: !migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
-                    return;
-                }
-                request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-                    if (err) {
-                        console.log('Error checking name change: ' + err);
-                        client.say(channel, 'Unable to check name.');
-                        return;
-                    } else {
-                        let js = JSON.parse(body);
-                        if (js.length == 0) client.say(channel, 'No recent name change.');
-                        else {
-                            client.say(channel, '!transfer ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
-                        }
-                    }
-                });
-            break;*
-        case '!worm':
-            if (self) return;
-            if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 5);
-                    client.say(channel, "Raid message for Non-Subs:");
-                    client.say(channel, "!regworm");
-                    setTimeout(function Words() {
-                        client.say(channel, "Raid message for Non-Subs:");
-                        client.say(channel, "!subworm");
-                    }, 1000 * 3);
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;*/
     }
 }
-
-/*function handleSub(channel, username, method, message, userstate) {
-    request({
-        url: 'https://api.twitch.tv/helix/streams?user_id=43947695',
-        method: 'GET',
-        headers: {
-            'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
-        }}, (err, res, body) => {
-            if (method.plan == '1000') {
-                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                    } else {
-                        client.say('#nottriz', '[' + channel + '] Offline T1 Sub: ' + username);
-                    }
-            } else if (method.plan == '2000') {
-                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
-                    client.say(channel, '!zbucks add ' + username + ' 2000');
-                    } else {
-                        client.say('#nottriz', '[' + channel + '] Offline T2 Sub: ' + username);
-                    }
-            } else if (method.plan == '3000') {
-                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
-                    client.say(channel, '!zbucks add ' + username + ' 3000');
-                    } else {
-                        client.say('#nottriz', '[' + channel + '] Offline T3 Sub: ' + username);
-                    }
-            } else if (method.prime) {
-                if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                    } else {
-                        client.say('#nottriz', '[' + channel + '] Offline Prime Sub: ' + username);
-                    }
-            }
-        });
-}*/
-
-/*function handleSub(channel, username, method, message, userstate) {
-    request({
-        url: 'https://api.twitch.tv/helix/streams?user_id=INSERT_ID_HERE',
-        method: 'GET',
-        headers: {
-            'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
-        }}, (err, res, body) => {
-            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
-                if (method.plan == '1000') {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                } else if (method.plan == '2000') {
-                    client.say(channel, '!zbucks add ' + username + ' 2000');
-                } else if (method.plan == '3000') {
-                    client.say(channel, '!zbucks add ' + username + ' 3000');
-                } else if (method.prime) {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                }
-            }
-            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type != 'live') {
-                if (method.plan == '1000') {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                } else if (method.plan == '2000') {
-                    client.say(channel, '!zbucks add ' + username + ' 2000');
-                } else if (method.plan == '3000') {
-                    client.say(channel, '!zbucks add ' + username + ' 3000');
-                } else if (method.prime) {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                }
-            } else
-                return;
-        });
-}
-
-function handleResub(channel, username, useless, message, userstate, method) {
-    request({
-        url: 'https://api.twitch.tv/helix/streams?user_id=INSERT_ID_HERE',
-        method: 'GET',
-        headers: {
-            'Client-ID': '1vw4epe6wur0n3g7gyh9o0mrtkfy6g'
-        }}, (err, res, body) => {
-            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type == 'live') {
-                if (method.plan == '1000') {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                } else if (method.plan == '2000') {
-                    client.say(channel, '!zbucks add ' + username + ' 2000');
-                } else if (method.plan == '3000') {
-                    client.say(channel, '!zbucks add ' + username + ' 3000');
-                } else if (method.prime) {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                }
-            }
-            if (JSON.parse(body).data.length > 0 && JSON.parse(body).data[0].type != 'live') {
-                if (method.plan == '1000') {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                } else if (method.plan == '2000') {
-                    client.say(channel, '!zbucks add ' + username + ' 2000');
-                } else if (method.plan == '3000') {
-                    client.say(channel, '!zbucks add ' + username + ' 3000');
-                } else if (method.prime) {
-                    client.say(channel, '!zbucks add ' + username + ' 1000');
-                }
-            } else
-                return;
-        });
-}*/
 
 function handleSub(channel, username, method, message, userstate) {
     if (method.plan == '1000') {

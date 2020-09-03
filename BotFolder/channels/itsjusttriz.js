@@ -7,10 +7,11 @@ const packlist = require('../DataPull/packlist.js');
 const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
+
 //Counters.
 let framesctr = {'Complained': 0};
-let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 let deathctr = {'Deaths': 0};
+
 fs.readFile('./DataPull/Counters/TrizDeath.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
@@ -79,56 +80,6 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
- /*       case '?normalsub':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            let symbol = args[0];
-                if (!symbol) {
-                    client.say(channel, 'Usage: !normalsub (+/-)');
-                } else if (symbol == '+') {
-                    substhisstream['Normal'] += 1;
-                    substhisstream['Combined'] += 1;
-                    client.say(channel, '[Normal Sub Increased] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                } else if (symbol == '-') {
-                    substhisstream['Normal'] += -1;
-                    substhisstream['Combined'] += -1;
-                    client.say(channel, '[Normal Sub Decreased] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?giftedsub':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            let symbol2 = args[0];
-                if (!symbol2) {
-                    client.say(channel, 'Usage: !giftedsub (+/-)');
-                } else if (symbol2 == '+') {
-                    substhisstream['Gifted'] += 1;
-                    substhisstream['Combined'] += 1;
-                    client.say(channel, '[Gifted Sub Increased] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                } else if (symbol2 == '-') {
-                    substhisstream['Gifted'] += -1;
-                    substhisstream['Combined'] += -1;
-                    client.say(channel, '[Gifted Decreased] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?clearsubs':
-            if (self) return;
-            if (botAdmin.indexOf(userstate.username) < 0) return;
-                substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
-                    client.say(channel, '[Cleared Subs] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?totalsubs':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                client.say(channel, '[Total Subs] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?setsubs':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                substhisstream = {'Normal': Number(args[0]) || 0, 'Gifted': Number(args[1]) || 0, 'Combined': Number(args[2]) || 0};
-                client.say(channel, '[Updated Subs] ' + `Normal: ${substhisstream.Normal}, Gifted: ${substhisstream.Gifted}, Combined: ${substhisstream.Combined}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;*/
         case '?death':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
             let symbol3 = args[0];
@@ -158,19 +109,6 @@ function handleChat(channel, userstate, message, self) {
                     if (err) return console.log(err);
                 });
             break;
-        /*case '!worm':
-            if (self) return;
-            if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 5);
-                    client.action(channel, "Raid message for Non-Subs:");
-                    client.say(channel, " /me bleedPurple twitchRaid ZERO IS RAIDING YOU! twitchRaid bleedPurple ZERO IS RAIDING YOU! bleedPurple twitchRaid ZERO IS RAIDING YOU! twitchRaid bleedPurple");
-                    client.action(channel, "Raid message for Subs:");
-                    client.say(channel, " /me zeroxWAVE zeroxHEART ZERO IS RAIDING YOU! zeroxHEART zeroxWAVE ZERO IS RAIDING YOU! zeroxHEART zeroxWAVE ZERO IS RAIDING YOU! zeroxHEART zeroxWAVE");
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;*/
     }
 }
 
@@ -185,8 +123,6 @@ function handleSub(channel, username, method, message, userstate) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
     client.say(channel, posthearts);
-//    substhisstream['Normal'] += 1;
-//    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
@@ -201,8 +137,6 @@ function handleResub(channel, username, useless, message, userstate, method) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
     }
     client.say(channel, posthearts);
-//    substhisstream['Normal'] += 1;
-//    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
 }
 
@@ -215,8 +149,6 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
     }
     client.say(channel, posthearts);
-//    substhisstream['Gifted'] += 1;
-//    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 

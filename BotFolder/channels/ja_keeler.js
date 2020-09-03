@@ -7,13 +7,6 @@ const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
-/*fs.readFile('../DataPull/Counters/JaDeath.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
-    }
-    deathctr['Deaths'] = parseInt(data);
-});*/
 
 function isOnCooldown(channel, command) {
     if (cooldown[channel] && cooldown[channel][command] == true) return true;
@@ -61,70 +54,6 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-/*        case '?death':
-            let symbol = args[0];
-                if (!symbol) {
-                    if (isOnCooldown(channel, command));
-                    else {
-                        setCooldown(channel, command, 5);
-                        client.say(channel, `Deaths: ${deathctr.Deaths}`);
-                    }
-                } else if (symbol == '+') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    if (isOnCooldown(channel, command));
-                    else {
-                        setCooldown(channel, command, 3);
-                        deathctr['Deaths'] += 1;
-                        client.say(channel, '[Increased] ' + `Deaths: ${deathctr.Deaths}`);
-                    }
-                } else if (symbol == '-') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    if (isOnCooldown(channel, command));
-                    else {
-                        setCooldown(channel, command, 3);
-                        deathctr['Deaths'] += -1;
-                        client.say(channel, '[Decreased] ' + `Deaths: ${deathctr.Deaths}`);
-                    }
-                } else if (symbol == 'reset') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr = {'Deaths': 0};
-                    client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('../DataPull/Counters/JaDeath.txt', deathctr['Deaths'], function (err) {
-                    if (err) return console.log(err);
-                });
-            break;
-        case '?setdeath':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                deathctr = {'Deaths': Number(args[0]) || 0};
-                client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('../DataPull/Counters/JaDeath.txt', deathctr['Deaths'], function (err) {
-                    if (err) return console.log(err);
-                });
-            break;
-/*        case '?migrate':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id']) return;
-            if (!args[0]) {
-                client.say(channel, 'Usage: ?migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
-                return;
-            }
-            request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-                if (err) {
-                    console.log('Error checking name change: ' + err);
-                    client.say(channel, 'Unable to check name.');
-                    return;
-                } else {
-                    let js = JSON.parse(body);
-                    if (js.length == 0) client.say(channel, 'No recent name change.');
-                    else {
-                        client.say(channel, '!transfer ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
-                    }
-                }
-            });
-            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;*/
     }
 }
 

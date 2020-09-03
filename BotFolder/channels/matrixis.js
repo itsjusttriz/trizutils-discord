@@ -8,7 +8,7 @@ const packlist = require('../DataPull/packlist.js');
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 let tools = {'Pickaxes': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
+
 fs.readFile('./DataPull/Counters/MatDeath.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
@@ -35,10 +35,6 @@ function setCooldown(channel, command, cd = 5) {
         cooldown[channel][command] = false;
     }, cd * 1000);
 }
-
-/*setInterval(function matxfish() {
-    client.say('#twitchverse', "!feed matrixis matxHeart matx123 matxHeart matx123 matxHeart matx123 matxHeart matx123");
-}, 1000 * 31);*/
 
 function handleChat(channel, userstate, message, self) {
     let command = message.split(' ')[0];
@@ -81,16 +77,6 @@ function handleChat(channel, userstate, message, self) {
                 client.say(channel, '/timeout ' + userstate.username + ' 1 !speak is for Mods only.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-        /*case '?percent':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            request('https://api.hcmc100.com/twitch/data/matrixis', (err, res, body) => {
-                if (JSON.parse(body).completion > -1) {
-                    client.say(channel, 'Mat has completed ' + JSON.parse(body).completion + '% matxH');
-                } else return;
-            });
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;*/
         case '?death':
             let symbol = args[0];
                 if (!deathchoice) {

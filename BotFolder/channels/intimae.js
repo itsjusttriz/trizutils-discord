@@ -6,8 +6,6 @@ const botAdmin = require('../main.js').botAdmin
 const packlist = require('../DataPull/packlist.js');
 
 let cooldown = {};
-//let deathctr = {'Deaths': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 
 function isOnCooldown(channel, command) {
     if (cooldown[channel] && cooldown[channel][command] == true) return true;

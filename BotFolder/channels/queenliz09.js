@@ -5,7 +5,7 @@ const botAdmin = require('../main.js').botAdmin
 const packlist = require('../DataPull/packlist.js');
 
 let cooldown = {};
-//let deathctr = {'Deaths': 0};
+
 let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 
 function isOnCooldown(channel, command) {
@@ -37,28 +37,6 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-/*      case '?migrate':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (!args[0]) {
-                client.say(channel, 'Usage: !migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
-                return;
-            }
-            request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-                if (err) {
-                    console.log('Error checking name change: ' + err);
-                    client.say(channel, 'Unable to check name.');
-                    return;
-                } else {
-                    let js = JSON.parse(body);
-                    if (js.length == 0) client.say(channel, 'No recent name change.');
-                    else {
-                        if (channel == '#chatbot-queenliz09') {
-                            client.say(channel, '/w norwegian_v1kingbot !namechange ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
-                        }
-                    }
-                }
-            });
-            break;*/
         case '?death':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
             let symbol3 = args[0];

@@ -6,8 +6,6 @@ const packlist = require('../DataPull/packlist.js');
 const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
-//let deathctr = {'Deaths': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 
 function isOnCooldown(channel, command) {
     if (cooldown[channel] && cooldown[channel][command] == true) return true;

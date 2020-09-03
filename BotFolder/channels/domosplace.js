@@ -8,8 +8,7 @@ const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let exercise = {'JJs': 0, 'Squats': 0, 'Hoops': 0};
-//let deathctr = {'Deaths': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
+
 fs.readFile('../DataPull/Counters/DomoJJs.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
@@ -48,10 +47,6 @@ function handleChat(channel, userstate, message, self) {
 	let command = message.split(' ')[0];
 	let args = message.split(' ');
 	args.shift();
-
-/*	if (message.match(/TriHard/i)) {
-		client.ban(channel, userstate.username, 'Automated Blacklisted Emote due to common racist trolls - Contact #Triz4776 on Discord for more info.');
-	}*/ //DomoProtectionMode Un-needed.
 
 	switch(command) {
         case '?commands':
@@ -172,27 +167,6 @@ function handleChat(channel, userstate, message, self) {
                     if (err) return console.log(err);
                 });
             break;
-/*		case '?migrate':
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id']) return;
-			if (!args[0]) {
-				client.say(channel, 'Usage: ?migrate <username> (checks for a namechange and immediately transfers points balance to new username)');
-				return;
-			}
-			request('https://twitch-tools.rootonline.de/username_changelogs_search.php?q=' + args[0] + '&format=json', (err, result, body) => {
-				if (err) {
-					console.log('Error checking name change: ' + err);
-					client.say(channel, 'Unable to check name.');
-					return;
-				} else {
-					let js = JSON.parse(body);
-					if (js.length == 0) client.say(channel, 'No recent name change.');
-					else {
-						client.say(channel, '!transfer ' + js[0]['username_old'] + ' ' + js[0]['username_new']);
-					}
-				}
-			});
-			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;*/
 	}
 }
 
@@ -242,7 +216,6 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
 	client.say(channel, '!giftadd3 ' + gifter + ' ' + recipient);
 	}
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
-//    client.say('#nottriz', '[' + channel + '] MASSGIFTSUB: ' + gifter + ' -> ' + userstate['msg-param-mass-gift-count'] + ' Total');
 }
 
 function handleCheer(channel, userstate, message) {

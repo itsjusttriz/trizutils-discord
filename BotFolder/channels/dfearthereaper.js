@@ -7,7 +7,7 @@ const packlist = require('../DataPull/packlist.js');
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
-//let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
+
 fs.readFile('./DataPull/Counters/FearDeath.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
