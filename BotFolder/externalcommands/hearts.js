@@ -46,3 +46,5 @@ client.on('chat', (channel, userstate, message, self) => {
 		});
 	}
 });
+
+module.exports.hearts = hearts;
