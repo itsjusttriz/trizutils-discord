@@ -1,29 +1,27 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
 const botAdmin = require('../main.js').botAdmin;
-const packlist = require('../DataPull/packlist.js');
-const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let exercise = {'JJs': 0, 'Squats': 0, 'Hoops': 0};
 
-fs.readFile('../DataPull/Counters/DomoJJs.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/domosplace/fitJJs.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
     exercise['JJs'] = parseInt(data);
 });
 
-fs.readFile('../DataPull/Counters/DomoSquats.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/domosplace/fitSquats.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
     exercise['Squats'] = parseInt(data);
 });
 
-fs.readFile('../DataPull/Counters/DomoHoops.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/domosplace/fitHoops.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -95,13 +93,13 @@ function handleChat(channel, userstate, message, self) {
 					client.say(channel, '[Hoops Increased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
 				}
 				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + addactivity);
-                fs.writeFile('../DataPull/Counters/DomoJJs.txt', exercise['JJs'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoSquats.txt', exercise['Squats'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoHoops.txt', exercise['Hoops'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
                     if (err) return console.log(err);
                 });
 			break;
@@ -121,13 +119,13 @@ function handleChat(channel, userstate, message, self) {
 					client.say(channel, '[Hoops Decreased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
 				}
 				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + delactivity);
-                fs.writeFile('../DataPull/Counters/DomoJJs.txt', exercise['JJs'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoSquats.txt', exercise['Squats'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoHoops.txt', exercise['Hoops'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
                     if (err) return console.log(err);
                 });
 			break;
@@ -137,13 +135,13 @@ function handleChat(channel, userstate, message, self) {
 				exercise = {'JJs': 0, 'Squats': 0, 'Hoops': 0};
 					client.say(channel, '[Cleared Exercise] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
 				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('../DataPull/Counters/DomoJJs.txt', exercise['JJs'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoSquats.txt', exercise['Squats'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoHoops.txt', exercise['Hoops'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
                     if (err) return console.log(err);
                 });
 			break;
@@ -157,13 +155,13 @@ function handleChat(channel, userstate, message, self) {
                 exercise = {'JJs': Number(args[0]) || 0, 'Squats': Number(args[1]) || 0, 'Hoops': Number(args[2]) || 0};
                 client.say(channel, '[Updated Exercises] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
 				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args.shift(' '));
-                fs.writeFile('../DataPull/Counters/DomoJJs.txt', exercise['JJs'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoSquats.txt', exercise['Squats'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
                     if (err) return console.log(err);
                 });
-                fs.writeFile('../DataPull/Counters/DomoHoops.txt', exercise['Hoops'], function (err) {
+                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
                     if (err) return console.log(err);
                 });
             break;

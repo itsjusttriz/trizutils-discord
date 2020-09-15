@@ -1,4 +1,4 @@
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
 let hearts = '<3';
 const botAdmin = require('../main.js').botAdmin
@@ -46,5 +46,3 @@ client.on('chat', (channel, userstate, message, self) => {
 		});
 	}
 });
-
-module.exports.hearts = hearts;

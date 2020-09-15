@@ -1,6 +1,7 @@
 const twitchjs = require('twitch-js');
 const request = require('request-promise');
-const client = require('../config.js').client;
+const client = require('./config.js').client;
+const clientID = require('./config.js').clientID;
 
 const botAdmin = ['47y_', 'itsjusttriz', 'nottriz', 'tellik', 'rhilou32', 'immp'];
 
@@ -109,7 +110,7 @@ client.on('chat', (channel, userstate, message, self) => {
 					client.say('#nottriz', '[' + channel + ']' + "Time's up!");
 				}, 1000 * args[0]);
 				client.say(channel, 'Timer set for ' + args[0] + ' seconds.');
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
+			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
 			break;
 		case '?triztime':
 			if (self) return;
@@ -117,7 +118,7 @@ client.on('chat', (channel, userstate, message, self) => {
 			request('https://decapi.me/misc/time?timezone=Europe/Dublin', (err, res, body) => {
 				client.say(channel, "It's currently " + body + ' for Triz.');
 			});
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
 			break;
 		case '?checkfollowcount':
 			if (self) return;
@@ -150,7 +151,7 @@ client.on('chat', (channel, userstate, message, self) => {
                 url: 'https://modlookup.3v.fi/api/user-totals/' + args[0],
                 method: 'GET',
                 headers: {
-                    'Client-ID': '...'
+                    'Client-ID': `${clientID}`
                 }}, (err, res, body) => {
                     if (JSON.parse(body).total > 0) {
                     	let swords = JSON.parse(body).total;
@@ -304,7 +305,7 @@ client.on('chat', (channel, userstate, message, self) => {
 						client.say(channel, 'Visit https://itsjusttriz.weebly.com/chatbot-global for more support. SeemsGood');
 				} else if (botoption.toLowerCase() == 'host') {
 					if (botAdmin.indexOf(userstate.username) < 0) return;
-						client.say('#itsjusttriz', "!editcom !hosting Triz is currently hosting " + channel.substr(1) + "! Please go check out their channel and join the conversation. It would mean a lot to both himself, and them >> https://twitch.tv/" + channel.substr(1));
+						client.say('#itsjusttriz', "!sethosting " + channel.substr(1));
 						client.say('#itsjusttriz', '/host ' + channel.substr(1));
 						client.say('#nottriz', '/host ' + channel.substr(1));
 				} else if (botoption.toLowerCase() == 'kill') {
@@ -538,16 +539,6 @@ client.on('subgift', (channel, gifter, recipient, method, userstate) => {
 			break;
 	}
 });
-
-/*client.on('subcommunitygift', (count, gifter, gifterGiftCount, plan) => {
-	switch(channel) {
-		case '#domosplace':
-			client.say(channel, gifter + ' has gifted ' + count + ' subs to the channel. (Total: ' + gifterGiftCount + ')');
-			client.say('#nottriz', gifter + ' has gifted ' + count + ' subs to the channel. (Total: ' + gifterGiftCount + ')');
-			break;
-	}
-});*/
-
 
 client.on('cheer', (channel, userstate, message) => {
 	var username = userstate.username;

@@ -1,9 +1,8 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
-const packlist = require('../DataPull/packlist.js');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 
@@ -21,9 +20,9 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
     switch(command) {
         case '?commands':
@@ -104,8 +103,8 @@ function handleCheer(channel, userstate, message) {
 }
 
 function handleRaid(customraid) {
-    client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-    client.say(customraid.channel, '!raider ' + customraid.raider);
+	client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
+	client.say(customraid.channel, '!raider ' + customraid.raider);
     client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
 }
 

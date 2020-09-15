@@ -1,8 +1,8 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
-const botAdmin = require('../main.js').botAdmin
-const packlist = require('../DataPull/packlist.js');
+const client = require('../config.js').client;
+const fs = require('fs');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 
@@ -22,11 +22,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -120,70 +120,46 @@ function handleChat(channel, userstate, message, self) {
 function handleSub(channel, username, method, message, userstate) {
     if (method.plan == '1000') {
         client.say(channel, 'PogChamp New Tier 1 Sub: ' + username + ' PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.plan == '2000') {
         client.say(channel, 'PogChamp New Tier 2 Sub: ' + username + ' PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.plan == '3000') {
         client.say(channel, 'PogChamp New Tier 3 Sub: ' + username + ' PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.prime) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     }
+    client.say(channel, '!hearts');
+    substhisstream['Normal'] += 1;
+    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
 function handleResub(channel, username, useless, message, userstate, method) {
     if (method.plan == '1000') {
         client.say(channel, 'PogChamp Returning Tier 1 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.plan == '2000') {
         client.say(channel, 'PogChamp Returning Tier 2 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.plan == '3000') {
         client.say(channel, 'PogChamp Returning Tier 3 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.prime) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!heartspam');
-        substhisstream['Normal'] += 1;
-        substhisstream['Combined'] += 1;
     }
+    client.say(channel, '!hearts');
+    substhisstream['Normal'] += 1;
+    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
 }
 
 function handleGiftsub(channel, gifter, recipient, method, userstate) {
     if (method.plan == '1000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 1)');
-        client.say(channel, '!heartspam');
-        substhisstream['Gifted'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.plan == '2000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 2)');
-        client.say(channel, '!heartspam');
-        substhisstream['Gifted'] += 1;
-        substhisstream['Combined'] += 1;
     } else if (method.plan == '3000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
-        client.say(channel, '!heartspam');
-        substhisstream['Gifted'] += 1;
-        substhisstream['Combined'] += 1;
     }
+    client.say(channel, '!hearts');
+    substhisstream['Gifted'] += 1;
+    substhisstream['Combined'] += 1;
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 

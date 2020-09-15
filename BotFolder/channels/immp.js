@@ -1,15 +1,13 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
 const botAdmin = require('../main.js').botAdmin;
-const packlist = require('../DataPull/packlist.js');
-const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 
-fs.readFile('./DataPull/Counters/ImmpDeath.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/immp/deathctr.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -30,15 +28,15 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
     if (message.match(/respect the grind/i)) {
         client.ban(channel, userstate.username);
     }
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -75,7 +73,7 @@ function handleChat(channel, userstate, message, self) {
                     client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('./DataPull/Counters/ImmpDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/immp/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -85,7 +83,7 @@ function handleChat(channel, userstate, message, self) {
                 client.say(channel, '[Set]' + `Deaths: ${deathctr.Deaths}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('./DataPull/Counters/ImmpDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/immp/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;

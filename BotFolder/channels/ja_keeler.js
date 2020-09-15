@@ -1,9 +1,8 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
 const botAdmin = require('../main.js').botAdmin;
-const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
@@ -22,11 +21,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -68,7 +67,7 @@ function handleSub(channel, username, method, message, userstate) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
@@ -82,7 +81,7 @@ function handleResub(channel, username, useless, message, userstate, method) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
 }
 
@@ -94,7 +93,7 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
     } else if (method.plan == '3000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 

@@ -1,29 +1,28 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
 const botAdmin = require('../main.js').botAdmin;
-const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 let mosctr = {'Current': 0, 'Total': 0};
 
-fs.readFile('./DataPull/Counters/ZeroDeath.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/zeroxfusionz/deathctr.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
     deathctr['Deaths'] = parseInt(data);
 });
 
-fs.readFile('./DataPull/Counters/ZeroMosCurrent.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/zeroxfusionz/mosCurrent.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
     mosctr['Current'] = parseInt(data);
 });
 
-fs.readFile('./DataPull/Counters/ZeroMosTotal.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/zeroxfusionz/mosTotal.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -44,11 +43,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -64,60 +63,60 @@ function handleChat(channel, userstate, message, self) {
                 if (!symbol3) {
                     client.say(channel, `Deaths: ${deathctr.Deaths}`);
                 } else if (symbol3 == '+') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                     deathctr['Deaths'] += 1;
                     client.say(channel, '[Increased] ' + `Deaths: ${deathctr.Deaths}`);
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased Death counter.');
+					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased Death counter.');
                 } else if (symbol3 == '-') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                     deathctr['Deaths'] += -1;
                     client.say(channel, '[Decreased] ' + `Deaths: ${deathctr.Deaths}`);
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased Death counter.');
+					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased Death counter.');
                 } else if (symbol3 == 'reset') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                     deathctr = {'Deaths': 0};
                     client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
+					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + symbol3);
-                fs.writeFile('./DataPull/Counters/ZeroDeath.txt', deathctr['Deaths'], function (err) {
-                    if (err) return console.log(err);
-                });
+                fs.writeFile('./DataPull/Counters/zeroxfusionz/deathctr.txt', deathctr['Deaths'], function (err) {
+				    if (err) return console.log(err);
+				});
             break;
         case '?setdeath':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                 deathctr = {'Deaths': Number(args[0]) || 0};
                 client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
+				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/ZeroDeath.txt', deathctr['Deaths'], function (err) {
-                    if (err) return console.log(err);
-                });
+                fs.writeFile('./DataPull/Counters/zeroxfusionz/deathctr.txt', deathctr['Deaths'], function (err) {
+				    if (err) return console.log(err);
+				});
             break;
         case '?races':
             let symbolmos = args[0];
                 if (!symbolmos) {
                     client.say(channel, `Races: ${mosctr.Current} / ${mosctr.Total}`);
                 } else if (symbolmos == '+') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                        mosctr['Current'] += 1;
-                        client.say(channel, '[Increased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                        client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased MoS counter.');
+            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+                    	mosctr['Current'] += 1;
+                    	client.say(channel, '[Increased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
+                    	client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased MoS counter.');
                 } else if (symbolmos == '-') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                        mosctr['Current'] += -1;
-                        client.say(channel, '[Decreased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                        client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased MoS counter.');
+		            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+        	            mosctr['Current'] += -1;
+        	            client.say(channel, '[Decreased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
+        	            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased MoS counter.');
                 } else if (symbolmos == 'reset') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                        mosctr = {'Current': 0, 'Total': 0};
-                        client.say(channel, '[Reset] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                        client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared MoS counter.');
+		            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+        	            mosctr = {'Current': 0, 'Total': 0};
+        	            client.say(channel, '[Reset] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
+        	            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared MoS counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/ZeroMosCurrent.txt', mosctr['Current'], function (err) {
-                    if (err) return console.log(err);
-                });
+                fs.writeFile('./DataPull/Counters/zeroxfusionz/mosCurrent.txt', mosctr['Current'], function (err) {
+				    if (err) return console.log(err);
+				});
             break;
         case '?setmos':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -125,24 +124,24 @@ function handleChat(channel, userstate, message, self) {
                 client.say(channel, '[Set] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set MoS counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args.join(' '));
-                fs.writeFile('./DataPull/Counters/ZeroMosCurrent.txt', mosctr['Current'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('./DataPull/Counters/ZeroMosTotal.txt', mosctr['Total'], function (err) {
-                    if (err) return console.log(err);
-                });
+                fs.writeFile('./DataPull/Counters/zeroxfusionz/mosCurrent.txt', mosctr['Current'], function (err) {
+				    if (err) return console.log(err);
+				});
+                fs.writeFile('./DataPull/Counters/zeroxfusionz/mosTotal.txt', mosctr['Total'], function (err) {
+				    if (err) return console.log(err);
+				});
             break;
         case '!play':
-            if (userstate.username != 'itsjusttriz') return;
-            else
-                if (isOnCooldown(channel, command)) return;
-                else {
-                    setCooldown(channel, command, 5);
-                    client.say(channel, '!play')
-                }
+        	if (userstate.username != 'itsjusttriz') return;
+        	else
+	        	if (isOnCooldown(channel, command)) return;
+	        	else {
+	        		setCooldown(channel, command, 5);
+	        		client.say(channel, '!play')
+	        	}
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-    }
+        	break;
+	}
 }
 
 function handleSub(channel, username, method, message, userstate) {
@@ -155,7 +154,7 @@ function handleSub(channel, username, method, message, userstate) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
@@ -169,7 +168,7 @@ function handleResub(channel, username, useless, message, userstate, method) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
 }
 
@@ -181,7 +180,7 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
     } else if (method.plan == '3000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 

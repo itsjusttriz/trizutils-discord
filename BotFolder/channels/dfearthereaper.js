@@ -1,14 +1,13 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
-const packlist = require('../DataPull/packlist.js');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 
-fs.readFile('./DataPull/Counters/FearDeath.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/dfearthereaper/deathctr.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -29,9 +28,9 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
     switch(command) {
         case '?commands':
@@ -65,7 +64,7 @@ function handleChat(channel, userstate, message, self) {
                     client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + symbol3);
-                fs.writeFile('./DataPull/Counters/FearDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/dfearthereaper/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -75,7 +74,7 @@ function handleChat(channel, userstate, message, self) {
                 client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/FearDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/dfearthereaper/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;

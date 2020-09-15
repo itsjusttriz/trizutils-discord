@@ -1,14 +1,13 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
-const botAdmin = require('../main.js').botAdmin
+const client = require('../config.js').client;
 const fs = require('fs');
-const packlist = require('../DataPull/packlist.js');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 
-fs.readFile('./DataPull/Counters/JayDeath.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/jayrockbird/deathctr.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -29,9 +28,9 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
     if (message.match(/littlebirdy/i)) {
         if (isOnCooldown(channel, command)) return;
@@ -51,19 +50,6 @@ function handleChat(channel, userstate, message, self) {
                 client.say(channel, "Click here for commands, specific to this channel >> https://itsjusttriz.weebly.com/chatbot-" + channel.substr(1));
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?ichooseyou':
-            if (self) return;
-            if (isOnCooldown(channel, command)) return;
-            if (!args[0]) {
-                client.say(channel, 'Usage: !ichooseyou <PokemonName>');
-            } else {
-                setCooldown(channel, command, 3);
-                client.say(channel, '/w jayrockbird ' + userstate.username + ' has chosen ' + args[0]);
-                client.say(channel, args[0] + " has been sent to Jay's whispers.");
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> has chosen ' + args[0] + ' (!ichooseyou)');
-            }
-            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
         case '?death':
             let symbol3 = args[0];
@@ -86,7 +72,7 @@ function handleChat(channel, userstate, message, self) {
                     client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + symbol3);
-                fs.writeFile('./DataPull/Counters/JayDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/jayrockbird/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -96,7 +82,7 @@ function handleChat(channel, userstate, message, self) {
                 client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/JayDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/jayrockbird/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;

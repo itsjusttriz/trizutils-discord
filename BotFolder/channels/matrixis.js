@@ -1,22 +1,21 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
-const botAdmin = require('../main.js').botAdmin
-const packlist = require('../DataPull/packlist.js');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 let deathctr = {'Deaths': 0};
 let tools = {'Pickaxes': 0};
 
-fs.readFile('./DataPull/Counters/MatDeath.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/matrixis/deathctr.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
     deathctr['Deaths'] = parseInt(data);
 });
 
-fs.readFile('./DataPull/Counters/MatPickaxe.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/matrixis/pickaxe.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -41,7 +40,7 @@ function handleChat(channel, userstate, message, self) {
     let args = message.split(' ');
     args.shift();
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -52,13 +51,13 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-        case '?sethome':
-            if (self) return;
+		case '?sethome':
+			if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
             if (!args[0]) {
-                client.say(channel, 'Usage: !sethome <x> <y> <z>');
+            	client.say(channel, 'Usage: !sethome <x> <y> <z>');
             } else {
-                client.say(channel, "!editcom !home Mat's home is at XYZ: " + args.join(' '));
+            	client.say(channel, "!editcom !home Mat's home is at XYZ: " + args.join(' '));
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
@@ -107,7 +106,7 @@ function handleChat(channel, userstate, message, self) {
                     client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('./DataPull/Counters/MatDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/matrixis/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -116,7 +115,7 @@ function handleChat(channel, userstate, message, self) {
                 deathctr = {'Deaths': Number(args[0]) || 0};
                 client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('./DataPull/Counters/MatDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/matrixis/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -149,7 +148,7 @@ function handleChat(channel, userstate, message, self) {
                     tools = {'Pickaxes': 0};
                     client.say(channel, '[Reset] ' + `Pickaxes: ${tools.Pickaxes}`);
                 }
-                fs.writeFile('./DataPull/Counters/MatPickaxe.txt', tools['Pickaxes'], function (err) {
+                fs.writeFile('./DataPull/Counters/matrixis/pickaxe.txt', tools['Pickaxes'], function (err) {
                     if (err) return console.log(err);
                 });
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + pickchoice);
@@ -159,11 +158,11 @@ function handleChat(channel, userstate, message, self) {
                 tools = {'Pickaxes': Number(args[0]) || 0};
                 client.say(channel, '[Set] ' + `Pickaxes: ${tools.Pickaxes}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/MatPickaxe.txt', tools['Pickaxes'], function (err) {
+                fs.writeFile('./DataPull/Counters/matrixis/pickaxe.txt', tools['Pickaxes'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
-    }
+	}
 }
 
 function handleSub(channel, username, method, message, userstate) {

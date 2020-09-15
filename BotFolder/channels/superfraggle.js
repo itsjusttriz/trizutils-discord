@@ -1,8 +1,8 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
-const botAdmin = require('../main.js').botAdmin
-const packlist = require('../DataPull/packlist.js');
+const client = require('../config.js').client;
+const fs = require('fs');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 

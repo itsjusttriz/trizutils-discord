@@ -1,8 +1,8 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
-const botAdmin = require('../main.js').botAdmin
-const packlist = require('../DataPull/packlist.js');
+const client = require('../config.js').client;
+const fs = require('fs');
+const botAdmin = require('../main.js').botAdmin;
 
 let cooldown = {};
 
@@ -20,11 +20,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -35,19 +35,19 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-        case '?frames':
-            if (self) return;
-                client.say(channel, "Koby's CPU is acting up at this current time. There is nothing he can do, right now, about the frame drops! BibleThump Please bare with him.");
+		case '?frames':
+			if (self) return;
+				client.say(channel, "Koby's CPU is acting up at this current time. There is nothing he can do, right now, about the frame drops! BibleThump Please bare with him.");
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
+			break;
         case '?multiedit':
         case '?setmulti':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
                 client.say(channel, '!command edit !multi To support ' + args.join(' ') + ' and myself, click here - https://multistre.am/theimperialbitgod/' + args.join(' '));
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;  
-    }
+            break;	
+	}
 }
 
 function handleSub(channel, username, method, message, userstate) {
@@ -77,16 +77,16 @@ function handleResub(channel, username, useless, message, userstate, method) {
 }
 
 function handleGiftsub(channel, gifter, recipient, method, userstate) {
-    if (method.plan == '1000') {
+	if (method.plan == '1000') {
+		client.say(channel, "Happy Holidays, " + recipient + '! Enjoy the gifted sub :D');
+		client.say(channel, gifter + ', Thank you for the Tier 1 GiftSub to ' + recipient);
+	} else if (method.plan == '2000') {
         client.say(channel, "Happy Holidays, " + recipient + '! Enjoy the gifted sub :D');
-        client.say(channel, gifter + ', Thank you for the Tier 1 GiftSub to ' + recipient);
-    } else if (method.plan == '2000') {
+		client.say(channel, gifter + ', Thank you for the Tier 2 GiftSub to ' + recipient);
+	} else if (method.plan == '3000') {
         client.say(channel, "Happy Holidays, " + recipient + '! Enjoy the gifted sub :D');
-        client.say(channel, gifter + ', Thank you for the Tier 2 GiftSub to ' + recipient);
-    } else if (method.plan == '3000') {
-        client.say(channel, "Happy Holidays, " + recipient + '! Enjoy the gifted sub :D');
-        client.say(channel, gifter + ', Thank you for the Tier 3 GiftSub to ' + recipient);
-    }
+		client.say(channel, gifter + ', Thank you for the Tier 3 GiftSub to ' + recipient);
+	}
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 
@@ -99,8 +99,8 @@ function handleCheer(channel, userstate, message) {
 }
 
 function handleRaid(customraid) {
-    client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-    client.say(customraid.channel, '!so ' + customraid.raider);
+	client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
+	client.say(customraid.channel, '!so ' + customraid.raider);
     client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
 }
 

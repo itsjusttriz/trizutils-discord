@@ -1,18 +1,16 @@
 const request = require('request');
 const getUrls = require('get-urls');
-const client = require('../main.js').client;
+const client = require('../config.js').client;
 const fs = require('fs');
 const botAdmin = require('../main.js').botAdmin;
-const packlist = require('../DataPull/packlist.js');
-const posthearts = require('../externalcommands/hearts.js').hearts;
 
 let cooldown = {};
 
 //Counters.
-let framesctr = {'Complained': 0};
+let substhisstream = {'Normal': 0, 'Gifted': 0, 'Combined': 0};
 let deathctr = {'Deaths': 0};
 
-fs.readFile('./DataPull/Counters/TrizDeath.txt', 'utf8', function (err, data) {
+fs.readFile('./DataPull/Counters/itsjusttriz/deathctr.txt', 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
@@ -33,11 +31,11 @@ function setCooldown(channel, command, cd = 5) {
 }
 
 function handleChat(channel, userstate, message, self) {
-    let command = message.split(' ')[0];
-    let args = message.split(' ');
-    args.shift();
+	let command = message.split(' ')[0];
+	let args = message.split(' ');
+	args.shift();
 
-    switch(command) {
+	switch(command) {
         case '?commands':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
@@ -48,38 +46,11 @@ function handleChat(channel, userstate, message, self) {
             }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
-        case '?frames':
-        case '?rip':
-            if (self) return;
-            if (!userstate.subscriber && !userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command);
-                framesctr['Complained'] += 1;
-                client.action(channel, "It seems like we may have dropped frames?! Welp, our internet is shit so there's nothing that can be done about it. " + `Times Complained: ${framesctr.Complained}`);
-            }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
         case '?setmulti':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                client.say(channel, '!editcom !multi Oh look?! A Multi-Stream PogChamp - https://kadgar.net/live/itsjusttriz/' + args[0]);
+                client.say(channel, '!command edit !multi Oh look?! A Multi-Stream PogChamp - https://kadgar.net/live/itsjusttriz/' + args[0]);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
                 break;
-        case '?raid':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command);
-                client.action(channel, "We are going to pop on over to " + args[0] + " with a raid! https://twitch.tv/" + args[0] + " <3 ");
-                client.say(channel, "Here's your message:");
-                client.action(channel, "/me Blades appear out of nowhere, slicing and dicing in every direction! twitchRaid #TrizRaid");
-                client.action(channel, "/me Blades appear out of nowhere, slicing and dicing in every direction! twitchRaid #TrizRaid");
-                client.action(channel, "/me Blades appear out of nowhere, slicing and dicing in every direction! twitchRaid #TrizRaid");
-                client.say(channel, "/raid " + args[0]);
-            }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
         case '?death':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
             let symbol3 = args[0];
@@ -96,7 +67,7 @@ function handleChat(channel, userstate, message, self) {
                     client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
                 }
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('./DataPull/Counters/TrizDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/itsjusttriz/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -105,7 +76,7 @@ function handleChat(channel, userstate, message, self) {
                 deathctr = {'Deaths': Number(args[0]) || 0};
                 client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('./DataPull/Counters/TrizDeath.txt', deathctr['Deaths'], function (err) {
+                fs.writeFile('./DataPull/Counters/itsjusttriz/deathctr.txt', deathctr['Deaths'], function (err) {
                     if (err) return console.log(err);
                 });
             break;
@@ -122,7 +93,7 @@ function handleSub(channel, username, method, message, userstate) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
@@ -136,7 +107,7 @@ function handleResub(channel, username, useless, message, userstate, method) {
     } else if (method.prime) {
         client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
 }
 
@@ -148,7 +119,7 @@ function handleGiftsub(channel, gifter, recipient, method, userstate) {
     } else if (method.plan == '3000') {
         client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
     }
-    client.say(channel, posthearts);
+    client.say(channel, '!hearts');
     client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
 }
 
@@ -161,8 +132,8 @@ function handleCheer(channel, userstate, message) {
 }
 
 function handleRaid(customraid) {
-    client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-    client.say(customraid.channel, '!so ' + customraid.raider);
+	client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
+	client.say(customraid.channel, '!so ' + customraid.raider);
     client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
 }
 
