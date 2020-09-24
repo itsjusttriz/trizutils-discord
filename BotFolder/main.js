@@ -540,6 +540,13 @@ client.on('subgift', (channel, gifter, recipient, method, userstate) => {
 	}
 });
 
+// Testing Sub-Bombs.
+client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
+    let senderCount = ~~userstate["msg-param-sender-count"];
+
+    client.say('#nottriz', `[${channel}] MASSGIFTSUB: ${username} - ${numbOfSubs} (${method.plan})`);
+});
+
 client.on('cheer', (channel, userstate, message) => {
 	var username = userstate.username;
 	var	bits = userstate.bits;

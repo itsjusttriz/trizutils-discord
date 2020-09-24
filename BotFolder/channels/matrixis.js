@@ -77,7 +77,7 @@ function handleChat(channel, userstate, message, self) {
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
             break;
         case '?death':
-            let symbol = args[0];
+            let deathchoice = args[0];
                 if (!deathchoice) {
                     if (isOnCooldown(channel, command));
                     else {

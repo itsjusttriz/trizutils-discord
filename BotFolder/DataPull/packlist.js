@@ -33,6 +33,7 @@ const skyworkshop = ['The current pack is SkyWorkshop, a modpack available on th
 const stoneblock1 = ['The current pack is StoneBlock 1, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/stoneblock'];
 const stoneblock2 = ['The current pack is StoneBlock 2, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/ftb-presents-stoneblock-2/'];
 const towncraft = ['The current pack is TownCraft, a modpack that can be found on the Twitch App. >> https://minecraft.curseforge.com/projects/towncraft'];
+const trillionaire = ['The current pack is Minecraft Trillionaire, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/minecraft-trillionaire'];
 const volcanoblock = ['The current pack is Volcano Block, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/volcano-block'];
 
 const vanilla = ['This is Vanilla Minecraft. (Ask a Mod/Broadcaster about the version)'];
@@ -75,6 +76,7 @@ module.exports.enigmatica2skyex = enigmatica2skyex
 module.exports.atm3ex = atm3ex
 module.exports.compactclaustrophobia = compactclaustrophobia
 module.exports.ftbinteractions = ftbinteractions
+module.exports.trillionaire = trillionaire
 
 module.exports.vanilla = vanilla;
 module.exports.none = none;
