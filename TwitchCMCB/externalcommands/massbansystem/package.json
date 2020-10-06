@@ -1,0 +1,19 @@
+{
+  "name": "massban_script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "massban.js",
+  "dependencies": {
+    "dotenv": "^8.1.0",
+    "get-urls": "^7.2.0",
+    "mysql": "^2.17.1",
+    "request": "^2.88.0",
+    "twitch-js": "^1.2.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
