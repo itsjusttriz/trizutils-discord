@@ -6,3 +6,4 @@ TwitchCMCB/config.js
 **/package-lock.json
 **/package.json
 TwitchCMCB/node_modules/**
+DiscordCMCB/config.json
