@@ -150,7 +150,7 @@ function handleMessage(client, message, response) {
                     .setTitle('Compact Claustrophobia Server Info')
                     .setColor(embedColor)
                     .addField('Status', ':white_check_mark: Online', true)
-                    .addField('IP', '\`tbcc.g.akliz.net\`', true)
+                    .addField('IP', '\`HIDDEN\`', true)
                     .addField('Pack Version', '1.3.5.2', true)
                     .addField('Notes // Rules', '‣ Have Fun.\n‣ Don\'t fuck it up!')
                     .addField('Pack Download', '[Click Here](https://www.curseforge.com/minecraft/modpacks/compact-claustrophobia)', true)
