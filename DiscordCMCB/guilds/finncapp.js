@@ -229,7 +229,7 @@ function handleMessage(client, message, response) {
                     .setTitle('Regrowth Server Info')
                     .setColor(embedColor)
                     .addField('Status', ':white_check_mark: Online', true)
-                    .addField('IP', '\`marcks.me:25573\`', true)
+                    .addField('IP', '\`HIDDEN\`', true)
                     .addField('Pack Version', '1.0.2', true)
                     .addField('Notes // Rules', `
                         ‣ This is the MC 1.7.10 version.
@@ -249,7 +249,7 @@ function handleMessage(client, message, response) {
                     .setTitle('PO3 Kappa Server Info')
                     .setColor(embedColor)
                     .addField('Status', ':white_check_mark: Online', true)
-                    .addField('IP', '\`po3finncakappa.nodecraft.gg\`', true)
+                    .addField('IP', '\`HIDDEN\`', true)
                     .addField('Pack Version', '3.3.60', true)
                     .addField('Notes // Rules', `
                         ‣ This is the MC 1.12.2 version.
@@ -274,7 +274,7 @@ function handleMessage(client, message, response) {
                     .setTitle('Sky Workshop Server Info')
                     .setColor(embedColor)
                     .addField('Status', ':white_check_mark: Online', true)
-                    .addField('IP', '\`marcks.me:25571\`', true)
+                    .addField('IP', '\`HIDDEN\`', true)
                     .addField('Pack Version', '2.2.6', true)
                     .addField('Notes // Rules', `
                         ‣ This is the MC 1.12.2 version.
