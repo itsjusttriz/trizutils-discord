@@ -1,4 +1,4 @@
-const listemotes = ['lgbt2019, ffcheck, rpgbits, hahahalidays, luvcheck, hypetrain1, hypetrain2, lgbt2020, hyperscape'];
+const listemotes = ['lgbt2019, ffcheck, rpgbits, hahahalidays, luvcheck, hypetrain1, hypetrain2, lgbt2020, hyperscape, kpop'];
 
 const lgbt2019 = ['PrideLionYay PrideLionChomp PrideLionHey PrideBalloons PrideGive PrideTake PrideSaba PrideWingR PrideWingL PrideShine PrideParty PrideHi PrideGasp PrideFlag PrideCheers PridePan PrideAsexual PrideTrans PrideLesbian PrideBisexual'];
 const ffcheck = ['FightBerry FightBox FightBurger FightCC FightCookie FightFruit FightIce FightPC FightPepper FightPop FightSmore FightChips FightFry FightJello FightMash FightPizza FightPudding FightSardine FightSmoothie FightSoda FightSub FightBagel FightCake FightCheese FightCorn FightCup FightEgg FightNacho FightPBJ FightPie FightRamen FightSalad FightSoup FightSpag FightTomato'];
@@ -9,6 +9,7 @@ const hypetrain2 = ['[Level 1] HypeChimp , HypeGhost , HypeChest , HypeFrog , Hy
 const luvcheck = ['LuvBlondeL LuvBrownR LuvBrownL LuvBlondeR LuvPeekL LuvPeekR LuvBlush LuvSnooze LuvSign LuvHearts LuvGift LuvOops LuvUok LuvCool'];
 const lgbt2020 = ['PrideDragon PrideCrown PrideWave PridePaint PrideWorld PrideCute PrideKoala PrideHeyyy PrideLove PrideStrong PrideUnicorn PridePog PrideUwu PrideRhino PridePenguin PrideLGBTea PrideToucan PrideFlower PrideHeartL PrideHeartR PrideLaugh PrideShrug PrideLion PrideRise PrideFloat'];
 const hyperscape = ['HyperLost HyperCrate HyperSlam HyperReveal HyperParkour HyperMine HyperMayhem HyperJump HyperHex HyperHaste HyperGravity HyperCrown HyperCooldown HyperCheese HyperTiger'];
+const kpop = ['KPOPselfie KPOPmerch KPOPheart KPOPfan KPOPdance KPOPcheer KPOPTT KPOPvictory KPOPlove KPOPglow'];
 
 module.exports.listemotes = listemotes;
 
@@ -21,3 +22,4 @@ module.exports.hypetrain1 = hypetrain1;
 module.exports.hypetrain2 = hypetrain2;
 module.exports.lgbt2020 = lgbt2020;
 module.exports.hyperscape = hyperscape;
+module.exports.kpop = kpop

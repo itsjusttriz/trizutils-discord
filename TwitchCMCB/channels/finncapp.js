@@ -134,8 +134,8 @@ function handleChat(channel, userstate, message, self) {
             break;
         case '!so':
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id']) return;
-            let soargs = args[0];
-                if (soargs.toLowerCase() == 'dfearthereaper') {
+            let soargs = args[0].toLowerCase();
+                if (soargs == 'dfearthereaper') {
                     client.say(channel, '/w ' + userstate.username + ' Psst.. DFearTheReaper doesnt like being shouted out - https://discordapp.com/channels/585627689612869645/586460891814428693/745354449668538529');
                 }
                 else

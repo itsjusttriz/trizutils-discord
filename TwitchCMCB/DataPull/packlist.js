@@ -1,4 +1,4 @@
-const listpacks = [' (vanilla, none, po3normal, po3titan, po3kappa, sf4, ragnamodv, towncraft, amnesia, rusticwaters, astroblock, volcanoblock, stoneblock1, stoneblock2, skyodyssey, chaoticprogression, antichem, madpack4, rad, rlcraft, mceternal, enigmatica4, blissfulbuilding, infinevo, infinevo_expert, skyworkshop, questingmayhem, dimensionzero, ftbacademy, enigmatica2, enigmatica2ex, enigmatica2skyex, enigmatica6, atm3ex, compactclaustrophobia, ftbinteractions)'];
+const listpacks = [' (vanilla, vanillaplus, none, po3normal, po3titan, po3kappa, sf4, ragnamodv, towncraft, amnesia, rusticwaters, astroblock, volcanoblock, stoneblock1, stoneblock2, skyodyssey, chaoticprogression, antichem, madpack4, rad, rlcraft, mceternal, enigmatica4, blissfulbuilding, infinevo, infinevo_expert, skyworkshop, questingmayhem, dimensionzero, ftbacademy, enigmatica2, enigmatica2ex, enigmatica2skyex, enigmatica6, atm3ex, compactclaustrophobia, ftbinteractions)'];
 
 const amnesia = ['The current pack is Amnesia, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/Amnesia'];
 const atm3ex = ['The current pack is All The Mods 3 [Expert], a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/all-the-mods-3-expert'];
@@ -37,6 +37,7 @@ const trillionaire = ['The current pack is Minecraft Trillionaire, a modpack tha
 const volcanoblock = ['The current pack is Volcano Block, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/volcano-block'];
 
 const vanilla = ['This is Vanilla Minecraft. (Ask a Mod/Broadcaster about the version)'];
+const vanillaplus = ['This is Vanilla Minecraft with a few minor mods added for convenience. (Ask a Mod/Broadcaster about the version)'];
 const none = ['There is currently no modpack being played, right now.'];
 
 
@@ -79,4 +80,5 @@ module.exports.ftbinteractions = ftbinteractions
 module.exports.trillionaire = trillionaire
 
 module.exports.vanilla = vanilla;
+module.exports.vanillaplus = vanillaplus;
 module.exports.none = none;

@@ -53,7 +53,7 @@ function handleChat(channel, userstate, message, self) {
         case '?song':
             if (self) return;
             if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            request('https://www.pretzel.rocks/api/v1/playing/twitch/reninsane/insane', (err, res, body) => {
+            request('https://www.pretzel.rocks/api/v1/playing/twitch/reninsane', (err, res, body) => {
                 if (isOnCooldown(channel, command)) return;
                 else {
                     setCooldown(channel, command, 5);

@@ -1,7 +1,10 @@
 const twitchjs = require('twitch-js');
-const request = require('request-promise');
+const axios = require('axios');
+const request = require('request')
 const client = require('./config.js').client;
 const clientID = require('./config.js').clientID;
+const { authToken } = require('./config.js');
+const { authorization } = require('../DiscordCMCB/config.js');
 
 const botAdmin = ['47y_', 'itsjusttriz', 'nottriz', 'tellik', 'rhilou32', 'immp'];
 
@@ -9,11 +12,13 @@ const botAdmin = ['47y_', 'itsjusttriz', 'nottriz', 'tellik', 'rhilou32', 'immp'
 const cmdGroup1 = ['#domosplace', '#immp', '#reninsane', '#theimperialbitgod', '#xobias', '#chachava', '#kikiisyourfriend', '#ja_keeler'];
 //Channels that use '!editcom'.
 const cmdGroup2 = ['#itsjusttriz', '#jayrockbird', '#queenliz09', '#superfraggle', '#zeroxfusionz', '#vertigo67', '#finncapp'];
-
+//Channels that use '!editcommand'.
+const cmdGroup3 = ['#blitzyuk'];
 
 module.exports.botAdmin = botAdmin;
 
 const almostfae = require('./channels/almostfae.js');
+const blitzyuk = require('./channels/blitzyuk.js');
 const dfearthereaper = require('./channels/dfearthereaper.js');
 const domosplace = require('./channels/domosplace.js');
 const finncapp = require('./channels/finncapp.js');
@@ -52,13 +57,38 @@ setInterval(function() {
     client.color(nonTurboColors.random());
 }, 1000 * 2);
 
+setInterval(function() {
+	axios({
+		method: 'get',
+		url: 'https://api.twitch.tv/helix/streams?user_login=domosplace',
+        headers: {
+			'Client-ID': `${clientID}`,
+			'Authorization': `Bearer ${authorization}`
+		}
+	})
+	.then(function (response) {
+		if (response.data.data.length > 0 && response.data.data[0].type === 'live') {
+			client.say('#domosplace', '/me Running a 90 second ad..');
+			client.say('#domosplace', '/commercial 90');
+			client.say('#domosplace', 'Sick of the ads? Subscribe to Domo to get Ad-Free viewing experience while also showing off those really cool emotes! https://twitch.tv/domosplace/subscribe');
+		} else
+			return;
+	})
+	.catch(function (error) {
+		console.log('Error:', error);
+	});
+}, 1000 * 60 * 30 ); //30 Minutes.
+//}, 1000 * 5); //Test Time
+
 client.on('chat', (channel, userstate, message, self) => {
 	let command = message.split(' ')[0];
 	let args = message.split(' ');
 	args.shift();
 
 	if (channel == '#almostfae') {
-    	almostfae.handleChat(channel, userstate, message, self);
+		almostfae.handleChat(channel, userstate, message, self);
+	} else if (channel == '#blitzyuk') {
+		blitzyuk.handleChat(channel, userstate, message, self);
     } else if (channel == '#dfearthereaper') {
     	dfearthereaper.handleChat(channel, userstate, message, self);
     } else if (channel == '#domosplace') {
@@ -106,8 +136,8 @@ client.on('chat', (channel, userstate, message, self) => {
 		case '?settimer':
 			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
 				setTimeout(function CTimer() {
-					client.say(channel, "Time's up!");
-					client.say('#nottriz', '[' + channel + ']' + "Time's up!");
+					client.say(channel, `@${userstate.username}, ${args[0]}s Timer has ended!`);
+					client.say('#nottriz', `[${channel}] ${userstate.username}'s ${args[0]}s Timer has ended!`);
 				}, 1000 * args[0]);
 				client.say(channel, 'Timer set for ' + args[0] + ' seconds.');
 			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
@@ -185,17 +215,23 @@ client.on('chat', (channel, userstate, message, self) => {
 			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
 			const packlist = require('./DataPull/packlist.js');
             let mpack = args[0];
-	            if (cmdGroup2.indexOf(channel) > -1) {
+	            if (cmdGroup1.indexOf(channel) > -1) {
+    	            if (!mpack) {
+        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + packlist.listpacks);
+            	    } else if (mpack.toLowerCase()) {
+            	        client.say(channel, '!command edit !pack ' + packlist[args[0]]);
+            	    }
+            	} else if (cmdGroup2.indexOf(channel) > -1) {
     	            if (!mpack) {
         	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + packlist.listpacks);
             	    } else if (mpack.toLowerCase()) {
             	        client.say(channel, '!editcom !pack ' + packlist[args[0]]);
             	    }
-            	} else if (cmdGroup1.indexOf(channel) > -1) {
+            	} else if (cmdGroup3.indexOf(channel) > -1) {
     	            if (!mpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: !setpack ' + packlist.listpacks);
+        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + packlist.listpacks);
             	    } else if (mpack.toLowerCase()) {
-            	        client.say(channel, '!command edit !pack ' + packlist[args[0]]);
+            	        client.say(channel, '!editcommand !pack ' + packlist[args[0]]);
             	    }
             	}
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + mpack);
@@ -207,13 +243,13 @@ client.on('chat', (channel, userstate, message, self) => {
             let rpack = args[0];
 	            if (cmdGroup2.indexOf(channel) > -1) {
     	            if (!rpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + rplist.listpacks);
+        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setrp ' + rplist.listpacks);
             	    } else if (rpack.toLowerCase()) {
             	        client.say(channel, '!editcom !tp ' + rplist[args[0]]);
             	    }
             	} else if (cmdGroup1.indexOf(channel) > -1) {
     	            if (!rpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: !setpack ' + rplist.listpacks);
+        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setrp ' + rplist.listpacks);
             	    } else if (rpack.toLowerCase()) {
             	        client.say(channel, '!command edit !tp ' + rplist[args[0]]);
             	    }
@@ -267,6 +303,22 @@ client.on('chat', (channel, userstate, message, self) => {
 				});
                 client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
 				break;
+/*		case '?math':
+			if (self) return;
+			if (!userstate.subscriber && !userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+				axios({
+					method: 'get',
+					url: `http://twitch.center/customapi/math?expr=${encodeURI(args[0]).replace(/\+/g, '%2B')}`
+				})
+				.then(function (response) {
+					console.log(response.data)
+					client.say(channel, response.data)
+				})
+				.catch(function (error){
+					console.log(error)
+				})
+                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+				break;*/
 		case '?trizspam':
 			if (self) return;
 			if (botAdmin.indexOf(userstate.username) < 0) return;
@@ -291,39 +343,36 @@ client.on('chat', (channel, userstate, message, self) => {
 		case '?n':
 			if (self) return;
 			let botoption = args[0];
-				if (!botoption) {
-					if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-					else
-						client.say(channel, 'Usage: ?n (?/help/host/kill)');
-				} else if (botoption.toLowerCase() == '?') {
-					if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-					else
-						client.action(channel, 'v4.7 is online! SeemsGood');
-				} else if (botoption.toLowerCase() == 'help') {
-					if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-					else
-						client.say(channel, 'Visit https://itsjusttriz.weebly.com/chatbot-global for more support. SeemsGood');
-				} else if (botoption.toLowerCase() == 'host') {
-					if (botAdmin.indexOf(userstate.username) < 0) return;
-						client.say('#itsjusttriz', "!sethosting " + channel.substr(1));
-						client.say('#itsjusttriz', '/host ' + channel.substr(1));
-						client.say('#nottriz', '/host ' + channel.substr(1));
-				} else if (botoption.toLowerCase() == 'kill') {
-					if (botAdmin.indexOf(userstate.username) < 0) return;
-					else
-						process.exit(0);
-				}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + botoption);
+			if (!botoption) {
+				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+				client.say(channel, 'Usage: ?n (?/help/host/kill)');
+			} else if (botoption.toLowerCase() == '?') {
+				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+				client.action(channel, 'v4.7 is online! SeemsGood');
+			} else if (botoption.toLowerCase() == 'help') {
+				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
+				client.say(channel, 'Visit https://itsjusttriz.weebly.com/chatbot-global for more support. SeemsGood');
+			} else if (botoption.toLowerCase() == 'host') {
+				if (botAdmin.indexOf(userstate.username) < 0) return;
+//				client.say('#itsjusttriz', "!sethosting " + channel.substr(1));
+				client.say('#itsjusttriz', '/host ' + channel.substr(1));
+				client.say('#nottriz', '/host ' + channel.substr(1));
+			} else if (botoption.toLowerCase() == 'kill') {
+				if (botAdmin.indexOf(userstate.username) < 0) return;
+				process.exit(0);
+			}
+			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + botoption);
 			break;
 		case '?breakspam':
 			if (self) return;
 			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				client.say(channel, 'B R E A K !');
-				client.say(channel, 'B R E A K !');
-				client.say(channel, 'B R E A K !');
-				client.say(channel, 'B R E A K !');
-				client.say(channel, 'B R E A K !');
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+			let num2 = 5
+			for (let i = 0; i < num2; i++) {
+				setTimeout(function breakSpam5() {
+					client.say(channel, 'B R E A K !');
+				}, 100 * i );
+			}
+			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
 			break;
 	}
 });
@@ -340,6 +389,9 @@ client.on('subscription', (channel, username, method, message, userstate) => {
 	switch(channel) {
 		case '#almostfae':
 			almostfae.handleSub(channel, username, method, message, userstate);
+			break;
+		case '#blitzyuk':
+			blitzyuk.handleSub(channel, username, method, message, userstate);
 			break;
 		case '#dfearthereaper':
 			dfearthereaper.handleSub(channel, username, method, message, userstate);
@@ -409,6 +461,9 @@ client.on('resub', (channel, username, useless, message, userstate, method) => {
 		case '#almostfae':
 			almostfae.handleResub(channel, username, useless, message, userstate, method);
 			break;
+		case '#blitzyuk':
+			blitzyuk.handleResub(channel, username, useless, message, userstate, method);
+			break;
 		case '#dfearthereaper':
 			dfearthereaper.handleResub(channel, username, useless, message, userstate, method);
 			break;
@@ -476,6 +531,9 @@ client.on('subgift', (channel, gifter, recipient, method, userstate) => {
 	switch(channel) {
 		case '#almostfae':
 			almostfae.handleGiftsub(channel, gifter, recipient, method, userstate);
+			break;
+		case '#blitzyuk':
+			blitzyuk.handleGiftsub(channel, gifter, recipient, method, userstate);
 			break;
 		case '#dfearthereaper':
 			dfearthereaper.handleGiftsub(channel, gifter, recipient, method, userstate);
@@ -555,6 +613,9 @@ client.on('cheer', (channel, userstate, message) => {
 		case '#almostfae':
 			almostfae.handleCheer(channel, userstate, message);
 			break;
+		case '#blitzyuk':
+			blitzyuk.handleCheer(channel, userstate, message);
+			break;
 		case '#dfearthereaper':
 			dfearthereaper.handleCheer(channel, userstate, message);
 			break;
@@ -623,6 +684,9 @@ client.on('raid', (customraid) => {
 	switch(customraid.channel) {
 		case '#almostfae':
 			almostfae.handleRaid(customraid);
+			break;
+		case '#blitzyuk':
+			blitzyuk.handleRaid(customraid);
 			break;
 		case '#dfearthereaper':
 			dfearthereaper.handleRaid(customraid);

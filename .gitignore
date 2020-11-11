@@ -6,4 +6,12 @@ TwitchCMCB/config.js
 **/package-lock.json
 **/package.json
 TwitchCMCB/node_modules/**
-DiscordCMCB/config.json
+DiscordCMCB/config.js
+DiscordCMCB/btsCommands/discordTicketSys.js
+DiscordCMCB/btsCommands/twitchTicketSys.js
+TwitchCMCB/testFile.js
+TwitchCMCB/config.js
+TwitchCMCB/config.js
+TwitchCMCB/config.js
+TwitchCMCB/config.js
+DiscordCMCB/guilds/nottriz.js
