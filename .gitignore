@@ -1,11 +1,20 @@
 
 **/node_modules/**
-TwitchCMCB/externalcommands/massbansystem/**
-TwitchCMCB/externalcommands/massunban.js
 **/config.js
 **/package-lock.json
 **/package.json
-DiscordCMCB/btsCommands/discordTicketSys.js
-DiscordCMCB/btsCommands/twitchTicketSys.js
-TwitchCMCB/testFile.js
+**/testFile.js
+**/testingFile.js
 DiscordCMCB/guilds/nottriz.js
+CMCB-massbanSys/**
+**/twitch-tokens.json
+OLD_TwitchCMCB/**
+**/-----EXAMPLE-----.js
+*.txt
+TwitchCMCB/externalcommands/**
+**/grabtoken.js
+**/JSTests.js
+TwitchCMCB/node_modules/**
+DiscordCMCB/node_modules/**
+**/tokens.json
+*.ppk
