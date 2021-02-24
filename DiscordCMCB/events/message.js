@@ -1,7 +1,6 @@
 export default async function (client, message) {
     // Ignore all bots
-    if (message.author.bot)
-        return;
+    if (message.author.bot) return;
 
     // Ignore DMs
     if (!message.guild) return;
