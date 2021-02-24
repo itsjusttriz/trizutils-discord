@@ -4,6 +4,8 @@ export default {
     name: "kill",
     usage: "n!kill",
     description: 'Manually kills the bot',
+    permissions: '@botOwner',
+    hidden: true,
     run(client, message, args) {
         message.delete({ timeout: 1000 })
 
