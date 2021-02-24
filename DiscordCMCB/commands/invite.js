@@ -5,6 +5,8 @@ export default {
     name: "invite",
     usage: "n!invite",
     description: 'DMs you the invite link for the bot',
+    permissions: 'VIEW_CHANNEL',
+    hidden: false,
     run(client, message, args) {
 
         message.delete({ timeout: 1000 })
