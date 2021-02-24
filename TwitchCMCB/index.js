@@ -1,756 +1,774 @@
-const twitchjs = require('twitch-js');
-const axios = require('axios');
-const request = require('request')
-const client = require('./config.js').client;
-const clientID = require('./config.js').clientID;
-const { authToken } = require('./config.js');
-const { authorization } = require('../DiscordCMCB/config.js');
+import { RefreshableAuthProvider, StaticAuthProvider } from 'twitch-auth';
+import { ChatClient } from 'twitch-chat-client';
+import { ApiClient } from 'twitch';
+import { PubSubClient } from 'twitch-pubsub-client';
+import { promises as fs } from 'fs';
+import { clientId, botVersion, botAdmin, clientSecret } from './config.js';
+import * as $ from "./datapull/defaults.js";
+import * as packlist from "./datapull/packlist.js";
+import * as emoteslist from "./datapull/emoteslist.js";
+import * as rplist from './datapull/rplist.js';
+import * as fsnp from 'fs';
+import { default as axios } from 'axios';
+import * as TimeFormat from 'hh-mm-ss';
+import chalk from 'chalk';
+import * as heartsSys from './extcmd/hearts.js';
 
-const botAdmin = ['47y_', 'itsjusttriz', 'nottriz', 'tellik', 'rhilou32', 'immp'];
-
-//Channels that use '!command edit'.
-const cmdGroup1 = ['#domosplace', '#immp', '#reninsane', '#theimperialbitgod', '#xobias', '#chachava', '#kikiisyourfriend', '#ja_keeler'];
-//Channels that use '!editcom'.
-const cmdGroup2 = ['#itsjusttriz', '#jayrockbird', '#queenliz09', '#superfraggle', '#zeroxfusionz', '#vertigo67', '#finncapp'];
-//Channels that use '!editcommand'.
-const cmdGroup3 = ['#blitzyuk'];
-
-module.exports.botAdmin = botAdmin;
-
-const almostfae = require('./channels/almostfae.js');
-const blitzyuk = require('./channels/blitzyuk.js');
-const dfearthereaper = require('./channels/dfearthereaper.js');
-const domosplace = require('./channels/domosplace.js');
-const finncapp = require('./channels/finncapp.js');
-const gwinthor = require('./channels/gwinthor.js');
-const immp = require('./channels/immp.js');
-const intimae = require('./channels/intimae.js');
-const itsjusttriz = require('./channels/itsjusttriz.js');
-const ja_keeler = require('./channels/ja_keeler.js');
-const jayrockbird = require('./channels/jayrockbird.js');
-const kikiisyourfriend = require('./channels/kikiisyourfriend.js');
-const matrixis = require('./channels/matrixis.js');
-const queenliz09 = require('./channels/queenliz09.js');
-const reninsane = require('./channels/reninsane.js');
-const rhilou32 = require('./channels/rhilou32.js');
-const superfraggle = require('./channels/superfraggle.js');
-const techyguy = require('./channels/techyguy.js');
-const theimperialbitgod = require('./channels/theimperialbitgod.js');
-const tonster46346 = require('./channels/tonster46346.js');
-const xobias = require('./channels/xobias.js');
-const zeroxfusionz = require('./channels/zeroxfusionz.js');
-
-client.connect();
-//client.on('action', (channel, userstate, message, self) => {}
-
-client.on('join', function(channel, username, self) {
-  if (self) client.say('#nottriz', '[Join] ' + channel);
+let addedChannels;
+const jsonStorageFile = './datapull/JSON-Storage/addedChannels.json';
+fsnp.readFile(jsonStorageFile, (err, data) => {
+    //    console.log(JSON.parse(data))
+    try {
+        addedChannels = JSON.parse(data);
+    } catch (e) {
+        console.log(chalk.red(e));
+    }
 });
 
-Array.prototype.random = function() {
-    return this[Math.floor((Math.random()*this.length))]
-};
+const cmdEditGroups = {
+    // Channels that use '!command edit'.
+    groupOne: ['#domosplace', '#immp', '#reninsane', '#theimperialbitgod', '#xobias', '#chachava', '#kikiisyourfriend', '#ja_keeler', '#yzulf'],
+    // Channels that use '!editcom'.
+    groupTwo: ['#jayrockbird', '#queenliz09', '#superfraggle', '#zeroxfusionz', '#vertigo67', '#finncapp', '#masonnnn7'],
+    // Channels that use '!editcommand'
+    groupThree: ['#blitzyuk'],
+    // Channels that use '!cmdr'.
+    groupFour: ['#itsjusttriz']
+}
 
-const nonTurboColors = [ 'blue', 'blueviolet', 'cadetblue', 'chocolate', 'coral', 'dodgerblue', 'firebrick', 'goldenrod', 'green', 'hotpink', 'orangered', 'red', 'seagreen', 'springgreen', 'yellowgreen' ];
+import * as almostfae from './channels/almostfae.js';
+import * as blitzyuk from './channels/blitzyuk.js';
+import * as dfearthereaper from './channels/dfearthereaper.js';
+import * as domosplace from './channels/domosplace.js';
+import * as finncapp from './channels/finncapp.js';
+import * as gwinthor from './channels/gwinthor.js';
+import * as immp from './channels/immp.js';
+import * as intimae from './channels/intimae.js';
+import * as itsjusttriz from './channels/itsjusttriz.js';
+import * as ja_keeler from './channels/ja_keeler.js';
+import * as jayrockbird from './channels/jayrockbird.js';
+import * as kikiisyourfriend from './channels/kikiisyourfriend.js';
+import * as matrixis from './channels/matrixis.js';
+import * as queenliz09 from './channels/queenliz09.js';
+import * as reninsane from './channels/reninsane.js';
+import * as rhilou32 from './channels/rhilou32.js';
+import * as superfraggle from './channels/superfraggle.js';
+import * as techyguy from './channels/techyguy.js';
+import * as theimperialbitgod from './channels/theimperialbitgod.js';
+import * as tonster46346 from './channels/tonster46346.js';
+import * as xobias from './channels/xobias.js';
+import * as zeroxfusionz from './channels/zeroxfusionz.js';
 
-setInterval(function() {
-    client.color(nonTurboColors.random());
-}, 1000 * 2);
+async function main() {
+    const tokenData = JSON.parse(await fs.readFile('./tokens.json'));
+    const auth = new RefreshableAuthProvider(
+        new StaticAuthProvider(clientId, tokenData.accessToken),
+        {
+            clientSecret,
+            refreshToken: tokenData.refreshToken,
+            expiry: tokenData.expiryTimestamp === null ? null : new Date(tokenData.expiryTimestamp),
+            onRefresh: async ({ accessToken, refreshToken, expiryDate }) => {
+                const newTokenData = {
+                    accessToken,
+                    refreshToken,
+                    expiryTimestamp: expiryDate === null ? null : expiryDate.getTime()
+                };
+                await fs.writeFile('./tokens.json', JSON.stringify(newTokenData, null, 4), 'UTF-8')
+                await fs.writeFile('../DiscordCMCB/twitch-tokens.json', JSON.stringify(newTokenData, null, 4), 'UTF-8')
+            }
+        }
+    );
+    // pubSubClient.start()
+    const pubSubClient = new PubSubClient();
 
-setInterval(function() {
-	axios({
-		method: 'get',
-		url: 'https://api.twitch.tv/helix/streams?user_login=domosplace',
-        headers: {
-			'Client-ID': `${clientID}`,
-			'Authorization': `Bearer ${authorization}`
-		}
-	})
-	.then(function (response) {
-		if (response.data.data.length > 0 && response.data.data[0].type === 'live') {
-			client.say('#domosplace', '/me Running a 90 second ad..');
-			client.say('#domosplace', '/commercial 90');
-			client.say('#domosplace', 'Sick of the ads? Subscribe to Domo to get Ad-Free viewing experience while also showing off those really cool emotes! https://twitch.tv/domosplace/subscribe');
-		} else
-			return;
-	})
-	.catch(function (error) {
-		console.log('Error:', error);
-	});
-}, 1000 * 60 * 30 ); //30 Minutes.
-//}, 1000 * 5); //Test Time
 
-client.on('chat', (channel, userstate, message, self) => {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+    // apiClient.start()
+    const apiClient = new ApiClient({ authProvider: auth });
 
-	if (channel == '#almostfae') {
-		almostfae.handleChat(channel, userstate, message, self);
-	} else if (channel == '#blitzyuk') {
-		blitzyuk.handleChat(channel, userstate, message, self);
-    } else if (channel == '#dfearthereaper') {
-    	dfearthereaper.handleChat(channel, userstate, message, self);
-    } else if (channel == '#domosplace') {
-    	domosplace.handleChat(channel, userstate, message, self);
-    } else if (channel == '#finncapp') {
-    	finncapp.handleChat(channel, userstate, message, self);
-    } else if (channel == '#gwinthor') {
-    	gwinthor.handleChat(channel, userstate, message, self);
-    } else if (channel == '#immp') {
-    	immp.handleChat(channel, userstate, message, self);
-    } else if (channel == '#intimae') {
-    	intimae.handleChat(channel, userstate, message, self);
-    } else if (channel == '#itsjusttriz') {
-    	itsjusttriz.handleChat(channel, userstate, message, self);
-    } else if (channel == '#ja_keeler') {
-    	ja_keeler.handleChat(channel, userstate, message, self);
-    } else if (channel == '#jayrockbird') {
-    	jayrockbird.handleChat(channel, userstate, message, self);
-    } else if (channel == '#kikiisyourfriend') {
-    	kikiisyourfriend.handleChat(channel, userstate, message, self);
-    } else if (channel == '#matrixis') {
-    	matrixis.handleChat(channel, userstate, message, self);
-    } else if (channel == '#queenliz09') {
-    	queenliz09.handleChat(channel, userstate, message, self);
-    } else if (channel == '#reninsane') {
-    	reninsane.handleChat(channel, userstate, message, self);
-    } else if (channel == '#rhilou32') {
-    	rhilou32.handleChat(channel, userstate, message, self);
-    } else if (channel == '#superfraggle') {
-    	superfraggle.handleChat(channel, userstate, message, self);
-    } else if (channel == '#techyguy') {
-    	techyguy.handleChat(channel, userstate, message, self);
-    } else if (channel == '#theimperialbitgod') {
-    	theimperialbitgod.handleChat(channel, userstate, message, self);
-    } else if (channel == '#tonster46346') {
-    	tonster46346.handleChat(channel, userstate, message, self);
-    } else if (channel == '#xobias') {
-    	xobias.handleChat(channel, userstate, message, self);
-    } else if (channel == '#zeroxfusionz') {
-    	zeroxfusionz.handleChat(channel, userstate, message, self);
+    // chatClient.start()
+    const chatClient = new ChatClient(auth, { channels: addedChannels.sort() });
+
+    if (!(chatClient.isConnected || chatClient.isConnecting)) {
+        await chatClient.connect()
     }
 
-//Global Commands.
-	switch(command) {
-		case '?settimer':
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				setTimeout(function CTimer() {
-					client.say(channel, `@${userstate.username}, ${args[0]}s Timer has ended!`);
-					client.say('#nottriz', `[${channel}] ${userstate.username}'s ${args[0]}s Timer has ended!`);
-				}, 1000 * args[0]);
-				client.say(channel, 'Timer set for ' + args[0] + ' seconds.');
-			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-			break;
-		case '?triztime':
-			if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			request('https://decapi.me/misc/time?timezone=Europe/Dublin', (err, res, body) => {
-				client.say(channel, "It's currently " + body + ' for Triz.');
-			});
-			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?checkfollowcount':
-			if (self) return;
-			if (botAdmin.indexOf(userstate.username) < 0) return;
-			request(`https://decapi.me/twitch/followcount/` + args[0], (err, res, body) => {
-				client.say(channel, args[0] + ' has ' + body + ' followers!');
-			});
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?checksubcount':
-			if (self) return;
-			if (botAdmin.indexOf(userstate.username) < 0) return;
-			request(`https://decapi.me/twitch/subcount/` + args[0], (err, res, body) => {
-    			client.say(channel, args[0] + ' has ' + body + ' Subscribers! (Including perm-subs)');
-			});
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?checksubpoints':
-			if (self) return;
-			if (botAdmin.indexOf(userstate.username) < 0) return;
-			request('https://decapi.me/twitch/subpoints/' + args[0], (err, res, body) => {
-				client.say(channel, args[0] + ' has ' + body + ' SubPoints! (Including perm-subs)');
-			});
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?checkswordcount':
-            if (self) return;
-			if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            request({
-                url: 'https://modlookup.3v.fi/api/user-totals/' + args[0],
-                method: 'GET',
-                headers: {
-                    'Client-ID': `${clientID}`
-                }}, (err, res, body) => {
-                    if (JSON.parse(body).total > 0) {
-                    	let swords = JSON.parse(body).total;
-                        client.action(channel, args[0] + ' is modded in ' + swords.toString() + ' channels! List: https://twitchstuff.3v.fi/modlookup/u/' + args[0]);
-                    } else
-                        return;
-                });
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-		case '?sudo':
-			if (self) return;
-			if (botAdmin.indexOf(userstate.username) < 0) return;
-				client.say(channel, args.join(' '));
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?multiso':
-			if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				if (!args[0]) { 
-					client.say(channel, "/w " + userstate.username + ' Usage: ?multiso <arg> <arg> <etc.>');
-				} else {
-					client.say(channel, "Check out the following nerds! You'll thank me later ;)");
-				  	args.forEach(user => {
-			    		client.say(channel, user + ' - https://twitch.tv/' + user);
-					});
-				}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-        case '?setpack':
-            if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			const packlist = require('./DataPull/packlist.js');
-            let mpack = args[0];
-	            if (cmdGroup1.indexOf(channel) > -1) {
-    	            if (!mpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + packlist.listpacks);
-            	    } else if (mpack.toLowerCase()) {
-            	        client.say(channel, '!command edit !pack ' + packlist[args[0]]);
-            	    }
-            	} else if (cmdGroup2.indexOf(channel) > -1) {
-    	            if (!mpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + packlist.listpacks);
-            	    } else if (mpack.toLowerCase()) {
-            	        client.say(channel, '!editcom !pack ' + packlist[args[0]]);
-            	    }
-            	} else if (cmdGroup3.indexOf(channel) > -1) {
-    	            if (!mpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setpack ' + packlist.listpacks);
-            	    } else if (mpack.toLowerCase()) {
-            	        client.say(channel, '!editcommand !pack ' + packlist[args[0]]);
-            	    }
-            	}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + mpack);
-            break;
-        case '?setrp':
-            if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			const rplist = require('./DataPull/rplist.js');
-            let rpack = args[0];
-	            if (cmdGroup2.indexOf(channel) > -1) {
-    	            if (!rpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setrp ' + rplist.listpacks);
-            	    } else if (rpack.toLowerCase()) {
-            	        client.say(channel, '!editcom !tp ' + rplist[args[0]]);
-            	    }
-            	} else if (cmdGroup1.indexOf(channel) > -1) {
-    	            if (!rpack) {
-        	            client.say(channel, '/w ' + userstate.username + ' Usage: ?setrp ' + rplist.listpacks);
-            	    } else if (rpack.toLowerCase()) {
-            	        client.say(channel, '!command edit !tp ' + rplist[args[0]]);
-            	    }
-            	}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + rpack);
-            break;
-        case '?emotes':
-        	if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			const emoteslist = require('./DataPull/emoteslist.js');
-			let emotes = args[0];
-				if (!emotes) {
-					client.say(channel, '/w ' + userstate.username + ' Usage: ?emotes ' + emoteslist.listemotes);
-				} else if (emotes.toLowerCase()) {
-					client.say(channel, '' + (emoteslist[args[0]] || ''));
-				} else
-					return;
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?lockdown':
-		case '?ld':
-			if (self) return;
-				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				let option = args[0];
-				if (!option) {
-					client.say(channel, 'Usage: !lockdown (on/off)');
-				} else if (option.toLowerCase() == 'on') {
-					client.say(channel, '/r9kbeta');
-					client.say(channel, '/slow');
-					client.say(channel, '/followers 1h');
-					client.say(channel, 'SwiftRage Chat has been locked down!');
-				} else if (option.toLowerCase() == 'off') {
-					client.say(channel, '/r9kbetaoff');
-					client.say(channel, '/slowoff');
-					client.say(channel, '/followersoff');
-					client.say(channel, 'SwiftRage Chat should now be safe! Enjoy your stay :D');
-				}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-				break;
-		case '?math':
-			if (self) return;
-			if (!userstate.subscriber && !userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				request(`http://twitch.center/customapi/math?expr=${encodeURI(args[0]).replace(/\+/g, '%2B')}`, (err, res, body) => {
-    				if (err) {
-        				console.log(err);
-        				return; // You could post something in chat or just return, up to you.
-    				}
-    				if (body == '???') client.say('#nottriz', channel + ' >> ' + args.join(' ') + ' = Invalid expression');
-    				// ^ Optional, but recommended
-    				client.say(channel, args.join(' ') + ' = ' + body);
-				});
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-				break;
-/*		case '?math':
-			if (self) return;
-			if (!userstate.subscriber && !userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				axios({
-					method: 'get',
-					url: `http://twitch.center/customapi/math?expr=${encodeURI(args[0]).replace(/\+/g, '%2B')}`
-				})
-				.then(function (response) {
-					console.log(response.data)
-					client.say(channel, response.data)
-				})
-				.catch(function (error){
-					console.log(error)
-				})
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-				break;*/
-		case '?trizspam':
-			if (self) return;
-			if (botAdmin.indexOf(userstate.username) < 0) return;
-			if (channel == '#button') return;
-				let num = args.shift();
-				for (let i = 0; i < num; i++) {
-					setTimeout(function letsbreakchat() {
-    					client.say(channel, args.join(' '));
-    				}, 100 * i );
-				}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?trizcord':
-			if (self) return;
-			if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			if (!args[0]) return;
-			else {
-				client.say(channel, "/w " + args[0] + " Join Triz's Discord! There, you can discuss issues about the Nottriz chatbot OR request a massban! >> https://itsjusttriz.weebly.com/discord");
-			}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?n':
-			if (self) return;
-			let botoption = args[0];
-			if (!botoption) {
-				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				client.say(channel, 'Usage: ?n (?/help/host/kill)');
-			} else if (botoption.toLowerCase() == '?') {
-				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				client.action(channel, 'v4.7 is online! SeemsGood');
-			} else if (botoption.toLowerCase() == 'help') {
-				if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				client.say(channel, 'Visit https://itsjusttriz.weebly.com/chatbot-global for more support. SeemsGood');
-			} else if (botoption.toLowerCase() == 'host') {
-				if (botAdmin.indexOf(userstate.username) < 0) return;
-//				client.say('#itsjusttriz', "!sethosting " + channel.substr(1));
-				client.say('#itsjusttriz', '/host ' + channel.substr(1));
-				client.say('#nottriz', '/host ' + channel.substr(1));
-			} else if (botoption.toLowerCase() == 'kill') {
-				if (botAdmin.indexOf(userstate.username) < 0) return;
-				process.exit(0);
-			}
-			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + botoption);
-			break;
-		case '?breakspam':
-			if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			let num2 = 5
-			for (let i = 0; i < num2; i++) {
-				setTimeout(function breakSpam5() {
-					client.say(channel, 'B R E A K !');
-				}, 100 * i );
-			}
-			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-	}
-});
+    chatClient.onRegister(() => {
+        console.log(chalk.yellow.bold('===> READY <==='));
 
-/* For these, here are some useful variables to use:
-	userstate['username']						The login name of the user.
-	userstate['display-name']					The name shown in chat. This includes things like asian characters.
-	userstate['msg-param-cumulative-months']	Total months subbed (only on resub).
-	userstate['msg-param-streak-months']		Streak. If this is not shown in chat, it will show as 0 here too.
-	userstate['msg-param-months']				Total months subbed (only on gift subs).
-*/
+        setInterval(async function forceTokenPush() {
+            const streamInfo = await apiClient.helix.streams.getStreamByUserName('itsjusttriz');
+            if (streamInfo) {
+                console.log('');
+            }
+        }, 1000 * 60 * 1);
+    })
 
-client.on('subscription', (channel, username, method, message, userstate) => {
-	switch(channel) {
-		case '#almostfae':
-			almostfae.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#blitzyuk':
-			blitzyuk.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#dfearthereaper':
-			dfearthereaper.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#domosplace':
-			domosplace.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#finncapp':
-			finncapp.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#gwinthor':
-			gwinthor.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#immp':
-			immp.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#intimae':
-			intimae.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#itsjusttriz':
-			itsjusttriz.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#ja_keeler':
-			ja_keeler.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#jayrockbird':
-			jayrockbird.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#kikiisyourfriend':
-			kikiisyourfriend.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#matrixis':
-			matrixis.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#queenliz09':
-			queenliz09.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#reninsane':
-			reninsane.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#rhilou32':
-			rhilou32.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#superfraggle':
-			superfraggle.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#techyguy':
-			techyguy.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#theimperialbitgod':
-			theimperialbitgod.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#tonster46346':
-			tonster46346.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#xobias':
-			xobias.handleSub(channel, username, method, message, userstate);
-			break;
-		case '#zeroxfusionz':
-			zeroxfusionz.handleSub(channel, username, method, message, userstate);
-			break;
-	}
-});
+    chatClient.onJoin((channel, user) => {
+        if (user === 'nottriz') {
+            console.log(chalk.green(`===> Joined ${channel} <===`));
+            chatClient.action('#nottriz', `joined ${channel}`);
+        }
+    });
 
-client.on('resub', (channel, username, useless, message, userstate, method) => {
-	switch(channel) {
-		case '#almostfae':
-			almostfae.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#blitzyuk':
-			blitzyuk.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#dfearthereaper':
-			dfearthereaper.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#domosplace':
-			domosplace.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#finncapp':
-			finncapp.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#gwinthor':
-			gwinthor.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#immp':
-			immp.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#intimae':
-			intimae.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#itsjusttriz':
-			itsjusttriz.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#ja_keeler':
-			ja_keeler.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#jayrockbird':
-			jayrockbird.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#kikiisyourfriend':
-			kikiisyourfriend.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#matrixis':
-			matrixis.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#queenliz09':
-			queenliz09.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#reninsane':
-			reninsane.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#rhilou32':
-			rhilou32.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#superfraggle':
-			superfraggle.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#techyguy':
-			techyguy.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#theimperialbitgod':
-			theimperialbitgod.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#tonster46346':
-			tonster46346.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#xobias':
-			xobias.handleResub(channel, username, useless, message, userstate, method);
-			break;
-		case '#zeroxfusionz':
-			zeroxfusionz.handleResub(channel, username, useless, message, userstate, method);
-			break;
-	}
-});
+    chatClient.onPart((channel, user) => {
+        if (user === 'nottriz') {
+            console.log(chalk.red(`===> Left ${channel} <===`));
+            chatClient.action('#nottriz', `left ${channel}`);
+        }
+    });
 
-client.on('subgift', (channel, gifter, recipient, method, userstate) => {
-	switch(channel) {
-		case '#almostfae':
-			almostfae.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#blitzyuk':
-			blitzyuk.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#dfearthereaper':
-			dfearthereaper.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#domosplace':
-			domosplace.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#finncapp':
-			finncapp.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#gwinthor':
-			gwinthor.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#immp':
-			immp.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#intimae':
-			intimae.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#itsjusttriz':
-			itsjusttriz.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#ja_keeler':
-			ja_keeler.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#jayrockbird':
-			jayrockbird.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#kikiisyourfriend':
-			kikiisyourfriend.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#matrixis':
-			matrixis.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#queenliz09':
-			queenliz09.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#reninsane':
-			reninsane.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#rhilou32':
-			rhilou32.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#superfraggle':
-			superfraggle.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#techyguy':
-			techyguy.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#theimperialbitgod':
-			theimperialbitgod.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#tonster46346':
-			tonster46346.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#xobias':
-			xobias.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-		case '#zeroxfusionz':
-			zeroxfusionz.handleGiftsub(channel, gifter, recipient, method, userstate);
-			break;
-	}
-});
+    Array.prototype.random = function () {
+        return this[Math.floor((Math.random() * this.length))]
+    };
 
-// Testing Sub-Bombs.
-client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-    let senderCount = ~~userstate["msg-param-sender-count"];
+    const nonTurboColors = ['blue', 'blueviolet', 'cadetblue', 'chocolate', 'coral', 'dodgerblue', 'firebrick', 'goldenrod', 'green', 'hotpink', 'orangered', 'red', 'seagreen', 'springgreen', 'yellowgreen'];
 
-    client.say('#nottriz', `[${channel}] MASSGIFTSUB: ${username} - ${numbOfSubs} (${method.plan})`);
-});
+    setInterval(function () {
+        chatClient.changeColor(nonTurboColors.random());
+    }, 1000 * 2);
 
-client.on('cheer', (channel, userstate, message) => {
-	var username = userstate.username;
-	var	bits = userstate.bits;
+    chatClient.onMessage(async (channel, user, message, msg) => {
+        console.log(`${chalk.blue(`[${channel}]`)} ${chalk.magenta(`<${user}>`)} ${chalk.grey('|')} ${chalk.white.bold(`${message}`)}`)
 
-	switch(channel) {
-		case '#almostfae':
-			almostfae.handleCheer(channel, userstate, message);
-			break;
-		case '#blitzyuk':
-			blitzyuk.handleCheer(channel, userstate, message);
-			break;
-		case '#dfearthereaper':
-			dfearthereaper.handleCheer(channel, userstate, message);
-			break;
-		case '#domosplace':
-			domosplace.handleCheer(channel, userstate, message);
-			break;
-		case '#finncapp':
-			finncapp.handleCheer(channel, userstate, message);
-			break;
-		case '#gwinthor':
-			gwinthor.handleCheer(channel, userstate, message);
-			break;
-		case '#immp':
-			immp.handleCheer(channel, userstate, message);
-			break;
-		case '#intimae':
-			intimae.handleCheer(channel, userstate, message);
-			break;
-		case '#itsjusttriz':
-			itsjusttriz.handleCheer(channel, userstate, message);
-			break;
-		case '#ja_keeler':
-			ja_keeler.handleCheer(channel, userstate, message);
-			break;
-		case '#jayrockbird':
-			jayrockbird.handleCheer(channel, userstate, message);
-			break;
-		case '#kikiisyourfriend':
-			kikiisyourfriend.handleCheer(channel, userstate, message);
-			break;
-		case '#matrixis':
-			matrixis.handleCheer(channel, userstate, message);
-			break;
-		case '#queenliz09':
-			queenliz09.handleCheer(channel, userstate, message);
-			break;
-		case '#reninsane':
-			reninsane.handleCheer(channel, userstate, message);
-			break;
-		case '#rhilou32':
-			rhilou32.handleCheer(channel, userstate, message);
-			break;
-		case '#superfraggle':
-			superfraggle.handleCheer(channel, userstate, message);
-			break;
-		case '#techyguy':
-			techyguy.handleCheer(channel, userstate, message);
-			break;
-		case '#theimperialbitgod':
-			theimperialbitgod.handleCheer(channel, userstate, message);
-			break;
-		case '#tonster46346':
-			tonster46346.handleCheer(channel, userstate, message);
-			break;
-		case '#xobias':
-			xobias.handleCheer(channel, userstate, message);
-			break;
-		case '#zeroxfusionz':
-			zeroxfusionz.handleCheer(channel, userstate, message);
-			break;
-	}
-});
+        heartsSys.onMessage(chatClient, channel, user, message, msg);
 
+        //.onCommand
+        if (channel === '#almostfae') {
+            almostfae.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#blitzyuk') {
+            blitzyuk.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#dfearthereaper') {
+            dfearthereaper.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#domosplace') {
+            domosplace.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#finncapp') {
+            finncapp.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#gwinthor') {
+            gwinthor.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#immp') {
+            immp.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#intimae') {
+            intimae.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#itsjusttriz') {
+            itsjusttriz.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#ja_keeler') {
+            ja_keeler.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#jayrockbird') {
+            jayrockbird.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#kikiisyourfriend') {
+            kikiisyourfriend.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#matrixis') {
+            matrixis.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#queenliz09') {
+            queenliz09.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#reninsane') {
+            reninsane.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#rhilou32') {
+            rhilou32.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#superfraggle') {
+            superfraggle.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#techyguy') {
+            techyguy.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#theimperialbitgod') {
+            theimperialbitgod.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#tonster46346') {
+            tonster46346.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#xobias') {
+            xobias.handleMessage(chatClient, channel, user, message, msg)
+        } else if (channel === '#zeroxfusionz') {
+            zeroxfusionz.handleMessage(chatClient, channel, user, message, msg)
+        }
 
-client.on('raid', (customraid) => {
-	switch(customraid.channel) {
-		case '#almostfae':
-			almostfae.handleRaid(customraid);
-			break;
-		case '#blitzyuk':
-			blitzyuk.handleRaid(customraid);
-			break;
-		case '#dfearthereaper':
-			dfearthereaper.handleRaid(customraid);
-			break;
-		case '#domosplace':
-			domosplace.handleRaid(customraid);
-			break;
-		case '#finncapp':
-			finncapp.handleRaid(customraid);
-			break;
-		case '#gwinthor':
-			gwinthor.handleRaid(customraid);
-			break;
-		case '#immp':
-			immp.handleRaid(customraid);
-			break;
-		case '#intimae':
-			intimae.handleRaid(customraid);
-			break;
-		case '#itsjusttriz':
-			itsjusttriz.handleRaid(customraid);
-			break;
-		case '#ja_keeler':
-			ja_keeler.handleRaid(customraid);
-			break;
-		case '#jayrockbird':
-			jayrockbird.handleRaid(customraid);
-			break;
-		case '#kikiisyourfriend':
-			kikiisyourfriend.handleRaid(customraid);
-			break;
-		case '#matrixis':
-			matrixis.handleRaid(customraid);
-			break;
-		case '#queenliz09':
-			queenliz09.handleRaid(customraid);
-			break;
-		case '#reninsane':
-			reninsane.handleRaid(customraid);
-			break;
-		case '#rhilou32':
-			rhilou32.handleRaid(customraid);
-			break;
-		case '#superfraggle':
-			superfraggle.handleRaid(customraid);
-			break;
-		case '#techyguy':
-			techyguy.handleRaid(customraid);
-			break;
-		case '#theimperialbitgod':
-			theimperialbitgod.handleRaid(customraid);
-			break;
-		case '#tonster46346':
-			tonster46346.handleRaid(customraid);
-			break;
-		case '#xobias':
-			xobias.handleRaid(customraid);
-			break;
-		case '#zeroxfusionz':
-			zeroxfusionz.handleRaid(customraid);
-			break;
-	}
-});
+        switch ($.command(message)) {
+            // @everyone
+            // @subPlusOnly
+            case 'n!randnum':
+                if (!$.isSubPlus(msg) && !$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                chatClient.say(channel, `[RandomNumber] ${$.randNum($.firstArg(message), $.args(message)[1])}`);
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            // @modPlusOnly
+            case 'n!clip':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                let clipId = await apiClient.helix.clips.createClip({ channelId: msg.channelId, createAfterDelay: true })
+                chatClient.say(channel, `NEW CLIP! https://clips.twitch.tv/${clipId} ~ by ${user}`);
+                break;
+            // @casterOnly
+            case 'n!roadmap':
+                if (!$.isCaster(msg) && botAdmin.indexOf(user) < 0) return;
+                chatClient.say(channel, 'View the current development roadmap for the bot here -> https://nottriz.weebly.com/roadmap');
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message));
+                break;
+            // @botAdminOnly
+            // @botOwnerOnly
+            case 'n!mod':
+                if (user.toLowerCase() !== 'itsjusttriz') return;
+                if ($.firstArg(message) === 'on') {
+                    chatClient.mod(channel, user)
+                } else if ($.firstArg(message) === 'off') {
+                    chatClient.unmod(channel, user)
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!setmulti':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                chatClient.say(channel, `!command edit !multi Oh look?! A Multi-Stream coxHypers - https://kadgar.net/live/${channel.substr(1)}/${$.args(message).join('/')}`)
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!settimer':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                setTimeout(function CTimer() {
+                    chatClient.say(channel, `@${user}, ${$.firstArg(message)}s Timer has ended!`);
+                    chatClient.say($.logChannel, `[${channel}] ${user}'s ${$.firstArg(message)}s Timer has ended!`);
+                }, 1000 * $.firstArg(message));
+                chatClient.say(channel, `Timer set for ${$.firstArg(message)} seconds.`);
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!triztime':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                axios({
+                    "method": "get",
+                    "url": "https://decapi.me/misc/time?timezone=Europe/Dublin"
+                })
+                    .then(function (response) {
+                        chatClient.say(channel, `Current Time: ${response.data}`)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!checkfollowcount':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                axios({
+                    "method": "get",
+                    "url": `https://decapi.me/twitch/followcount/${$.firstArg(message)}`
+                })
+                    .then(function (response) {
+                        chatClient.say(channel, `${$.firstArg(message)} has ${response.data} followers.`)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    });
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!checksubcount':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                axios({
+                    "method": "get",
+                    "url": `https://decapi.me/twitch/subcount/${$.firstArg(message)}`
+                })
+                    .then(function (response) {
+                        if (isNaN(response.data)) {
+                            chatClient.say(channel, $.noSubApiAuth)
+                        } else {
+                            chatClient.say(channel, `${$.firstArg(message)} has ${response.data} Subscribers.`)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!checksubpoints':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                axios({
+                    "method": "get",
+                    "url": `https://decapi.me/twitch/subpoints/${$.firstArg(message)}`
+                })
+                    .then(function (response) {
+                        if (isNaN(response.data)) {
+                            chatClient.say(channel, $.noSubApiAuth)
+                        } else {
+                            chatClient.say(channel, `${$.firstArg(message)} has ${response.data} Sub-Points.`)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!checkswordcount':
+                if (!$.isCaster(msg) && botAdmin.indexOf(user) < 0) return;
+                axios({
+                    "method": "get",
+                    "url": `https://modlookup.3v.fi/api/user-totals/${$.firstArg(message)}`
+                })
+                    .then(function (response) {
+                        chatClient.say(channel, `${$.firstArg(message)} is modded in ${response.data.total} channels.`)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!sudo':
+                if (botAdmin.indexOf(user) < 0) return;
+                chatClient.say(channel, $.allArgs(message));
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!multiso':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                if (!$.firstArg(message)) {
+                    chatClient.whisper(user, `Usage: ${$.cmdPrefix}multiso <arg> <arg> <etc.>`);
+                } else {
+                    chatClient.say(channel, "Check out the following nerds! You'll thank me later ;)");
+                    $.args(message).forEach(user => {
+                        chatClient.say(channel, `${user} - https://twitch.tv/${user}`);
+                    });
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!setpack':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                if (!$.firstArg(message)) {
+                    chatClient.whisper(user, `Usage: ${$.cmdPrefix}setpack ${packlist.listpacks}`);
+                } else if (cmdEditGroups.groupOne.indexOf(channel) > -1) {
+                    if ($.firstArg(message)) {
+                        chatClient.say(channel, '!command edit !pack ' + packlist[$.firstArg(message).toLowerCase()]);
+                    }
+                } else if (cmdEditGroups.groupTwo.indexOf(channel) > -1) {
+                    if ($.firstArg(message)) {
+                        chatClient.say(channel, '!editcom !pack ' + packlist[$.firstArg(message).toLowerCase()]);
+                    }
+                } else if (cmdEditGroups.groupThree.indexOf(channel) > -1) {
+                    if ($.firstArg(message)) {
+                        chatClient.say(channel, '!editcommand !pack ' + packlist[$.firstArg(message).toLowerCase()]);
+                    }
+                } else if (cmdEditGroups.groupFour.indexOf(channel) > -1) {
+                    if ($.firstArg(message)) {
+                        chatClient.say(channel, `!cmdr pack ${packlist[$.firstArg(message).toLowerCase()]}`);
+                    }
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!setrp':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                if (!$.firstArg(message)) {
+                    chatClient.whisper(user, `Usage: ${$.cmdPrefix}setrp ${rplist.listpacks}`)
+                } else if (cmdGroup2.indexOf(channel) > -1) {
+                    if ($.firstArg(message)) {
+                        chatClient.say(channel, '!editcom !tp ' + rplist[$.firstArg(message).toLowerCase()]);
+                    }
+                } else if (cmdGroup1.indexOf(channel) > -1) {
+                    if ($.firstArg(message)) {
+                        chatClient.say(channel, '!command edit !tp ' + rplist[$.firstArg(message).toLowerCase()]);
+                    }
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!emotes':
+                if (!$.isModPlus(message) && botAdmin.indexOf(user) < 0) return;
+                if (!$.firstArg(message)) {
+                    chatClient.whisper(user, `Usage: ${$.cmdPrefix}emotes ${emoteslist.listemotes}`);
+                } else if ($.firstArg(message)) {
+                    chatClient.say(channel, '' + (emoteslist[$.firstArg(message).toLowerCase()] || `${user}, '${$.firstArg(message)}' isn't a logged emote-set.`));
+                } else
+                    return;
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!lockdown':
+            case 'n!ld':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                if (!$.firstArg(message)) {
+                    chatClient.say(channel, 'Usage: !lockdown (on/off)');
+                } else if ($.firstArg(message).toLowerCase() == 'on') {
+                    chatClient.enableR9k(channel);
+                    chatClient.enableSlow(channel);
+                    chatClient.enableFollowersOnly(channel, 60);
+                    chatClient.action(channel, `Lockdown = ${$.firstArg(message)}`);
+                } else if ($.firstArg(message).toLowerCase() == 'off') {
+                    chatClient.disableR9k(channel)
+                    chatClient.disableSlow(channel)
+                    chatClient.disableFollowersOnly(channel)
+                    chatClient.action(channel, `Lockdown = ${$.firstArg(message)}`);
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!math':
+                if (!$.isSubPlus(msg) && !$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                axios({
+                    "method": "get",
+                    "url": `http://twitch.center/customapi/math?expr=${encodeURI($.firstArg(message)).replace(/\+/g, '%2B')}`
+                })
+                    .then(function (response) {
+                        chatClient.say(channel, `${$.firstArg(message)} = ${response.data}`)
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!trizspam':
+                if (botAdmin.indexOf(user) < 0) return;
+                if (channel === '#button') return;
+                let num = $.args(message).shift();
+                for (let i = 0; i < num; i++) {
+                    setTimeout(function letsbreakchat() {
+                        chatClient.say(channel, $.allArgs(message));
+                    }, 100 * i);
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!admin':
+                if (!$.firstArg(message)) {
+                    if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                    chatClient.whisper(user, `Usage: ${$.cmdPrefix}admin ( ? / help / host / kill )`)
+                } else if ($.firstArg(message).toLowerCase() === '?') {
+                    if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                    chatClient.action(channel, `[NottrizDebug] Version: ${botVersion} | Uptime: ${TimeFormat.fromS(process.uptime(), 'hh:mm:ss')}`)
+                } else if ($.firstArg(message).toLowerCase() === 'help') {
+                    if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                    chatClient.say(channel, 'Need support? Join the Discord Server - https://nottriz.weebly.com/support')
+                } else if ($.firstArg(message).toLowerCase() === 'host') {
+                    if (botAdmin.indexOf(user) < 0) return;
+                    chatClient.host('itsjusttriz', $.args(message).slice(1)[1] || channel.substr(1));
+                    chatClient.host('nottriz', $.args(message).slice(1)[1] || channel.substr(1));
+                } else if ($.firstArg(message).toLowerCase() === 'join') {
+                    if (botAdmin.indexOf(user) < 0) return;
+                    let cArgs = message.split(' ');
+                    cArgs.slice(2).forEach(chan => {
+                        chatClient.join(chan)
+                        addedChannels.push(chan)
+                    });
+                    fsnp.writeFile(jsonStorageFile, JSON.stringify(addedChannels), (err) => {
+                        if (err) return console.log(err)
+                    })
+                    console.log(addedChannels)
+                    chatClient.say(channel, 'Attempting to join Channel(s)...');
+                } else if ($.firstArg(message).toLowerCase() === 'leave') {
+                    if (botAdmin.indexOf(user) < 0) return;
+                    let cArgs = message.split(' ');
+                    cArgs.slice(2).forEach(chan => {
+                        let chanCheck = addedChannels.indexOf(chan)
+                        if (chanCheck !== -1) {
+                            chatClient.part(chan);
+                            addedChannels.splice(chanCheck, 1);
+                            console.log(addedChannels)
+                        } else return chatClient.whisper(user, `Cannot part from ${chan}, as I'm not currently connected to it.`)
+                    })
+                    fsnp.writeFile(jsonStorageFile, JSON.stringify(addedChannels), (err) => {
+                        if (err) return console.log(err)
+                    });
+                    chatClient.say(channel, 'Attempting to leave Channel(s)...');
+                    //chatClient.say(channel, disabledCommand)
+                } else if ($.firstArg(message).toLowerCase() === 'eval') {
+                    if (user !== 'itsjusttriz') return;
+                    // console.log(message.split(' ').join(' ').replace('n!admin eval ', ''))
+                    const code = message.split(' ').join(' ').replace('n!admin eval ', '');
+                    try {
+                        const result = eval(code);
+                        console.log('EVAL USED:', result);
+                    } catch (error) {
+                        console.error('Error evaluating', code, error);
+                    }
+                } else if ($.firstArg(message).toLowerCase() === 'kill') {
+                    if (botAdmin.indexOf(user) < 0) return;
+                    console.log(`${user} killed me!`)
+                    process.exit(0)
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+            case 'n!breakspam':
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                let num2 = 5
+                for (let i = 0; i < num2; i++) {
+                    setTimeout(function breakSpam5() {
+                        chatClient.say(channel, 'B R E A K !');
+                    }, 100 * i);
+                }
+                chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+                break;
+        }
+    });
 
-require('./externalcommands/massbansystem/massban.js');
-require('./externalcommands/massunban.js');
-require('./externalcommands/hearts.js');
+    chatClient.onSub((channel, user, subInfo, msg) => {
+
+        switch (channel) {
+            case '#almostfae':
+                almostfae.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#blitzyuk':
+                blitzyuk.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#dfearthereaper':
+                dfearthereaper.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#domosplace':
+                domosplace.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#finncapp':
+                finncapp.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#gwinthor':
+                gwinthor.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#immp':
+                immp.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#intimae':
+                intimae.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#itsjusttriz':
+                itsjusttriz.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#ja_keeler':
+                ja_keeler.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#jayrockbird':
+                jayrockbird.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#kikiisyourfriend':
+                kikiisyourfriend.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#matrixis':
+                matrixis.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#queenliz09':
+                queenliz09.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#reninsane':
+                reninsane.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#rhilou32':
+                rhilou32.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#superfraggle':
+                superfraggle.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#techyguy':
+                techyguy.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#theimperialbitgod':
+                theimperialbitgod.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#tonster46346':
+                tonster46346.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#xobias':
+                xobias.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#zeroxfusionz':
+                zeroxfusionz.handleSub(chatClient, channel, user, subInfo, msg)
+                break;
+        }
+    });
+
+    chatClient.onResub((channel, user, subInfo, msg) => {
+
+        switch (channel) {
+            case '#almostfae':
+                almostfae.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#blitzyuk':
+                blitzyuk.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#dfearthereaper':
+                dfearthereaper.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#domosplace':
+                domosplace.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#finncapp':
+                finncapp.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#gwinthor':
+                gwinthor.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#immp':
+                immp.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#intimae':
+                intimae.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#itsjusttriz':
+                itsjusttriz.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#ja_keeler':
+                ja_keeler.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#jayrockbird':
+                jayrockbird.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#kikiisyourfriend':
+                kikiisyourfriend.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#matrixis':
+                matrixis.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#queenliz09':
+                queenliz09.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#reninsane':
+                reninsane.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#rhilou32':
+                rhilou32.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#superfraggle':
+                superfraggle.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#techyguy':
+                techyguy.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#theimperialbitgod':
+                theimperialbitgod.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#tonster46346':
+                tonster46346.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#xobias':
+                xobias.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#zeroxfusionz':
+                zeroxfusionz.handleResub(chatClient, channel, user, subInfo, msg)
+                break;
+        }
+    });
+
+    chatClient.onSubGift((channel, user, subInfo, msg) => {
+
+        switch (channel) {
+            case '#almostfae':
+                almostfae.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#blitzyuk':
+                blitzyuk.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#dfearthereaper':
+                dfearthereaper.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#domosplace':
+                domosplace.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#finncapp':
+                finncapp.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#gwinthor':
+                gwinthor.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#immp':
+                immp.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#intimae':
+                intimae.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#itsjusttriz':
+                itsjusttriz.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#ja_keeler':
+                ja_keeler.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#jayrockbird':
+                jayrockbird.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#kikiisyourfriend':
+                kikiisyourfriend.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#matrixis':
+                matrixis.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#queenliz09':
+                queenliz09.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#reninsane':
+                reninsane.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#rhilou32':
+                rhilou32.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#superfraggle':
+                superfraggle.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#techyguy':
+                techyguy.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#theimperialbitgod':
+                theimperialbitgod.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#tonster46346':
+                tonster46346.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#xobias':
+                xobias.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+            case '#zeroxfusionz':
+                zeroxfusionz.handleGiftSub(chatClient, channel, user, subInfo, msg)
+                break;
+        }
+    });
+
+    chatClient.onRaid((channel, user, raidInfo, msg) => {
+
+        switch (channel) {
+            case '#almostfae':
+                almostfae.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#blitzyuk':
+                blitzyuk.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#dfearthereaper':
+                dfearthereaper.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#domosplace':
+                domosplace.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#finncapp':
+                finncapp.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#gwinthor':
+                gwinthor.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#immp':
+                immp.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#intimae':
+                intimae.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#itsjusttriz':
+                itsjusttriz.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#ja_keeler':
+                ja_keeler.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#jayrockbird':
+                jayrockbird.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#kikiisyourfriend':
+                kikiisyourfriend.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#matrixis':
+                matrixis.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#queenliz09':
+                queenliz09.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#reninsane':
+                reninsane.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#rhilou32':
+                rhilou32.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#superfraggle':
+                superfraggle.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#techyguy':
+                techyguy.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#theimperialbitgod':
+                theimperialbitgod.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#tonster46346':
+                tonster46346.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#xobias':
+                xobias.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+            case '#zeroxfusionz':
+                zeroxfusionz.handleRaid(chatClient, channel, user, raidInfo, msg)
+                break;
+        }
+    });
+}
+
+main();
