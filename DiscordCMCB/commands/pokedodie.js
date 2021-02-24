@@ -8,6 +8,8 @@ export default {
     name: 'pokedodie',
     usage: 'n!pokedodie',
     description: 'Sends loving DM to Triz\'s GF',
+    permissions: '@botOwner',
+    hidden: true,
     run(client, message, args) {
         if (message.author.id !== client.config.botOwnerId) return;
 
