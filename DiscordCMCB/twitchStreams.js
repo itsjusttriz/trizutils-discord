@@ -19,14 +19,14 @@ export async function getStreamUptime(caster) {
     return data;
 }
 
-export async function liveStreamAnnouncements(streamerName, clientId, twitchToken, embedColor, guildId, channelId, msgId, rolePingId) {
+export async function liveStreamAnnouncements(client, streamerName, clientId, twitchToken, guildId, channelId, msgId, rolePingId) {
     if (typeof rolePingId === 'undefined') { rolePingId = '@everyone'; }
 
     let guildGrab = client.guilds.cache.get(guildId);
     let channelGrab = guildGrab.channels.cache.get(channelId);
-    let msgGrab = await channelGrab.messages.fetch(msgId)
+    let msgGrab = await channelGrab.messages.fetch(msgId);
     let roleGrab = await guildGrab.roles.fetch(rolePingId);
-    let botOwnerGrab = await client.users.fetch(config.botOwnerId);
+    let botOwnerGrab = await client.users.fetch(client.config.botOwnerId);
 
     axios({
         method: 'get',
@@ -40,7 +40,7 @@ export async function liveStreamAnnouncements(streamerName, clientId, twitchToke
         //
         if (response.data.data.length > 0 && streamInfo.type === 'live') {
             let liveEmbed = new Discord.MessageEmbed()
-                .setTitle(':TwitchSymbol: Twitch Live Stream Notification :bell:')
+                .setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
                 .setColor(guildGrab.me.displayHexColor)
                 .addField('Channel', streamInfo.user_name)
                 .addField('Stream Title', streamInfo.title)
@@ -59,9 +59,9 @@ export async function liveStreamAnnouncements(streamerName, clientId, twitchToke
             }
         } else {
             let offlineEmbed = new Discord.MessageEmbed()
-                .setTitle(':TwitchSymbol: Twitch Live Stream Notification :bell:')
+                .setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
                 .setColor(guildGrab.me.displayHexColor)
-                .setDescription(`:backEndCross: ${streamerName} is offline.\n\nKeep an eye on this channel to know when ${streamerName} is live!`)
+                .setDescription(`<:backEndCross:809620114084593675> ${streamerName} is offline.\n\nKeep an eye on this channel to know when ${streamerName} is live!`)
                 .setTimestamp()
             msgGrab.edit('', offlineEmbed)
             rolePing.set(streamerName, true);
@@ -69,9 +69,9 @@ export async function liveStreamAnnouncements(streamerName, clientId, twitchToke
     }).catch((error) => {
         console.log(chalk.red.bold(error));
         let errorEmbed = new Discord.MessageEmbed()
-            .setTitle(':TwitchSymbol: Twitch Live Stream Notification :bell:')
+            .setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
             .setColor('RED')
-            .setDescription(`:backEndMinus: Cannot retrieve information! :backEndMinus:\n ${error}`)
+            .setDescription(`<:backEndMinus:809616743332708372> Cannot retrieve information! <:backEndMinus:809616743332708372>\n ${error}`)
             .setTimestamp()
         msgGrab.edit(botOwnerGrab.toString(), errorEmbed);
     })
