@@ -2,6 +2,8 @@ export default {
     name: "setpresence",
     usage: 'n!setpresence <status> <...activity>',
     description: 'Sets custom status for the bot',
+    permissions: '@botOwner',
+    hidden: true,
     run(client, message, args) {
         const [pStatus, ...pActivity] = args;
 

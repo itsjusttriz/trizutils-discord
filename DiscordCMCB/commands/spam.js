@@ -2,6 +2,8 @@ export default {
     name: "spam",
     usage: "n!spam <number> <...msg>",
     description: 'Spams given input x amount of times',
+    permissions: '@botOwner',
+    hidden: true,
     run(client, message, args) {
 
         message.delete({ timeout: 1000 })

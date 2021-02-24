@@ -5,6 +5,8 @@ export default {
     name: "support",
     usage: "n!support",
     description: 'DMs the link to the CMCB_Official Discord Server',
+    permissions: 'VIEW_CHANNEL',
+    hidden: false,
     run: function (client, message, args) {
 
         message.delete({ timeout: 5000 });
