@@ -1,9 +1,12 @@
 import { MessageEmbed } from "discord.js";
+import chalk from 'chalk';
 
 export default {
     name: "roadmap",
     usage: "n!roadmap",
     description: 'DMs the link to the bot roadmap',
+    permissions: 'VIEW_CHANNEL',
+    hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 1000 })
 
