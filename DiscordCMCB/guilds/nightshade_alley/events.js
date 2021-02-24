@@ -16,7 +16,7 @@ export async function handleGuildMemberUpdate(client, oldMember, newMember) {
 		// console.log(`The roles ${removedRoles.map(r => r.name)} were removed from ${oldMember.displayName} in ${oldMember.guild.name}.`);
 		let embed1 = new MessageEmbed()
 			.setAuthor(`${oldMember.user.tag}`, oldMember.user.displayAvatarURL())
-			.addField("<:backEndMinus:809616743332708372> Removed Role", `${removedRoles.map(r => r.name)}`)
+			.addField(`${client.systemEmojis.get('BACKEND_MINUS')} Removed Role`, `${removedRoles.map(r => r.name)}`)
 			.setFooter(`UserID: ${oldMember.id}`)
 			.setColor(client.colorWheel.get('RED'))
 			.setTimestamp()
@@ -31,7 +31,7 @@ export async function handleGuildMemberUpdate(client, oldMember, newMember) {
 		// console.log(`The roles ${addedRoles.map(r => r.name)} were added to ${oldMember.displayName} in ${oldMember.guild.name}.`);
 		let embed2 = new MessageEmbed()
 			.setAuthor(`${oldMember.user.tag}`, oldMember.user.displayAvatarURL())
-			.addField("<:backEndPlus:809616743659995146> Added Role", `${addedRoles.map(r => r.name)}`)
+			.addField(`${client.systemEmojis.get('BACKEND_PLUS')} Added Role`, `${addedRoles.map(r => r.name)}`)
 			.setFooter(`UserID: ${oldMember.id}`)
 			.setColor(client.colorWheel.get('GREEN'))
 			.setTimestamp()
@@ -43,7 +43,7 @@ export async function handleGuildMemberUpdate(client, oldMember, newMember) {
 export async function handleGuildMemberAdd(client, member) {
 	let embed = new MessageEmbed()
 		.setColor(client.colorWheel.get('GREEN'))
-		.addField('Action', '<:joinServer:770829534793826314> Member Joined', false)
+		.addField('Action', `${client.systeEmojis.get('BACKEND_JOIN')} Member Joined`, false)
 		.addField('Username', member.user.username, true)
 		.addField('ID', member.user.id, false)
 		.addField('Bot?', member.user.bot, true)
@@ -58,7 +58,7 @@ export async function handleGuildMemberAdd(client, member) {
 export async function handleGuildMemberRemove(client, member) {
 	let embed = new MessageEmbed()
 		.setColor(client.colorWheel.get('RED'))
-		.addField('Action', '<:leaveServer:770829554059182090> Member Left', false)
+		.addField('Action', `${client.systeEmojis.get('BACKEND_LEAVE')} Member Left`, false)
 		.addField('Username', member.user.username, true)
 		.addField('ID', member.user.id, false)
 		.addField('Bot?', member.user.bot, true)
