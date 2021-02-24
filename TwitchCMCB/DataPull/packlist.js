@@ -1,84 +1,66 @@
-const listpacks = [' (vanilla, vanillaplus, none, po3normal, po3titan, po3kappa, sf4, ragnamodv, towncraft, amnesia, rusticwaters, astroblock, volcanoblock, stoneblock1, stoneblock2, skyodyssey, chaoticprogression, antichem, madpack4, rad, rlcraft, mceternal, enigmatica4, blissfulbuilding, infinevo, infinevo_expert, skyworkshop, questingmayhem, dimensionzero, ftbacademy, enigmatica2, enigmatica2ex, enigmatica2skyex, enigmatica6, atm3ex, compactclaustrophobia, ftbinteractions)'];
+function publicPackMsg(packName, packLauncher, packLink) {
+    let msg = `The current pack is ${packName || '@UNREGISTERED@'}. You can download it from ${packLauncher || 'Nowhere'}. -> ${packLink || '[No Link]'}`;
 
-const amnesia = ['The current pack is Amnesia, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/Amnesia'];
-const atm3ex = ['The current pack is All The Mods 3 [Expert], a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/all-the-mods-3-expert'];
-const antichem = ['The current pack is AntiMatter Chemistry, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/antimatter-chemistry'];
-const astroblock = ['The current pack is AstroBlock, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/astroblock'];
-const blissfulbuilding = ['The current pack is Blissful Building, a 1.14.4 modpack for the Bliss Stream Team, available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/blissful-building'];
-const chaoticprogression = ['The current pack is Chaotic Progression, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/chaotic-progression'];
-const compactclaustrophobia = ['The current pack is Compact Claustrophobia, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/compact-claustrophobia'];
-const dimensionzero = ['The current pack is Dimension Zero, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/dimension-zero'];
-const enigmatica2 = ['The current pack is Enigmatica 2, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/enigmatica2'];
-const enigmatica2ex = ['The current pack is Enigmatica 2 [Expert], a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/enigmatica2expert'];
-const enigmatica2skyex = ['The current pack is Enigmatica 2: Skyblock [Expert], a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/enigmatica2expertskyblock'];
-const enigmatica4 = ['The current pack is Enigmatica 4, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/enigmatica4'];
-const enigmatica6 = ['The current pack is Enigmatica 6, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/enigmatica6'];
-const ftbacademy = ['The current pack is FTB Academy, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/ftb-academy'];
-const ftbinteractions = ['The current pack is FTB Interactions, a modpack available on the FTB App. >> https://www.feed-the-beast.com/modpack/ftb_interactions'];
-const infinevo = ['The current pack is FTB Infinity Evolved, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/ftb-infinity-evolved'];
-const infinevo_expert = ['The current pack is FTB Infinity Evolved [Expert], a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/ftb-infinity-evolved'];
-const madpack4 = ['The current pack is Madpack 4, a BETA modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/madpack-4/'];
-const mceternal = ['The current pack is MCEternal, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/minecraft-eternal'];
-const po3normal = ['The current pack is Project Ozone 3 [Normal], a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward'];
-const po3titan = ['The current pack is Project Ozone 3 [Titan], a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward'];
-const po3kappa = ['The current pack is Project Ozone 3 [Kappa], a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward'];
-const questingmayhem = ['The current pack is Questing Mayhem, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/questing-mayhem'];
-const rad = ['The current pack is Roguelike Adventures and Dungeons, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons'];
-const ragnamodv = ['The current pack is Ragnamod V, a modpack that can be found on the Twitch App. >> https://minecraft.curseforge.com/modpacks/ragnamod-v'];
-const rlcraft = ['The current pack is RLCraft, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/rlcraft'];
-const rusticwaters = ['The current pack is SeaBlock: Rustic Waters, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/seablock-rustic-waters'];
-const sf4 = ['The current pack is Sky Factory 4, a modpack that can be found on the Twitch App. >> https://minecraft.curseforge.com/projects/skyfactory-4'];
-const skyodyssey = ['The current pack is FTB Sky Odyssey, a modpack that can be found on the Twitch App. >> https://www.feed-the-beast.com/projects/ftb-sky-odyssey'];
-const skyworkshop = ['The current pack is SkyWorkshop, a modpack available on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/skyworkshop'];
-const stoneblock1 = ['The current pack is StoneBlock 1, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/stoneblock'];
-const stoneblock2 = ['The current pack is StoneBlock 2, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/ftb-presents-stoneblock-2/'];
-const towncraft = ['The current pack is TownCraft, a modpack that can be found on the Twitch App. >> https://minecraft.curseforge.com/projects/towncraft'];
-const trillionaire = ['The current pack is Minecraft Trillionaire, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/minecraft-trillionaire'];
-const volcanoblock = ['The current pack is Volcano Block, a modpack that can be found on the Twitch App. >> https://www.curseforge.com/minecraft/modpacks/volcano-block'];
+    return msg;
+}
 
-const vanilla = ['This is Vanilla Minecraft. (Ask a Mod/Broadcaster about the version)'];
-const vanillaplus = ['This is Vanilla Minecraft with a few minor mods added for convenience. (Ask a Mod/Broadcaster about the version)'];
-const none = ['There is currently no modpack being played, right now.'];
+function betaPackMsg(packName, packLauncher, packLink) {
+    let msg = `The current pack is ${packName || '@UNREGISTERED@'} [BETA]. You can download it from ${packLauncher || 'Nowhere'}. -> ${packLink || '[No Link]'}`;
 
+    return msg;
+}
 
-module.exports.listpacks = listpacks;
+function devPackMsg(packName) {
+    let msg = `${packName || '@UNREGISTERED@'}. This pack is still in development and cannot be downloaded.`;
 
-module.exports.po3normal = po3normal;
-module.exports.po3titan = po3titan;
-module.exports.po3kappa = po3kappa;
-module.exports.sf4 = sf4;
-module.exports.ragnamodv = ragnamodv;
-module.exports.towncraft = towncraft;
-module.exports.amnesia = amnesia;
-module.exports.rusticwaters = rusticwaters;
-module.exports.astroblock = astroblock;
-module.exports.volcanoblock = volcanoblock;
-module.exports.stoneblock1 = stoneblock1;
-module.exports.stoneblock2 = stoneblock2;
-module.exports.skyodyssey = skyodyssey;
-module.exports.chaoticprogression = chaoticprogression;
-module.exports.antichem = antichem;
-module.exports.madpack4 = madpack4;
-module.exports.rad = rad;
-module.exports.rlcraft = rlcraft;
-module.exports.mceternal = mceternal
-module.exports.enigmatica4 = enigmatica4
-module.exports.enigmatica6 = enigmatica6
-module.exports.blissfulbuilding = blissfulbuilding
-module.exports.infinevo = infinevo
-module.exports.infinevo_expert = infinevo_expert
-module.exports.skyworkshop = skyworkshop
-module.exports.questingmayhem = questingmayhem
-module.exports.dimensionzero = dimensionzero
-module.exports.ftbacademy = ftbacademy
-module.exports.enigmatica2 = enigmatica2
-module.exports.enigmatica2ex = enigmatica2ex
-module.exports.enigmatica2skyex = enigmatica2skyex
-module.exports.atm3ex = atm3ex
-module.exports.compactclaustrophobia = compactclaustrophobia
-module.exports.ftbinteractions = ftbinteractions
-module.exports.trillionaire = trillionaire
+    return msg;
+}
 
-module.exports.vanilla = vanilla;
-module.exports.vanillaplus = vanillaplus;
-module.exports.none = none;
+export const listpacks = ' [PackList unavailable. #BlameTriz!]';
+export const amnesia = publicPackMsg('Amnesia', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/Amnesia');
+export const atm3ex = publicPackMsg('All the Mods 3: Expert Mode', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-3-expert');
+export const antichem = publicPackMsg('Anti-Matter Chemistry', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/antimatter-chemistry');
+export const astroblock = publicPackMsg('AstroBlock', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/astroblock');
+export const blissfulbuilding = publicPackMsg('Blissful Building', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/blissful-building');
+export const chaoticprogression = publicPackMsg('Chaotic Progression', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/chaotic-progression');
+export const compactclaustrophobia = publicPackMsg('Compact Claustrophobia', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/compact-claustrophobia');
+export const ddss = publicPackMsg('Dungeons, Dragons and Space Shuttles', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles');
+export const dimensionzero = publicPackMsg('Dimension Zero', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/dimension-zero');
+export const dw20 = publicPackMsg('DireWolf20', 'FTB App', 'https://feed-the-beast.com/modpack/ftb_presents_direwolf20_1_16');
+export const enigmatica2 = publicPackMsg('Enigmatica 2', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica2');
+export const enigmatica2ex = publicPackMsg('Enigmatica 2: Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica2expert');
+export const enigmatica2skyex = publicPackMsg('Enigmatica 2 Skyblock: Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica2expertskyblock');
+export const enigmatica4 = publicPackMsg('Enigmatica 4', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica4');
+export const enigmatica6 = publicPackMsg('Enigmatica 6', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica6');
+export const error404 = betaPackMsg('Error404');
+export const ftbacademy = publicPackMsg('FTB Academy', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/ftb-academy');
+export const ftbinteractions = publicPackMsg('FTB Interactions', 'FTB App', 'https://www.feed-the-beast.com/modpack/ftb_interactions');
+export const glacialawakening = publicPackMsg('Glacial Awakening', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/glacial-awakening');
+export const infinevo = publicPackMsg('FTB Infinity Evolved', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/ftb-infinity-evolved');
+export const infinevo_expert = publicPackMsg('FTB Infinity Evolved Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/ftb-infinity-evolved');
+export const immersive_revolution = publicPackMsg('Immersive Revolution', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/immersive-revolution');
+export const madpack4 = publicPackMsg('Madpack 4', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/madpack-4/');
+export const mceternal = publicPackMsg('MCEternal', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/minecraft-eternal');
+export const po3normal = publicPackMsg('Project Ozone 3 Normal', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward');
+export const po3titan = publicPackMsg('Project Ozone 3 Titan', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward');
+export const po3kappa = publicPackMsg('Project Ozone 3 Kappa', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward');
+export const questingmayhem = publicPackMsg('Questing Mayhem', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/questing-mayhem');
+export const rad = publicPackMsg('Roguelike Adventures and Dungeons', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/roguelike-adventures-and-dungeons');
+export const ragnamodv = publicPackMsg('Ragnamod V', 'CurseForge', 'https://minecraft.curseforge.com/modpacks/ragnamod-v');
+export const rlcraft = publicPackMsg('RLCraft', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/rlcraft');
+export const rusticwaters = publicPackMsg('SeaBlock: Rustic Waters', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/seablock-rustic-waters');
+export const sf4 = publicPackMsg('Sky Factory 4', 'CurseForge', 'https://minecraft.curseforge.com/projects/skyfactory-4');
+export const skybees = publicPackMsg('Sky Bees', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/sky-bees');
+export const skyodyssey = publicPackMsg('FTB Sky Odyssey', 'CurseForge', 'https://www.feed-the-beast.com/projects/ftb-sky-odyssey');
+export const skyofdiamonds = publicPackMsg('Awakening: Sky of Diamonds', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/awakening-sky-of-diamonds');
+export const skyworkshop = publicPackMsg('SkyWorkshop', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/skyworkshop');
+export const stacia_expert = publicPackMsg('Stacia Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/stacia-expert');
+export const starfactory = publicPackMsg('Star Factory', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/star-factory');
+export const stoneblock1 = publicPackMsg('StoneBlock 1', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/stoneblock');
+export const stoneblock2 = publicPackMsg('StoneBlock 2', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/ftb-presents-stoneblock-2/');
+export const towncraft = publicPackMsg('TownCraft', 'CurseForge', 'https://minecraft.curseforge.com/projects/towncraft');
+export const trillionaire = publicPackMsg('Minecraft Trillionaire', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/minecraft-trillionaire');
+export const volcanoblock = publicPackMsg('Volcano Block', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/volcano-block');
+export const vanilla = 'This is Vanilla Minecraft. (Ask a Mod/Broadcaster about the version)';
+export const vanillaplus = 'This is Vanilla Minecraft with a few minor mods added for convenience. (Ask a Mod/Broadcaster about the version)';
+export const none = 'There is currently no modpack being played, right now.';
