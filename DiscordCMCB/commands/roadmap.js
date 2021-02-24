@@ -16,7 +16,7 @@ export default {
             .setColor(message.author.displayHexColor ?? '#FEFEFE')
             .setFooter(`Command used in ${message.guild.name}`)
             .setTimestamp()
-            .setDescription(`[Click Here](https://nottriz.weebly.com/roadmap) to view the current roadmap for the development of the both the /twitch & /discord CMCB Bots.`)
+            .setDescription(`[Click Here](https://itsjusttriz.github.io/rd/roadmap/) to view the current roadmap for the development of the both the /twitch & /discord CMCB Bots.`)
 
         message.channel.send('Sending response via DMs...').then(msg => msg.delete({ timeout: 5000 }));
 
