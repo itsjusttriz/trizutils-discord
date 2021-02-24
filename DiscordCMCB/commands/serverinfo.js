@@ -4,10 +4,17 @@ export default {
     name: "serverinfo",
     usage: "n!serverinfo <...args>",
     description: 'Creates information embed for a game server',
+    permissions: 'ADMINISTRATOR',
+    hidden: false,
     run(client, message, args) {
+        message.delete({ timeout: 5000 })
+
+        if (message.author.id !== client.config.botOwnerId && this.permissions.indexOf(message.member.permissions) < 0) return message.reply(`You must have one of the following permissions to use this command: \`${this.permissions.join(' | ')}\``).then(m => m.delete({ timeout: 1000 * 10 }))
+
         let serverTitle = message.content.match(/-name "([^"]*)"/)
         let serverStatus = message.content.match(/-status "([^"]*)"/)
         let serverIP = message.content.match(/-ip "([^"]*)"/)
+        let serverPort = message.content.match(/-port "([^"]*)"/)
         let serverMCVersion = message.content.match(/-mcversion "([^"]*)"/)
         let serverMPVersion = message.content.match(/-mpversion "([^"]*)"/)
         let serverRules = message.content.match(/-rules "([^"]*)"/)
@@ -16,45 +23,49 @@ export default {
         let serverGuidance = message.content.match(/-guidance "([^"]*)"/)
 
 
-        const addServerEmbed = new MessageEmbed()
+        const embed = new MessageEmbed()
             .setFooter('NEW!')
             .setTimestamp()
-            .setColor(message.author.displayHexColor ?? '#FEFEFE')
+            .setColor(message.member.displayHexColor ?? '#FEFEFE')
 
         if (serverTitle) {
-            addServerEmbed.setTitle(serverTitle?.[1].toString())
+            embed.setTitle(serverTitle?.[1].toString())
         }
         if (serverStatus) {
-            addServerEmbed.addField('Status', serverStatus?.[1].toString(), true)
+            embed.addField('Status', serverStatus?.[1].toString(), true)
         }
 
         if (serverIP) {
-            addServerEmbed.addField('IP', serverIP?.[1].toString(), true)
+            embed.addField('IP', serverIP?.[1].toString(), true)
+        }
+
+        if (serverPort) {
+            embed.addField('Port', serverPort?.[1].toString(), true)
         }
 
         if (serverMCVersion) {
-            addServerEmbed.addField('Minecraft Version', serverMCVersion?.[1].toString(), true)
+            embed.addField('Minecraft Version', serverMCVersion?.[1].toString(), true)
         }
 
         if (serverMPVersion) {
-            addServerEmbed.addField('Modpack Version', serverPVersion?.[1].toString(), true)
+            embed.addField('Modpack Version', serverMPVersion?.[1].toString(), true)
         }
 
         if (serverRules) {
-            addServerEmbed.addField('Notes // Rules', serverRules?.[1].toString(), true)
+            embed.addField('Notes // Rules', serverRules?.[1].toString(), false)
         }
 
         if (serverDownload) {
-            addServerEmbed.addField('Download', `[Click Here](${serverPackDownload?.[1].toString()})`, true)
+            embed.addField('Download', `[Click Here](${serverDownload?.[1].toString()})`, true)
         }
 
         if (serverIssueTracker) {
-            addServerEmbed.addField('Issue Tracker', `[Click Here](${serverPackIssueTracker?.[1].toString()})`, true)
+            embed.addField('Issue Tracker', `[Click Here](${serverIssueTracker?.[1].toString()})`, true)
         }
 
         if (serverGuidance) {
-            addServerEmbed.addField('Guidance', `[Click Here](${serverPackGuidance?.[1].toString()})`, true)
+            embed.addField('Guidance', `[Click Here](${serverGuidance?.[1].toString()})`, true)
         }
-        return message.channel.send(addServerEmbed)
+        return message.reply(`creating embed... your message will be deleted in 5 seconds...`).then(m => setTimeout(() => m.edit('', embed), 1000 * 3))
     }
 }
