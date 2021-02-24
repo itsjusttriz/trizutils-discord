@@ -1,204 +1,112 @@
-const request = require('request');
-const getUrls = require('get-urls');
-const client = require('../config.js').client;
-const fs = require('fs');
-const botAdmin = require('../index.js').botAdmin;
+import * as axios from 'axios';
+import chalk from 'chalk';
+import * as fs from 'fs';
+import * as $ from '../datapull/defaults.js';
+import { botAdmin } from '../config.js';
 
-let cooldown = {};
-let deathctr = {'Deaths': 0};
-let mosctr = {'Current': 0, 'Total': 0};
-
-fs.readFile('./DataPull/Counters/zeroxfusionz/deathctr.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
+const jsonStorageFile = './datapull/JSON-Storage/zeroxfusionz.json';
+let jsonStorageData;
+fs.readFile(jsonStorageFile, (err, data) => {
+    //    console.log(JSON.parse(data))
+    try {
+        jsonStorageData = JSON.parse(data);
+        console.log(`=== Syncing ${jsonStorageData.Caster}.json ===\n`, jsonStorageData);
+    } catch (e) {
+        console.log(chalk.red(e));
     }
-    deathctr['Deaths'] = parseInt(data);
 });
 
-fs.readFile('./DataPull/Counters/zeroxfusionz/mosCurrent.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
+export async function handleMessage(chatClient, channel, user, message, msg) {
+
+    if (msg.isCheer) {
+
+        chatClient.say($.logChannel, $.createCheerEventLogMessage(channel, user, msg))
     }
-    mosctr['Current'] = parseInt(data);
-});
-
-fs.readFile('./DataPull/Counters/zeroxfusionz/mosTotal.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
+    if (message.includes('!play')) {
+        if (botAdmin.indexOf(user) < 0) return;
+        chatClient.say(channel, '!play')
+        chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
     }
-    mosctr['Total'] = parseInt(data);
-});
 
-function isOnCooldown(channel, command) {
-    if (cooldown[channel] && cooldown[channel][command] == true) return true;
-    else return false;
-}
-
-function setCooldown(channel, command, cd = 5) {
-    if (!cooldown[channel]) cooldown[channel] = {};
-    cooldown[channel][command] = true;
-    setTimeout(function unsetCooldown() {
-        cooldown[channel][command] = false;
-    }, cd * 1000);
-}
-
-function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
-
-	switch(command) {
-        case '?commands':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 10);
-                client.say(channel, "Click here for commands, specific to this channel >> https://itsjusttriz.weebly.com/chatbot-" + channel.substr(1));
+    switch ($.command(message)) {
+        case 'n!death':
+            let deathCtrTag = '[DeathCounter]';
+            if (!$.firstArg(message)) {
+                chatClient.say(channel, `Current Deaths: ${jsonStorageData.Deaths}`)
+            } else if ($.firstArg(message) === '+') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] += 1;
+                chatClient.say(channel, `${deathCtrTag} Increased by 1 to ${jsonStorageData.Deaths}.`)
+            } else if ($.firstArg(message) === '-') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] += -1;
+                chatClient.say(channel, `${deathCtrTag} Decreased by 1 to ${jsonStorageData.Deaths}.`)
+            } else if ($.firstArg(message) === 'set') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] = Number($.args(message)[1]) || 0;
+                chatClient.say(channel, `${deathCtrTag} Set to ${jsonStorageData.Deaths}.`)
+            } else if ($.firstArg(message) === 'reset') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] = 0;
+                chatClient.say(channel, `${deathCtrTag} Reset to ${jsonStorageData.Deaths}.`)
             }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+            fs.writeFile(jsonStorageFile, JSON.stringify(jsonStorageData), (err) => {
+                if (err) return console.log(err)
+            })
+            chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
             break;
-        case '?death':
-            let symbol3 = args[0];
-                if (!symbol3) {
-                    client.say(channel, `Deaths: ${deathctr.Deaths}`);
-                } else if (symbol3 == '+') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr['Deaths'] += 1;
-                    client.say(channel, '[Increased] ' + `Deaths: ${deathctr.Deaths}`);
-					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased Death counter.');
-                } else if (symbol3 == '-') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr['Deaths'] += -1;
-                    client.say(channel, '[Decreased] ' + `Deaths: ${deathctr.Deaths}`);
-					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased Death counter.');
-                } else if (symbol3 == 'reset') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr = {'Deaths': 0};
-                    client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
-					client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + symbol3);
-                fs.writeFile('./DataPull/Counters/zeroxfusionz/deathctr.txt', deathctr['Deaths'], function (err) {
-				    if (err) return console.log(err);
-				});
+        case 'n!races':
+            let mosCtrTag = '[MoSCounter]';
+            let mosCtrMap = Object.entries(jsonStorageData.MoS).map(([type, count]) => `${type}: ${count}`).join(', ');
+            if (!$.firstArg(message)) {
+                chatClient.say(channel, `${mosCtrTag} ` + mosCtrMap)
+            } else if ($.firstArg(message) === '+') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData.MoS["Current"] += 1;
+                chatClient.say(channel, `${mosCtrTag} Increased by 1.`)
+            } else if ($.firstArg(message) === '-') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData.MoS["Current"] += -1;
+                chatClient.say(channel, `${mosCtrTag} Decreased by 1.`)
+            } else if ($.firstArg(message) === 'set') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData.MoS["Current"] = Number($.args(message)[1]) || 0;
+                jsonStorageData.MoS["Total"] = Number($.args(message)[2]) || 0;
+                chatClient.say(channel, `${mosCtrTag} Set to ${args.join(', ').replace(`${$.firstArg(message)}, `, '')}.`)
+            } else if ($.firstArg(message) === 'reset') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData.MoS["Current"] = 0;
+                jsonStorageData.MoS["Total"] = 0;
+                chatClient.say(channel, `${mosCtrTag} Reset to 0, 0.`)
+            }
+            fs.writeFile(jsonStorageFile, JSON.stringify(jsonStorageData), (err) => {
+                if (err) return console.log(err)
+            })
+            chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
             break;
-        case '?setdeath':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                deathctr = {'Deaths': Number(args[0]) || 0};
-                client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/zeroxfusionz/deathctr.txt', deathctr['Deaths'], function (err) {
-				    if (err) return console.log(err);
-				});
-            break;
-        case '?races':
-            let symbolmos = args[0];
-                if (!symbolmos) {
-                    client.say(channel, `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                } else if (symbolmos == '+') {
-            		if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    	mosctr['Current'] += 1;
-                    	client.say(channel, '[Increased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                    	client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased MoS counter.');
-                } else if (symbolmos == '-') {
-		            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-        	            mosctr['Current'] += -1;
-        	            client.say(channel, '[Decreased] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-        	            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased MoS counter.');
-                } else if (symbolmos == 'reset') {
-		            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-        	            mosctr = {'Current': 0, 'Total': 0};
-        	            client.say(channel, '[Reset] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-        	            client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared MoS counter.');
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/zeroxfusionz/mosCurrent.txt', mosctr['Current'], function (err) {
-				    if (err) return console.log(err);
-				});
-            break;
-        case '?setmos':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                mosctr = {'Current': Number(args[0]) || 0, 'Total': Number(args[1]) || 0};
-                client.say(channel, '[Set] ' + `Races: ${mosctr.Current} / ${mosctr.Total}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set MoS counter.');
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args.join(' '));
-                fs.writeFile('./DataPull/Counters/zeroxfusionz/mosCurrent.txt', mosctr['Current'], function (err) {
-				    if (err) return console.log(err);
-				});
-                fs.writeFile('./DataPull/Counters/zeroxfusionz/mosTotal.txt', mosctr['Total'], function (err) {
-				    if (err) return console.log(err);
-				});
-            break;
-        case '!play':
-        	if (userstate.username != 'itsjusttriz') return;
-        	else
-	        	if (isOnCooldown(channel, command)) return;
-	        	else {
-	        		setCooldown(channel, command, 5);
-	        		client.say(channel, '!play')
-	        	}
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-        	break;
-	}
-}
-
-function handleSub(channel, username, method, message, userstate) {
-    if (method.plan == '1000') {
-        client.say(channel, 'PogChamp New Tier 1 Sub: ' + username + ' PogChamp');
-    } else if (method.plan == '2000') {
-        client.say(channel, 'PogChamp New Tier 2 Sub: ' + username + ' PogChamp');
-    } else if (method.plan == '3000') {
-        client.say(channel, 'PogChamp New Tier 3 Sub: ' + username + ' PogChamp');
-    } else if (method.prime) {
-        client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
     }
-    client.say(channel, '!hearts');
-    client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
 }
 
-function handleResub(channel, username, useless, message, userstate, method) {
-    if (method.plan == '1000') {
-        client.say(channel, 'PogChamp Returning Tier 1 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-    } else if (method.plan == '2000') {
-        client.say(channel, 'PogChamp Returning Tier 2 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-    } else if (method.plan == '3000') {
-        client.say(channel, 'PogChamp Returning Tier 3 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-    } else if (method.prime) {
-        client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-    }
-    client.say(channel, '!hearts');
-    client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
+export async function handleSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultSubMessage(subInfo))
+    chatClient.say($.logChannel, $.createSubEventLogMessage(channel, subInfo))
 }
 
-function handleGiftsub(channel, gifter, recipient, method, userstate) {
-    if (method.plan == '1000') {
-        client.say(channel, gifter + ' -> ' + recipient + '! (Tier 1)');
-    } else if (method.plan == '2000') {
-        client.say(channel, gifter + ' -> ' + recipient + '! (Tier 2)');
-    } else if (method.plan == '3000') {
-        client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
-    }
-    client.say(channel, '!hearts');
-    client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
+export async function handleResub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultResubMessage(subInfo))
+    chatClient.say($.logChannel, $.createResubEventLogMessage(channel, user, subInfo))
 }
 
+export async function handleGiftSub(chatClient, channel, user, subInfo, msg) {
 
-function handleCheer(channel, userstate, message) {
-    var username = userstate.username;
-    var bits = userstate.bits;
-    client.say('#nottriz', '[' + channel + '] BITS: ' + username + ' (' + bits + ')');
+    chatClient.say(channel, $.createDefaultSubgiftMessage(subInfo))
+    chatClient.say($.logChannel, $.createSubgiftEventLogMessage(channel, user, subInfo))
 }
 
-function handleRaid(customraid) {
-    client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-    client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
-}
+export async function handleRaid(chatClient, channel, user, raidInfo, msg) {
 
-module.exports.handleChat = handleChat;
-module.exports.handleSub = handleSub;
-module.exports.handleResub = handleResub;
-module.exports.handleGiftsub = handleGiftsub;
-module.exports.handleCheer = handleCheer;
-module.exports.handleRaid = handleRaid;
+    chatClient.say(channel, $.createDefaultRaidMessage(raidInfo))
+    chatClient.say($.logChannel, $.createRaidEventLogMessage(channel, raidInfo))
+}
