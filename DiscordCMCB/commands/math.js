@@ -5,6 +5,8 @@ export default {
     name: "math",
     usage: "n!math <EquationWithNoSpaces>",
     description: 'Gives results of a given equation',
+    permissions: 'VIEW_CHANNEL',
+    hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 1000 })
 
