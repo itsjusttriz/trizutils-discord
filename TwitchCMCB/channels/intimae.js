@@ -1,116 +1,41 @@
-const request = require('request');
-const getUrls = require('get-urls');
-const client = require('../config.js').client;
-const fs = require('fs');
-const botAdmin = require('../index.js').botAdmin;
+import * as axios from 'axios';
+import chalk from 'chalk';
+import * as fs from 'fs';
+import * as $ from '../datapull/defaults.js';
+import { botAdmin } from '../config.js';
 
-let cooldown = {};
+export async function handleMessage(chatClient, channel, user, message, msg) {
 
-function isOnCooldown(channel, command) {
-    if (cooldown[channel] && cooldown[channel][command] == true) return true;
-    else return false;
-}
+    if (msg.isCheer) {
 
-function setCooldown(channel, command, cd = 5) {
-    if (!cooldown[channel]) cooldown[channel] = {};
-    cooldown[channel][command] = true;
-    setTimeout(function unsetCooldown() {
-        cooldown[channel][command] = false;
-    }, cd * 1000);
-}
-
-function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
-
-    switch(command) {
-        case '?commands':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 10);
-                client.say(channel, "Click here for commands, specific to this channel >> https://itsjusttriz.weebly.com/chatbot-" + channel.substr(1));
-            }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?streamanimals':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && trizAlts.indexOf(userstate.username) < 0) return;
-                    client.say(channel, 'The aim of the game is to NOT die! Type !join to enter the game and when the timer ends type: !n, !s, !e or !w to go North, South, East or West.');
-                    client.say(channel, '**OR** if you dont feel like choosing a direction, type !auto and the game will choose for you.');
-                    client.say(channel, 'The game will also show you commands that you can use to advance further! So keep an eye on the stream.');
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
+        chatClient.say(channel, $.createDefaultCheerMessage(msg))
+        chatClient.say($.logChannel, $.createCheerEventLogMessage(channel, user, msg))
     }
+
+    switch ($.command(message)) { }
 }
 
-function handleSub(channel, username, method, message, userstate) {
-    if (method.plan == '1000') {
-        client.say(channel, 'PogChamp New Tier 1 Sub: ' + username + ' PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 1000');
-    } else if (method.plan == '2000') {
-        client.say(channel, 'PogChamp New Tier 2 Sub: ' + username + ' PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 2000');
-    } else if (method.plan == '3000') {
-        client.say(channel, 'PogChamp New Tier 3 Sub: ' + username + ' PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 3000');
-    } else if (method.prime) {
-        client.say(channel, 'PogChamp New Prime Sub: ' + username + ' PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 1000');
-    }
-    client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
+export async function handleSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultSubMessage(subInfo))
+    chatClient.say($.logChannel, $.createSubEventLogMessage(channel, subInfo))
 }
 
-function handleResub(channel, username, useless, message, userstate, method) {
-    if (method.plan == '1000') {
-        client.say(channel, 'PogChamp Returning Tier 1 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 1000');
-    } else if (method.plan == '2000') {
-        client.say(channel, 'PogChamp Returning Tier 2 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 2000');
-    } else if (method.plan == '3000') {
-        client.say(channel, 'PogChamp Returning Tier 3 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 3000');
-    } else if (method.prime) {
-        client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-        client.say(channel, '!pineapples add ' + username + ' 1000');
-    }
-    client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
+export async function handleResub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultResubMessage(subInfo))
+    chatClient.say($.logChannel, $.createResubEventLogMessage(channel, user, subInfo))
 }
 
-function handleGiftsub(channel, gifter, recipient, method, userstate) {
-    if (method.plan == '1000') {
-        client.say(channel, gifter + ' -> ' + recipient + '! (Tier 1)');
-        client.say(channel, '!pineapples add ' + gifter + ' 1000');
-    } else if (method.plan == '2000') {
-        client.say(channel, gifter + ' -> ' + recipient + '! (Tier 2)');
-        client.say(channel, '!pineapples add ' + gifter + ' 2000');
-    } else if (method.plan == '3000') {
-        client.say(channel, gifter + ' -> ' + recipient + '! (Tier 3)');
-        client.say(channel, '!pineapples add ' + gifter + ' 3000');
-    }
-    client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
+export async function handleGiftSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultSubgiftMessage(subInfo))
+    chatClient.say($.logChannel, $.createSubgiftEventLogMessage(channel, user, subInfo))
 }
 
-function handleCheer(channel, userstate, message) {
-    var username = userstate.username;
-    var bits = userstate.bits;
+export async function handleRaid(chatClient, channel, user, raidInfo, msg) {
 
-    client.say(channel, 'PogChamp x' + bits);
-    client.say('#nottriz', '[' + channel + '] BITS: ' + username + ' (' + bits + ')');
+    chatClient.say(channel, $.createDefaultRaidMessage(raidInfo))
+    chatClient.say(channel, `!so ${user}`)
+    chatClient.say($.logChannel, $.createRaidEventLogMessage(channel, raidInfo))
 }
-
-function handleRaid(customraid) {
-	client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-	client.say(customraid.channel, '!raider ' + customraid.raider);
-    client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
-}
-
-module.exports.handleChat = handleChat;
-module.exports.handleSub = handleSub;
-module.exports.handleResub = handleResub;
-module.exports.handleGiftsub = handleGiftsub;
-module.exports.handleCheer = handleCheer;
-module.exports.handleRaid = handleRaid;

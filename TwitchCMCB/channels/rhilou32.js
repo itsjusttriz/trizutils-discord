@@ -1,70 +1,35 @@
-const request = require('request');
-const getUrls = require('get-urls');
-const client = require('../config.js').client;
-const fs = require('fs');
-const botAdmin = require('../index.js').botAdmin;
+import * as axios from 'axios';
+import chalk from 'chalk';
+import * as fs from 'fs';
+import * as $ from '../datapull/defaults.js';
+import { botAdmin } from '../config.js';
 
-let cooldown = {};
+export async function handleMessage(chatClient, channel, user, message, msg) {
 
-function isOnCooldown(channel, command) {
-    if (cooldown[channel] && cooldown[channel][command] == true) return true;
-    else return false;
-}
+    if (msg.isCheer) {
 
-function setCooldown(channel, command, cd = 5) {
-    if (!cooldown[channel]) cooldown[channel] = {};
-    cooldown[channel][command] = true;
-    setTimeout(function unsetCooldown() {
-        cooldown[channel][command] = false;
-    }, cd * 1000);
-}
-
-function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
-
-	switch(command) {
-        case '?commands':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 10);
-                client.say(channel, "Click here for commands, specific to this channel >> https://itsjusttriz.weebly.com/chatbot-" + channel.substr(1));
-            }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
+        chatClient.say($.logChannel, $.createCheerEventLogMessage(channel, user, msg))
     }
+
+    switch ($.command(message)) { }
 }
 
+export async function handleSub(chatClient, channel, user, subInfo, msg) {
 
-function handleSub(channel, username, method, message, userstate) {
-    client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
+    chatClient.say($.logChannel, $.createSubEventLogMessage(channel, subInfo))
 }
 
-function handleResub(channel, username, useless, message, userstate, method) {
-    client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
+export async function handleResub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say($.logChannel, logResubEvent)
 }
 
-function handleGiftsub(channel, gifter, recipient, method, userstate) {
-    client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
+export async function handleGiftSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say($.logChannel, $.createSubgiftEventLogMessage(channel, user, subInfo))
 }
 
-function handleCheer(channel, userstate, message) {
-    var username = userstate.username;
-    var bits = userstate.bits;
-    
-    client.say('#nottriz', '[' + channel + '] BITS: ' + username + ' (' + bits + ')');
-}
+export async function handleRaid(chatClient, channel, user, raidInfo, msg) {
 
-function handleRaid(customraid) {
-    client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
+    chatClient.say($.logChannel, $.createRaidEventLogMessage(channel, raidInfo))
 }
-
-module.exports.handleChat = handleChat;
-module.exports.handleSub = handleSub;
-module.exports.handleResub = handleResub;
-module.exports.handleGiftsub = handleGiftsub;
-module.exports.handleCheer = handleCheer;
-module.exports.handleRaid = handleRaid;

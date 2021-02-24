@@ -1,239 +1,122 @@
-const request = require('request');
-const getUrls = require('get-urls');
-const client = require('../config.js').client;
-const fs = require('fs');
-const botAdmin = require('../index.js').botAdmin;
+import { botAdmin } from "../config.js";
+import * as $ from '../datapull/defaults.js';
+import chalk from "chalk";
+import * as fs from "fs";
 
-let cooldown = {};
-let exercise = {'JJs': 0, 'Squats': 0, 'Hoops': 0};
-
-fs.readFile('./DataPull/Counters/domosplace/fitJJs.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
+const jsonStorageFile = './datapull/JSON-Storage/domosplace.json';
+let jsonStorageData;
+fs.readFile(jsonStorageFile, (err, data) => {
+    //    console.log(JSON.parse(data))
+    try {
+        jsonStorageData = JSON.parse(data);
+        console.log(`=== Syncing ${jsonStorageData.Caster}.json ===\n`, jsonStorageData);
+    } catch (e) {
+        console.log(chalk.red(e));
     }
-    exercise['JJs'] = parseInt(data);
 });
 
-fs.readFile('./DataPull/Counters/domosplace/fitSquats.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
+/*
+setInterval(function () {
+    axios({
+        method: 'get',
+        url: `https://api.twitch.tv/helix/streams?user_login=domosplace`,
+        headers: {
+            'Client-ID': `${clientID}`,
+            'Authorization': `Bearer ${authorization}`
+        }
+    })
+        .then(function (response) {
+            if (response.data.data.length > 0 && response.data.data[0].type === 'live') {
+                chatClient.say('domosplace', '/me Running a 90 second ad..');
+                chatClient.say('domosplace', '/commercial 90');
+                chatClient.say('domosplace', 'Sick of the ads? Subscribe to Domo to get Ad-Free viewing experience while also showing off those really cool emotes! https://twitch.tv/domosplace/subscribe');
+            } else
+                return;
+        })
+        .catch(function (error) {
+            console.log('Error:', error);
+        });
+}, 1000 * 60 * 30); //30 Minutes.
+//}, 1000 * 5); //Test Time
+*/
+
+
+export async function handleMessage(chatClient, channel, user, message, msg) {
+
+    if (msg.isCheer) {
+
+        chatClient.say(channel, $.createDefaultCheerMessage(msg))
+        chatClient.say($.logChannel, $.createCheerEventLogMessage(channel, user, msg))
     }
-    exercise['Squats'] = parseInt(data);
-});
 
-fs.readFile('./DataPull/Counters/domosplace/fitHoops.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
-    }
-    exercise['Hoops'] = parseInt(data);
-});
-
-function isOnCooldown(channel, command) {
-    if (cooldown[channel] && cooldown[channel][command] == true) return true;
-    else return false;
-}
-
-function setCooldown(channel, command, cd = 5) {
-    if (!cooldown[channel]) cooldown[channel] = {};
-    cooldown[channel][command] = true;
-    setTimeout(function unsetCooldown() {
-        cooldown[channel][command] = false;
-    }, cd * 1000);
-}
-
-function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
-
-	switch(command) {
-        case '?commands':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 10);
-                client.say(channel, "Click here for commands, specific to this channel >> https://itsjusttriz.weebly.com/chatbot-" + channel.substr(1));
+    switch ($.command(message)) {
+        case 'n!fitness':
+            let fitnessCtrTag = '[FitnessCounter]';
+            let fitnessCtrMap = Object.entries(jsonStorageData.Fitness).map(([type, count]) => `${type}: ${count}`).join(', ');
+            if (!$.firstArg(message)) {
+                chatClient.say(channel, `${fitnessCtrTag} ` + fitnessCtrMap)
+            } else if ($.firstArg(message).startsWith('+')) {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                if ($.firstArg(message).includes('jjs')) {
+                    jsonStorageData.Fitness["JJs"] += 1;
+                } else if ($.firstArg(message).includes('squats')) {
+                    jsonStorageData.Fitness["Squats"] += 1;
+                } else if ($.firstArg(message).includes('hoops')) {
+                    jsonStorageData.Fitness["Hoops"] += 1;
+                }
+                chatClient.say(channel, `${fitnessCtrTag} Increased by 1.`)
+            } else if ($.firstArg(message).startsWith('-')) {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                if ($.firstArg(message).includes('jjs')) {
+                    jsonStorageData.Fitness["JJs"] += -1;
+                } else if ($.firstArg(message).includes('squats')) {
+                    jsonStorageData.Fitness["Squats"] += -1;
+                } else if ($.firstArg(message).includes('hoops')) {
+                    jsonStorageData.Fitness["Hoops"] += -1;
+                }
+                chatClient.say(channel, `${fitnessCtrTag} Decreased by 1.`)
+            } else if ($.firstArg(message) === 'set') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData.Fitness["JJs"] = Number($.args(message)[1]) || 0;
+                jsonStorageData.Fitness["Squats"] = Number($.args(message)[2]) || 0;
+                jsonStorageData.Fitness["Hoops"] = Number($.args(message)[3]) || 0;
+                chatClient.say(channel, `${fitnessCtrTag} Set to ${$.args(message).join(', ').replace(`${$.firstArg(message)}, `, '')}.`)
+            } else if ($.firstArg(message) === 'reset') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData.Fitness["JJs"] = 0;
+                jsonStorageData.Fitness["Squats"] = 0;
+                jsonStorageData.Fitness["Hoops"] = 0;
+                chatClient.say(channel, `${fitnessCtrTag} Reset to 0, 0, 0.`)
             }
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
+            fs.writeFile(jsonStorageFile, JSON.stringify(jsonStorageData), (err) => {
+                if (err) return console.log(err)
+            })
+            chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
             break;
-        case '?twitchded':
-            if (self) return;
-        		client.say(channel, 'Yes, Twitch is dead. APIs are erroring, Sites are dying, and people are being cancelled Kappa Oh Well #BlameTwitch');
-        	break;
-		case '?dance':
-			if (self) return;
-			if (userstate.username !== 'itsjusttriz' && userstate.username !== 'nottriz') return;
-				client.say(channel, 'DANCE DANCE DANCE DANCE DANCE DANCE DANCE DANCE');
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?sethome':
-			if (self) return;
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id']) return
-			if (!args[0]) {
-				client.say(channel, "Usage: ?sethome x y z.");
-			} else {
-				client.say(channel, "!command edit !home Domo's home is at XYZ: " + args.join(' '));
-			}
-			client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-		case '?addfit':
-			if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			let addactivity = args[0];
-				if (!addactivity) {
-					client.say(channel, 'Usage: ?addfit (jjs/squats/hoops)');
-				} else if (addactivity == 'jjs') {
-					exercise['JJs'] += 5;
-					client.say(channel, '[JJs Increased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				} else if (addactivity == 'squats') {
-					exercise['Squats'] += 5;
-					client.say(channel, '[Squats Increased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				} else if (addactivity == 'hoops') {
-					exercise['Hoops'] += 10;
-					client.say(channel, '[Hoops Increased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				}
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + addactivity);
-                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
-                    if (err) return console.log(err);
-                });
-			break;
-		case '?delfit':
-			if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-			let delactivity = args[0];
-				if (!delactivity) {
-					client.say(channel, 'Usage: ?delfit (jjs/squats/hoops)');
-				} else if (delactivity == 'jjs') {
-					exercise['JJs'] += -5;
-					client.say(channel, '[JJs Decreased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				} else if (delactivity == 'squats') {
-					exercise['Squats'] += -5;
-					client.say(channel, '[Squats Decreased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				} else if (delactivity == 'hoops') {
-					exercise['Hoops'] += -10;
-					client.say(channel, '[Hoops Decreased] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				}
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + delactivity);
-                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
-                    if (err) return console.log(err);
-                });
-			break;
-		case '?resetfit':
-			if (self) return;
-			if (userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				exercise = {'JJs': 0, 'Squats': 0, 'Hoops': 0};
-					client.say(channel, '[Cleared Exercise] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
-                    if (err) return console.log(err);
-                });
-			break;
-		case '?fit':
-			if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-				client.say(channel, '[Total Exercises] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-			break;
-        case '?setfit':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                exercise = {'JJs': Number(args[0]) || 0, 'Squats': Number(args[1]) || 0, 'Hoops': Number(args[2]) || 0};
-                client.say(channel, '[Updated Exercises] ' + `JJs: ${exercise.JJs}, Squats: ${exercise.Squats}, Hoops: ${exercise.Hoops} seconds`);
-				client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args.shift(' '));
-                fs.writeFile('../DataPull/Counters/domosplace/fitJJs.txt', exercise['JJs'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitSquats.txt', exercise['Squats'], function (err) {
-                    if (err) return console.log(err);
-                });
-                fs.writeFile('../DataPull/Counters/domosplace/fitHoops.txt', exercise['Hoops'], function (err) {
-                    if (err) return console.log(err);
-                });
-            break;
-	}
+    }
 }
 
-function handleSub(channel, username, method, message, userstate) {
-	if (method.plan == '1000') {
-		client.say(channel, username + ' just subscribed to Domosplace!');
-		client.say(channel, '!subadd1 ' + username);
-	} else if (method.plan == '2000') {
-		client.say(channel, username + ' just subscribed to Domosplace!');
-		client.say(channel, '!subadd2 ' + username);
-	} else if (method.plan == '3000') {
-		client.say(channel, username + ' just subscribed to Domosplace!');
-		client.say(channel, '!subadd3 ' + username);
-	} else if (method.prime) {
-		client.say(channel, username + ' just subscribed to Domosplace with Twitch Prime!');
-		client.say(channel, '!subadd1 ' + username);
-	}
-    client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
+export async function handleSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultSubMessage(subInfo))
+    chatClient.say($.logChannel, $.createSubEventLogMessage(channel, subInfo))
 }
 
-function handleResub(channel, username, useless, message, userstate, method) {
-	if (method.plan == '1000') {
-		client.say(channel, 'PogChamp Returning Tier 1 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-		client.say(channel, '!subadd1 ' + username);
-	} else if (method.plan == '2000') {
-		client.say(channel, 'PogChamp Returning Tier 2 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-		client.say(channel, '!subadd2 ' + username);
-	} else if (method.plan == '3000') {
-		client.say(channel, 'PogChamp Returning Tier 3 Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-		client.say(channel, '!subadd3 ' + username);
-	} else if (method.prime) {
-		client.say(channel, 'PogChamp Returning Prime Sub: ' + username + ' (' + userstate['msg-param-cumulative-months'] + ' months) PogChamp');
-		client.say(channel, '!subadd1 ' + username);
-	}
-    client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
+export async function handleResub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultResubMessage(subInfo))
+    chatClient.say($.logChannel, $.createResubEventLogMessage(channel, user, subInfo))
 }
 
-function handleGiftsub(channel, gifter, recipient, method, userstate) {
-	if (method.plan == '1000') {
-	client.say(channel, gifter + ' gifted a sub to ' + recipient + '!');
-	client.say(channel, '!giftadd1 ' + gifter + ' ' + recipient);
-	} else if (method.plan == '2000') {
-	client.say(channel, gifter + ' gifted a sub to ' + recipient + '!');
-	client.say(channel, '!giftadd2 ' + gifter + ' ' +  recipient);
-	} else if (method.plan == '3000') {
-	client.say(channel, gifter + ' gifted a sub to ' + recipient + '!');
-	client.say(channel, '!giftadd3 ' + gifter + ' ' + recipient);
-	}
-    client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
+export async function handleGiftSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say(channel, $.createDefaultSubgiftMessage(subInfo))
+    chatClient.say($.logChannel, $.createSubgiftEventLogMessage(channel, user, subInfo))
 }
 
-function handleCheer(channel, userstate, message) {
-	var username = userstate.username;
-	var	bits = userstate.bits;
+export async function handleRaid(chatClient, channel, user, raidInfo, msg) {
 
-	client.say(channel, 'PogChamp x' + bits);
-    client.say('#nottriz', '[' + channel + '] BITS: ' + username + ' (' + bits + ')');
+    chatClient.say(channel, $.createDefaultRaidMessage(raidInfo))
+    chatClient.say(channel, `!so ${user}`)
+    chatClient.say($.logChannel, $.createRaidEventLogMessage(channel, raidInfo))
 }
-
-function handleRaid(customraid) {
-	client.say(customraid.channel, "Welcome Raiders from " + customraid.raider + "'s channel! <3 GivePLZ");
-	client.say(customraid.channel, '!raided ' + customraid.raider);
-	client.say(customraid.channel, '!so ' + customraid.raider);
-	client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
-}
-
-module.exports.handleChat = handleChat;
-module.exports.handleSub = handleSub;
-module.exports.handleResub = handleResub;
-module.exports.handleGiftsub = handleGiftsub;
-module.exports.handleCheer = handleCheer;
-module.exports.handleRaid = handleRaid;
