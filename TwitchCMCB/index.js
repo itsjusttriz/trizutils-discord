@@ -196,7 +196,7 @@ async function main() {
             // @casterOnly
             case 'n!roadmap':
                 if (!$.isCaster(msg) && botAdmin.indexOf(user) < 0) return;
-                chatClient.say(channel, 'View the current development roadmap for the bot here -> https://nottriz.weebly.com/roadmap');
+                chatClient.say(channel, 'View the current development roadmap for the bot here -> https://itsjusttriz.github.io/rd/roadmap/');
                 chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message));
                 break;
             // @botAdminOnly
