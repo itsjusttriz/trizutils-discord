@@ -15,6 +15,8 @@ export default {
     name: "clap",
     usage: "n!clap <msg>",
     description: 'Echoes your input while replacing spaces with :clap:',
+    permissions: 'READ_MESSAGES',
+    hidden: true,
     run(client, message, args) {
         // Deletes the triggering command.
         message.delete({ timeout: 3000 })
