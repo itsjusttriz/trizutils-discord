@@ -1,112 +1,72 @@
-const request = require('request');
-const getUrls = require('get-urls');
-const client = require('../config.js').client;
-const fs = require('fs');
-const botAdmin = require('../index.js').botAdmin;
+import { botAdmin } from "../config.js";
+import * as $ from '../datapull/defaults.js';
+import * as fs from 'fs';
 
-let cooldown = {};
-let deathctr = {'Deaths': 0};
-
-fs.readFile('./DataPull/Counters/dfearthereaper/deathctr.txt', 'utf8', function (err, data) {
-    if (err) {
-        return console.log(err);
+const jsonStorageFile = './datapull/JSON-Storage/dfearthereaper.json';
+let jsonStorageData;
+fs.readFile(jsonStorageFile, (err, data) => {
+    //    console.log(JSON.parse(data))
+    try {
+        jsonStorageData = JSON.parse(data);
+        console.log(`=== Syncing ${jsonStorageData.Caster}.json ===\n`, jsonStorageData);
+    } catch (e) {
+        console.log(chalk.red(e));
     }
-    deathctr['Deaths'] = parseInt(data);
 });
 
-function isOnCooldown(channel, command) {
-    if (cooldown[channel] && cooldown[channel][command] == true) return true;
-    else return false;
-}
+export async function handleMessage(chatClient, channel, user, message, msg) {
 
-function setCooldown(channel, command, cd = 5) {
-    if (!cooldown[channel]) cooldown[channel] = {};
-    cooldown[channel][command] = true;
-    setTimeout(function unsetCooldown() {
-        cooldown[channel][command] = false;
-    }, cd * 1000);
-}
+    if (msg.isCheer) {
 
-function handleChat(channel, userstate, message, self) {
-	let command = message.split(' ')[0];
-	let args = message.split(' ');
-	args.shift();
+        chatClient.say($.logChannel, $.createCheerEventLogMessage(channel, user, msg))
+    }
 
-    switch(command) {
-        case '?commands':
-            if (self) return;
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-            if (isOnCooldown(channel, command)) return;
-            else {
-                setCooldown(channel, command, 10);
-                client.say(channel, "Click here for commands, specific to this channel >> https://itsjusttriz.weebly.com/chatbot-" + channel.substr(1));
+    switch ($.command(message)) {
+        case 'n!death':
+            let deathCtrTag = '[DeathCounter]';
+            if (!$.firstArg(message)) {
+                chatClient.say(channel, `Current Deaths: ${jsonStorageData.Deaths}`)
+            } else if ($.firstArg(message).toLowerCase() === '+') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] += 1;
+                chatClient.say(channel, `${deathCtrTag} Increased by 1 to ${jsonStorageData.Deaths}.`)
+            } else if ($.firstArg(message).toLowerCase() === '-') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] += -1;
+                chatClient.say(channel, `${deathCtrTag} Decreased by 1 to ${jsonStorageData.Deaths}.`)
+            } else if ($.firstArg(message).toLowerCase() === 'set') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] = Number($.firstArg(message)[1]) || 0;
+                chatClient.say(channel, `${deathCtrTag} Set to ${jsonStorageData.Deaths}.`)
+            } else if ($.firstArg(message).toLowerCase() === 'reset') {
+                if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
+                jsonStorageData["Deaths"] = 0;
+                chatClient.say(channel, `${deathCtrTag} Reset to ${jsonStorageData.Deaths}.`)
             }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command);
-            break;
-        case '?death':
-            let symbol3 = args[0];
-                if (!symbol3) {
-                    client.say(channel, `Deaths: ${deathctr.Deaths}`);
-                } else if (symbol3 == '+') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr['Deaths'] += 1;
-                    client.say(channel, '[Increased] ' + `Deaths: ${deathctr.Deaths}`);
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Increased Death counter.');
-                } else if (symbol3 == '-') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr['Deaths'] += -1;
-                    client.say(channel, '[Decreased] ' + `Deaths: ${deathctr.Deaths}`);
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually Decreased Death counter.');
-                } else if (symbol3 == 'reset') {
-                    if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                    deathctr = {'Deaths': 0};
-                    client.say(channel, '[Reset] ' + `Deaths: ${deathctr.Deaths}`);
-                    client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually cleared Death counter.');
-                }
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + symbol3);
-                fs.writeFile('./DataPull/Counters/dfearthereaper/deathctr.txt', deathctr['Deaths'], function (err) {
-                    if (err) return console.log(err);
-                });
-            break;
-        case '?setdeath':
-            if (!userstate.mod && userstate['room-id'] !== userstate['user-id'] && botAdmin.indexOf(userstate.username) < 0) return;
-                deathctr = {'Deaths': Number(args[0]) || 0};
-                client.say(channel, '[Set] ' + `Deaths: ${deathctr.Deaths}`);
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> Manually set Death counter.');
-                client.say('#nottriz', '[' + channel + '] <' + userstate.username + '> ' + command + ' ' + args[0]);
-                fs.writeFile('./DataPull/Counters/dfearthereaper/deathctr.txt', deathctr['Deaths'], function (err) {
-                    if (err) return console.log(err);
-                });
+            fs.writeFile(jsonStorageFile, JSON.stringify(jsonStorageData), (err) => {
+                if (err) return console.log(err)
+            })
+            chatClient.say($.logCommand, $.createMessageEventLogMessage(channel, user, message))
             break;
     }
 }
 
-function handleSub(channel, username, method, message, userstate) {
-    client.say('#nottriz', '[' + channel + '] SUB: ' + username + ' (' + method.plan + ')');
+export async function handleSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say($.logChannel, $.createSubEventLogMessage(channel, subInfo))
 }
 
-function handleResub(channel, username, useless, message, userstate, method) {
-    client.say('#nottriz', '[' + channel + '] RESUB: ' + username + ' - ' + userstate['msg-param-cumulative-months'] + 'months (' + method.plan + ')');
+export async function handleResub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say($.logChannel, $.createResubEventLogMessage(channel, user, subInfo))
 }
 
-function handleGiftsub(channel, gifter, recipient, method, userstate) {
-    client.say('#nottriz', '[' + channel + '] GIFTSUB: ' + gifter + ' -> ' + recipient + ' (' + method.plan + ')');
+export async function handleGiftSub(chatClient, channel, user, subInfo, msg) {
+
+    chatClient.say($.logChannel, $.createSubgiftEventLogMessage(channel, user, subInfo))
 }
 
-function handleCheer(channel, userstate, message) {
-    var username = userstate.username;
-    var bits = userstate.bits;
-    
-    client.say('#nottriz', '[' + channel + '] BITS: ' + username + ' (' + bits + ')');
-}
+export async function handleRaid(chatClient, channel, user, raidInfo, msg) {
 
-function handleRaid(customraid) {
-    client.say('#nottriz', '[' + customraid.channel + '] RAID: ' + customraid.raider);
+    chatClient.say($.logChannel, $.createRaidEventLogMessage(channel, raidInfo))
 }
-
-module.exports.handleChat = handleChat;
-module.exports.handleSub = handleSub;
-module.exports.handleResub = handleResub;
-module.exports.handleGiftsub = handleGiftsub;
-module.exports.handleCheer = handleCheer;
-module.exports.handleRaid = handleRaid;
