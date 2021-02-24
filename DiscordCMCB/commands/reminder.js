@@ -4,6 +4,8 @@ export default {
     name: "reminder",
     usage: "n!reminder <msg>",
     description: 'Posts a fancy embed with the reminder youve asked for.',
+    permissions: 'MANAGE_MESSAGES',
+    hidden: false,
     async run(client, message, args) {
         message.delete({ timeout: 3000 })
 
