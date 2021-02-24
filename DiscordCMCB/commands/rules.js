@@ -12,6 +12,8 @@ export default {
     name: 'rules',
     usage: 'rules',
     description: 'Edits rules embeds in various guilds',
+    permissions: '@botOwner',
+    hidden: true,
     run(client, message, args) {
 
         // Delete triggering command.
