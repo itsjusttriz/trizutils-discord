@@ -1,10 +1,11 @@
 import { MessageEmbed } from "discord.js";
-import * as Discord from 'discord.js';
 
 export default {
     name: "eval",
     usage: "n!eval <query>",
     description: 'Runs the JS eval() function on your Input',
+    permissions: '@botOwner',
+    hidden: true,
     async run(client, message, args) {
         if (message.author.id !== client.config.botOwnerId) return;
 
@@ -18,7 +19,7 @@ export default {
             .setColor(message.member.displayHexColor ?? '#FEFEFE')
             .setFooter(message.author.tag, message.author.displayAvatarURL())
             .addField('Input', `\`\`\`js\n${args.join(' ')}\`\`\``)
-            .addField('Output', `\`\`\`js\n${result.toString()}\`\`\``)
+            .addField('Output', `\`\`\`js\n${result}\`\`\``)
 
         return message.channel.send(embed);
     }
