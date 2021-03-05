@@ -1,9 +1,3 @@
-/**
- *
- *  Created By TurkeyDev
- *
- */
-
 import * as Discord from "discord.js";
 
 let gameStarter = '';
