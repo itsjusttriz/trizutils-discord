@@ -13,7 +13,7 @@ export default {
         const embed = new MessageEmbed()
             .setTitle('CMCB Development Roadmap')
             .setAuthor(message.author.username, message.author.displayAvatarURL())
-            .setColor(message.author.displayHexColor ?? '#FEFEFE')
+            .setColor(message.member.displayHexColor ?? '#FEFEFE')
             .setFooter(`Command used in ${message.guild.name}`)
             .setTimestamp()
             .setDescription(`[Click Here](https://itsjusttriz.github.io/rd/roadmap/) to view the current roadmap for the development of the both the /twitch & /discord CMCB Bots.`)
