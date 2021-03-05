@@ -15,6 +15,7 @@ export default {
         let serverStatus = message.content.match(/-status "([^"]*)"/)
         let serverIP = message.content.match(/-ip "([^"]*)"/)
         let serverPort = message.content.match(/-port "([^"]*)"/)
+        let serverPassword = message.content.match(/-password "([^"]*)"/)
         let serverMCVersion = message.content.match(/-mcversion "([^"]*)"/)
         let serverMPVersion = message.content.match(/-mpversion "([^"]*)"/)
         let serverRules = message.content.match(/-rules "([^"]*)"/)
@@ -41,6 +42,10 @@ export default {
 
         if (serverPort) {
             embed.addField('Port', serverPort?.[1].toString(), true)
+        }
+
+        if (serverPassword) {
+            embed.addField('Password', serverPassword?.[1].toString(), true)
         }
 
         if (serverMCVersion) {
