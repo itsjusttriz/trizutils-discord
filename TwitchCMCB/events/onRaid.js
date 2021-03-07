@@ -1,4 +1,4 @@
-import channelImports from '../DB/channelImports.js';
+import ChannelImports from '../DB/ChannelImports.js';
 
 export default async function (chatClient, channel, user, raidInfo, msg) {
 
@@ -15,70 +15,70 @@ export default async function (chatClient, channel, user, raidInfo, msg) {
 
     switch (channel) {
         case '#almostfae':
-            (await channelImports.ALMOSTFAE).handleRaid(chatClient, options)
+            (await ChannelImports.ALMOSTFAE).handleRaid(chatClient, options)
             break;
         case '#blitzyuk':
-            (await channelImports.BLITZYUK).handleRaid(chatClient, options)
+            (await ChannelImports.BLITZYUK).handleRaid(chatClient, options)
             break;
         case '#dfearthereaper':
-            (await channelImports.DFEARTHEREAPER).handleRaid(chatClient, options)
+            (await ChannelImports.DFEARTHEREAPER).handleRaid(chatClient, options)
             break;
         case '#domosplace':
-            (await channelImports.DOMOSPLACE).handleRaid(chatClient, options)
+            (await ChannelImports.DOMOSPLACE).handleRaid(chatClient, options)
             break;
         case '#finncapp':
-            (await channelImports.FINNCAPP).handleRaid(chatClient, options)
+            (await ChannelImports.FINNCAPP).handleRaid(chatClient, options)
             break;
         case '#gwinthor':
-            (await channelImports.GWINTHOR).handleRaid(chatClient, options)
+            (await ChannelImports.GWINTHOR).handleRaid(chatClient, options)
             break;
         case '#immp':
-            (await channelImports.IMMP).handleRaid(chatClient, options)
+            (await ChannelImports.IMMP).handleRaid(chatClient, options)
             break;
         case '#intimae':
-            (await channelImports.INTIMAE).handleRaid(chatClient, options)
+            (await ChannelImports.INTIMAE).handleRaid(chatClient, options)
             break;
         case '#itsjusttriz':
-            (await channelImports.ITSJUSTTRIZ).handleRaid(chatClient, options)
+            (await ChannelImports.ITSJUSTTRIZ).handleRaid(chatClient, options)
             break;
         case '#ja_keeler':
-            (await channelImports.JA_KEELER).handleRaid(chatClient, options)
+            (await ChannelImports.JA_KEELER).handleRaid(chatClient, options)
             break;
         case '#jayrockbird':
-            (await channelImports.JAYROCKBIRD).handleRaid(chatClient, options)
+            (await ChannelImports.JAYROCKBIRD).handleRaid(chatClient, options)
             break;
         case '#kikiisyourfriend':
-            (await channelImports.KIKIISYOURFRIEND).handleRaid(chatClient, options)
+            (await ChannelImports.KIKIISYOURFRIEND).handleRaid(chatClient, options)
             break;
         case '#matrixis':
-            (await channelImports.MATRIXIS).handleRaid(chatClient, options)
+            (await ChannelImports.MATRIXIS).handleRaid(chatClient, options)
             break;
         case '#queenliz09':
-            (await channelImports.QUEENLIZ09).handleRaid(chatClient, options)
+            (await ChannelImports.QUEENLIZ09).handleRaid(chatClient, options)
             break;
         case '#reninsane':
-            (await channelImports.RENINSANE).handleRaid(chatClient, options)
+            (await ChannelImports.RENINSANE).handleRaid(chatClient, options)
             break;
         case '#rhilou32':
-            (await channelImports.RHILOU32).handleRaid(chatClient, options)
+            (await ChannelImports.RHILOU32).handleRaid(chatClient, options)
             break;
         case '#superfraggle':
-            (await channelImports.SUPERFRAGGLE).handleRaid(chatClient, options)
+            (await ChannelImports.SUPERFRAGGLE).handleRaid(chatClient, options)
             break;
         case '#techyguy':
-            (await channelImports.TECHYGUY).handleRaid(chatClient, options)
+            (await ChannelImports.TECHYGUY).handleRaid(chatClient, options)
             break;
         case '#theimperialbitgod':
-            (await channelImports.THEIMPERIALBITGOD).handleRaid(chatClient, options)
+            (await ChannelImports.THEIMPERIALBITGOD).handleRaid(chatClient, options)
             break;
         case '#tonster46346':
-            (await channelImports.TONSTER46346).handleRaid(chatClient, options)
+            (await ChannelImports.TONSTER46346).handleRaid(chatClient, options)
             break;
         case '#xobias':
-            (await channelImports.XOBIAS).handleRaid(chatClient, options)
+            (await ChannelImports.XOBIAS).handleRaid(chatClient, options)
             break;
         case '#zeroxfusionz':
-            (await channelImports.ZEROXFUSIONZ).handleRaid(chatClient, options)
+            (await ChannelImports.ZEROXFUSIONZ).handleRaid(chatClient, options)
             break;
     }
 }
