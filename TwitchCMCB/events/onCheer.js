@@ -1,4 +1,4 @@
-import channelImports from '../DB/channelImports.js';
+import ChannelImports from '../DB/ChannelImports.js';
 
 export default async function (chatClient, channel, user, message, msg) {
 
@@ -15,70 +15,70 @@ export default async function (chatClient, channel, user, message, msg) {
     if (msg.isCheer) {
         switch (channel) {
             case '#almostfae':
-                (await channelImports.ALMOSTFAE).handleCheer(chatClient, options)
+                (await ChannelImports.ALMOSTFAE).handleCheer(chatClient, options)
                 break;
             case '#blitzyuk':
-                (await channelImports.BLITZYUK).handleCheer(chatClient, options)
+                (await ChannelImports.BLITZYUK).handleCheer(chatClient, options)
                 break;
             case '#dfearthereaper':
-                (await channelImports.DFEARTHEREAPER).handleCheer(chatClient, options)
+                (await ChannelImports.DFEARTHEREAPER).handleCheer(chatClient, options)
                 break;
             case '#domosplace':
-                (await channelImports.DOMOSPLACE).handleCheer(chatClient, options)
+                (await ChannelImports.DOMOSPLACE).handleCheer(chatClient, options)
                 break;
             case '#finncapp':
-                (await channelImports.FINNCAPP).handleCheer(chatClient, options)
+                (await ChannelImports.FINNCAPP).handleCheer(chatClient, options)
                 break;
             case '#gwinthor':
-                (await channelImports.GWINTHOR).handleCheer(chatClient, options)
+                (await ChannelImports.GWINTHOR).handleCheer(chatClient, options)
                 break;
             case '#immp':
-                (await channelImports.IMMP).handleCheer(chatClient, options)
+                (await ChannelImports.IMMP).handleCheer(chatClient, options)
                 break;
             case '#intimae':
-                (await channelImports.INTIMAE).handleCheer(chatClient, options)
+                (await ChannelImports.INTIMAE).handleCheer(chatClient, options)
                 break;
             case '#itsjusttriz':
-                (await channelImports.ITSJUSTTRIZ).handleCheer(chatClient, options)
+                (await ChannelImports.ITSJUSTTRIZ).handleCheer(chatClient, options)
                 break;
             case '#ja_keeler':
-                (await channelImports.JA_KEELER).handleCheer(chatClient, options)
+                (await ChannelImports.JA_KEELER).handleCheer(chatClient, options)
                 break;
             case '#jayrockbird':
-                (await channelImports.JAYROCKBIRD).handleCheer(chatClient, options)
+                (await ChannelImports.JAYROCKBIRD).handleCheer(chatClient, options)
                 break;
             case '#kikiisyourfriend':
-                (await channelImports.KIKIISYOURFRIEND).handleCheer(chatClient, options)
+                (await ChannelImports.KIKIISYOURFRIEND).handleCheer(chatClient, options)
                 break;
             case '#matrixis':
-                (await channelImports.MATRIXIS).handleCheer(chatClient, options)
+                (await ChannelImports.MATRIXIS).handleCheer(chatClient, options)
                 break;
             case '#queenliz09':
-                (await channelImports.QUEENLIZ09).handleCheer(chatClient, options)
+                (await ChannelImports.QUEENLIZ09).handleCheer(chatClient, options)
                 break;
             case '#reninsane':
-                (await channelImports.RENINSANE).handleCheer(chatClient, options)
+                (await ChannelImports.RENINSANE).handleCheer(chatClient, options)
                 break;
             case '#rhilou32':
-                (await channelImports.RHILOU32).handleCheer(chatClient, options)
+                (await ChannelImports.RHILOU32).handleCheer(chatClient, options)
                 break;
             case '#superfraggle':
-                (await channelImports.SUPERFRAGGLE).handleCheer(chatClient, options)
+                (await ChannelImports.SUPERFRAGGLE).handleCheer(chatClient, options)
                 break;
             case '#techyguy':
-                (await channelImports.TECHYGUY).handleCheer(chatClient, options)
+                (await ChannelImports.TECHYGUY).handleCheer(chatClient, options)
                 break;
             case '#theimperialbitgod':
-                (await channelImports.THEIMPERIALBITGOD).handleCheer(chatClient, options)
+                (await ChannelImports.THEIMPERIALBITGOD).handleCheer(chatClient, options)
                 break;
             case '#tonster46346':
-                (await channelImports.TONSTER46346).handleCheer(chatClient, options)
+                (await ChannelImports.TONSTER46346).handleCheer(chatClient, options)
                 break;
             case '#xobias':
-                (await channelImports.XOBIAS).handleCheer(chatClient, options)
+                (await ChannelImports.XOBIAS).handleCheer(chatClient, options)
                 break;
             case '#zeroxfusionz':
-                (await channelImports.ZEROXFUSIONZ).handleCheer(chatClient, options)
+                (await ChannelImports.ZEROXFUSIONZ).handleCheer(chatClient, options)
                 break;
         }
     }
