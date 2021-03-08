@@ -5,7 +5,7 @@ export default {
 
         if (!options.isCaster && !options.isBotAdmin) return;
 
-        chatClient.say(options.channel, 'View the current development roadmap for the bot here -> https://itsjusttriz.github.io/rd/roadmap/');
+        chatClient.say(options.channel, 'View the current development roadmap for the bot here -> http://triz.link/@mscb/github/roadmap/');
 
         return chatClient.say(options.logChan, options.logMsg);
     }
