@@ -8,7 +8,7 @@ export default {
     run(chatClient, message, args, options) {
         if (!options.isModPlus && !options.isBotAdmin) return;
 
-        if (args.length <= 1 || args.length >= 2) return chatClient.say(options.channel, `${options.user}, you must specify an [option] & a [timerName]! E.g ${this.usage} (Possible options: ${this.requiredArgs?.join(', ')})`);
+        if (args.length <= 1 || args.length >= 3) return chatClient.say(options.channel, `${options.user}, you must specify an [option] & a [timerName]! E.g ${this.usage} (Possible options: ${this.requiredArgs?.join(', ')})`);
 
         switch (args[0]) {
             case 'enable':
