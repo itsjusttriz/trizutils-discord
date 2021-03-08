@@ -56,15 +56,14 @@ export const TimerRunner = {
                 if (TimerManager.get('#finncapp', 'roxSellout') == false) return;
                 if (!isLive) return;
 
-                chatClient.say('finncapp', 'ROX! GET YOUR ROX HERE!');
+                chatClient.say('finncapp', 'ROX! GET YOUR ROX HERE!');      // A
                 chatClient.say('finncapp', '!rox');
                 setTimeout(() => {
                     if (!isLive) return;
 
                     chatClient.say('finncapp', 'Wanna make Finn open some RoxBoxes on stream? SUBSCRIBE! And then go to - https://www.rox.gg/users/FinnCapp/roxbox/finncapp-finncapps-rox-box/freeclaim');
-                    chatClient.say('finncapp', '!rox');
-                }, 1000 * 60 * 15);
-            }, 1000 * 60 * 30);
+                }, 1000 * 60 * 30);
+            }, 1000 * 60 * 60);
         }
     },
     "#nottriz": {
