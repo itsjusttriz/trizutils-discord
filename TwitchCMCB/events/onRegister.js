@@ -5,9 +5,8 @@ import { MoSManager } from "../utils/MoSManager.js";
 import { ToolsManager } from "../utils/ToolsManager.js";
 import { CooldownManager } from '../utils/CooldownManager.js';
 import { TimerManager, TimerRunner } from '../utils/TimerManager.js';
-import { default as tokenData } from "../tokens.json";
 
-export default async function (chatClient, apiClient) {
+export default async function (chatClient, apiClient, auth) {
     console.log(chalk.cyan.bold(`===> ${chalk.green.bold('READY!')} <===`));
 
     const nonTurboColors = {
@@ -34,12 +33,7 @@ export default async function (chatClient, apiClient) {
         }
     }
 
-    const streamInfo = await apiClient.helix.streams.getStreamByUserName('itsjusttriz');
-
     setInterval(async () => {
-        if (streamInfo) {
-            console.log('Triz Live!');
-        }
-    }, 1000 * 1);
-    console.log(tokenData)
+        auth.refresh();
+    }, 1000 * 60 * 3);
 }
