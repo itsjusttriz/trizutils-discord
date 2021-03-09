@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { config } from '../config.js';
-import { BlacklistedTerms } from '../utils/Functions.js';
+import { BlacklistedTerms, ExtraCommands } from '../utils/Functions.js';
 
 export default async function onMessage(chatClient, apiClient, channel, user, message, msg) {
     console.log(`${chalk.blue(`[${channel}]`)} ${chalk.magenta(`<${user}>`)} ${chalk.grey('|')} ${chalk.white.bold(`${message}`)}`)
@@ -29,6 +29,8 @@ export default async function onMessage(chatClient, apiClient, channel, user, me
         logChan: 'nottriz',
         logMsg: `[${channel}] <${user}> ${message}`,
     }
+
+    ExtraCommands(options)
 
     // Ignore messages not starting with the prefix (in config.json)
     if (!message.startsWith(config.prefix))
