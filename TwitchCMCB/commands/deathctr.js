@@ -31,6 +31,8 @@ export default {
                     chatClient.say(options.channel, `${DeathsManager.tag} Cleared the counter! Total: ${DeathsManager.counts[options.channel]}`);
                     break;
             }
-        } else return chatClient.say(options.channel, `${DeathsManager.tag} Current Total: ${DeathsManager.counts[options.channel]}`);
+        } else chatClient.say(options.channel, `${DeathsManager.tag} Current Total: ${DeathsManager.counts[options.channel]}`);
+
+        return chatClient.say(options.logChan, options.logMsg);
     }
 }
