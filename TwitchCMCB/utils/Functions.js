@@ -18,17 +18,17 @@ export function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function BlacklistedTerms(chatClient, channel, user, message, msg) {
+export function BlacklistedTerms(options) {
 
-    switch (channel) {
+    switch (options.channel) {
         case '#immp':
-            if (message.toLowerCase().includes('respect the grind')) {
-                chatClient.ban(channel, user, '[CMCB Moderation] Blacklisted Phrase.')
+            if (options.message.toLowerCase().includes('respect the grind')) {
+                options.chatClient.ban(options.channel, options.user, '[CMCB Moderation] Blacklisted Phrase.')
             }
             break;
         case '#jayrockbird':
-            if (message.toLowerCase().includes('littlebirdy')) {
-                chatClient.say(channel, 'Now you guys can donate here >> https://streamlabs.com/jayrockbird <3 Tips/Donations are NOT required but are VERY much appreciated! GivePLZ');
+            if (options.message.toLowerCase().includes('littlebirdy')) {
+                options.chatClient.say(options.channel, 'Now you guys can donate here >> https://streamlabs.com/jayrockbird <3 Tips/Donations are NOT required but are VERY much appreciated! GivePLZ');
             }
             break;
     }
