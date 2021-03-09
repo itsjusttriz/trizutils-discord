@@ -33,12 +33,12 @@ export default async function (chatClient, apiClient) {
         }
     }
 
-    const streamInfo = await apiClient.helix.streams.getStreamByUserName('itsjusttriz');
+    const streamInfo = await apiClient.helix.streams.getStreamByUserName('commanderroot');
 
     setInterval(async () => {
         if (streamInfo) {
-            console.log('Triz Live!');
+            console.log(streamInfo);
         }
-    }, 1000 * 1);
+    }, 1000 * 60 * 3);
     // console.log(tokenData);
 }
