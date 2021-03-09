@@ -5,7 +5,6 @@ import { MoSManager } from "../utils/MoSManager.js";
 import { ToolsManager } from "../utils/ToolsManager.js";
 import { CooldownManager } from '../utils/CooldownManager.js';
 import { TimerManager, TimerRunner } from '../utils/TimerManager.js';
-import { default as tokenData } from "../tokens.json";
 
 export default async function (chatClient, apiClient) {
     console.log(chalk.cyan.bold(`===> ${chalk.green.bold('READY!')} <===`));
@@ -41,5 +40,5 @@ export default async function (chatClient, apiClient) {
             console.log('Triz Live!');
         }
     }, 1000 * 1);
-    console.log(tokenData)
+    // console.log(tokenData);
 }
