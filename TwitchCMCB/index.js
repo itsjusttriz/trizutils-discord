@@ -27,6 +27,7 @@ async function main() {
             }
         }
     );
+
     // pubSubClient.start()
     const pubSubClient = new PubSubClient();
 
@@ -84,7 +85,7 @@ async function main() {
             console.log(`[EVENT_LOADER] ${eventName} ✅`);
             switch (eventName) {
                 case 'onRegister':
-                    chatClient.onRegister(() => event.default(chatClient, apiClient));
+                    chatClient.onRegister(() => event.default(chatClient, apiClient, auth));
                     break;
                 case 'onJoin':
                     chatClient.onJoin((channel, user) => event.default(chatClient, channel, user))
