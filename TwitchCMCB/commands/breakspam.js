@@ -11,5 +11,7 @@ export default {
                 chatClient.say(options.channel, 'B R E A K !');
             }, 100 * i);
         }
+
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
