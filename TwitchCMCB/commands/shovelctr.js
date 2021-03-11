@@ -32,5 +32,7 @@ export default {
                     break;
             }
         } else return chatClient.say(options.channel, `${ToolsManager.tag} Current Shovel total: ${ToolsManager.counts.shovel[options.channel]}`);
+
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
