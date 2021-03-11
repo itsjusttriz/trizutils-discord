@@ -10,5 +10,7 @@ export default {
         } catch (error) {
             console.error('Error evaluating', code, error);
         }
+
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
