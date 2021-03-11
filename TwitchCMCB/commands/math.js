@@ -25,6 +25,6 @@ export default {
             chatClient.say(options.channel, `${options.user}, you have given an invalid calculation. Please try again! (${_this.usage})`)
         }
 
-        return chatClient.say(options.channel, options.logMsg)
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
