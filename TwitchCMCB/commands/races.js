@@ -29,5 +29,7 @@ export default {
                     break;
             }
         } else return chatClient.say(options.channel, `${MoSManager.counts.current[options.channel]} : ${MoSManager.counts.total[options.channel]}`);
+
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
