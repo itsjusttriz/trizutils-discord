@@ -32,5 +32,7 @@ export default {
                     break;
             }
         } else return chatClient.say(options.channel, `${ToolsManager.tag} Current Pickaxe total: ${ToolsManager.counts.pickaxe[options.channel]}`);
+
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
