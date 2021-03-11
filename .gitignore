@@ -18,3 +18,4 @@ OLD_TwitchCMCB/**
 *.env
 *.json
 *.txt
+TwitchCMCB/.eslintrc.js
