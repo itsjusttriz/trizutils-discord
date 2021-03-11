@@ -10,13 +10,14 @@ function betaPackMsg(packName, packLauncher, packLink) {
     return msg;
 }
 
-function devPackMsg(packName = 'UN-NAMED') {
-    let msg = `The current pack is ${packName}. This pack is still in development and cannot be downloaded.`;
+function devPackMsg(packName, packDev = '') {
+    let msg = `The current pack is ${packName}.${packDev ? ` This pack is created by ${packDev}.` : ''} This pack is still in development and cannot be downloaded.`;
 
     return msg;
 }
 
 export const packlist = {
+    acalltoadventure: devPackMsg('A Call to Adventure', 'EnderGrimm'),
     amnesia: publicPackMsg('Amnesia', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/Amnesia'),
     atm3ex: publicPackMsg('All the Mods 3: Expert Mode', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-3-expert'),
     antichem: publicPackMsg('Anti-Matter Chemistry', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/antimatter-chemistry'),
@@ -27,6 +28,8 @@ export const packlist = {
     ddss: publicPackMsg('Dungeons, Dragons and Space Shuttles', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles'),
     dimensionzero: publicPackMsg('Dimension Zero', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/dimension-zero'),
     dw20: publicPackMsg('DireWolf20', 'FTB App', 'https://feed-the-beast.com/modpack/ftb_presents_direwolf20_1_16'),
+    engineerslife: publicPackMsg('Engineer\'s Life', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/engineers-life'),
+    engineerslife2: publicPackMsg('Engineer\'s Life 2', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/engineers-life-2'),
     enigmatica2: publicPackMsg('Enigmatica 2', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica2'),
     enigmatica2ex: publicPackMsg('Enigmatica 2: Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica2expert'),
     enigmatica2skyex: publicPackMsg('Enigmatica 2 Skyblock: Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/enigmatica2expertskyblock'),
