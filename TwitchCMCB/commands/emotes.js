@@ -8,11 +8,11 @@ export default {
         if (!options.isModPlus && !options.isBotAdmin) return;
 
         if (args.length > 0 && args.length < 2) {
-            chatClient.say(channel, '' + (emoteslist[args[0].toLowerCase()] || `${user}, '${$.firstArg(message)}' isn't a logged emote-set.`));
+            chatClient.say(options.channel, '' + (emoteList[args[0].toLowerCase()] || `${options.user}, '${args[0]}' isn't a logged emote-set.`));
         } else {
             chatClient.say(options.channel, `${options.user}, please specify an emoteset.`)
         }
 
-        return chatClient.say($.logChannel, $.createMessageEventLogMessage(channel, user, message))
+        return chatClient.say(options.logChan, options.logMsg)
     }
 }
