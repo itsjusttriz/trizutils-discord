@@ -43,6 +43,7 @@ export const packlist = {
     infinevo_expert: publicPackMsg('FTB Infinity Evolved Expert', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/ftb-infinity-evolved'),
     immersive_revolution: publicPackMsg('Immersive Revolution', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/immersive-revolution'),
     kikipack: devPackMsg('Kiki\'s Pack'),
+    levitated: publicPackMsg('Levitated', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/levitated'),
     madpack4: publicPackMsg('Madpack 4', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/madpack-4/'),
     mceternal: publicPackMsg('MCEternal', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/minecraft-eternal'),
     po3normal: publicPackMsg('Project Ozone 3 Normal', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward'),
