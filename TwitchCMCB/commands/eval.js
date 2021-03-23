@@ -8,7 +8,7 @@ export default {
             const result = await eval(args.join(' '));
             console.log('EVAL USED:', result);
         } catch (error) {
-            console.error('Error evaluating', code, error);
+            console.error('Error evaluating', result, error);
         }
 
         return chatClient.say(options.logChan, options.logMsg)
