@@ -31,7 +31,7 @@ export default async function (chatClient, apiClient, auth) {
 
     for (let x in TimerRunner) {
         for (let y in TimerRunner[x]) {
-            TimerRunner[x][y](chatClient, apiClient);
+            await TimerRunner[x][y](chatClient, apiClient);
         }
     }
 
