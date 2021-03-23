@@ -9,7 +9,6 @@ client.login(config.token)
 
 client.config = config;
 client.commands = new Discord.Collection();
-client.twitchTokens = {};
 client.guildIdList = new Map([
 	['nightshade_alley', '466402083466379267'],
 	['cmcb_official', '768289504603275265'],
