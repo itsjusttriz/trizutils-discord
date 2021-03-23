@@ -61,14 +61,14 @@ export const TimerRunner = {
                 setTimeout(() => {
                     if (!isLive) return;
 
-                    chatClient.say('finncapp', 'Wanna make Finn open some RoxBoxes on stream? SUBSCRIBE! And then go to - https://www.rox.gg/users/FinnCapp/roxbox/finncapp-finncapps-rox-box/freeclaim');
+                    chatClient.say('finncapp', 'Wanna make Finn open some RoxBoxes on stream? SUBSCRIBE! And then go to - https://www.rox.gg/users/FinnCapp/roxbox/finncapp-new-house-hype/freeclaim');
                 }, 1000 * 60 * 30);
             }, 1000 * 60 * 60);
         }
     },
     "#nottriz": {
         "testing": async (chatClient, apiClient) => {
-            const isLive = await apiClient.helix.streams.getStreamByUserName('finncapp');
+            const isLive = await apiClient.helix.streams.getStreamByUserName('nottriz');
 
             setInterval(() => {
                 if (TimerManager.get('#nottriz', 'testing') == false) return;
