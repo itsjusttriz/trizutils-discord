@@ -49,7 +49,7 @@ export default {
         }
 
         if (serverGameVersion) {
-            embed.addField('Game Version', serverMCVersion?.[1].toString(), true)
+            embed.addField('Game Version', serverGameVersion?.[1].toString(), true)
         }
 
         if (serverMPVersion) {
