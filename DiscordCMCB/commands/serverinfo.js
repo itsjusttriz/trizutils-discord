@@ -16,10 +16,10 @@ export default {
         let serverIP = message.content.match(/-ip "([^"]*)"/)
         let serverPort = message.content.match(/-port "([^"]*)"/)
         let serverPassword = message.content.match(/-password "([^"]*)"/)
-        let serverMCVersion = message.content.match(/-mcversion "([^"]*)"/)
+        let serverGameVersion = message.content.match(/-gameversion "([^"]*)"/)
         let serverMPVersion = message.content.match(/-mpversion "([^"]*)"/)
         let serverRules = message.content.match(/-rules "([^"]*)"/)
-        let serverDownload = message.content.match(/-mpdownload "([^"]*)"/)
+        let serverDownload = message.content.match(/-download "([^"]*)"/)
         let serverIssueTracker = message.content.match(/-issues "([^"]*)"/)
         let serverGuidance = message.content.match(/-guidance "([^"]*)"/)
 
@@ -48,8 +48,8 @@ export default {
             embed.addField('Password', serverPassword?.[1].toString(), true)
         }
 
-        if (serverMCVersion) {
-            embed.addField('Minecraft Version', serverMCVersion?.[1].toString(), true)
+        if (serverGameVersion) {
+            embed.addField('Game Version', serverMCVersion?.[1].toString(), true)
         }
 
         if (serverMPVersion) {
