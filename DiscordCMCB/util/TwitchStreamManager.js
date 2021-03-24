@@ -16,6 +16,7 @@ export const TwitchStreamManager = {
     getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
+
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     async getStreamUptime(caster) {
@@ -33,13 +34,14 @@ export const TwitchStreamManager = {
             }
         }).catch((error) => {
             console.error(error.response.data);
-            newRes = 'ERROR!'
             messageById.edit(this.getErrorEmbed(error));
         });
-        return res.data.data.length > 0 && res.data.data[0].type === 'live' ? res.data.data[0] : null;
+
+        if (!res) return new Error('getStreamStatus() returned null.');
+        return res.data.data[0] || null;
     },
     async getLiveEmbed(guild, caster, streamData) {
-        const embed = new MessageEmbed()
+        const live = new MessageEmbed()
             .setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
             .setColor(guild.me.displayHexColor)
             .addField('Channel', streamData.user_name)
@@ -48,28 +50,28 @@ export const TwitchStreamManager = {
             .addField('Viewers', streamData.viewer_count, true)
             .addField('Uptime', await this.getStreamUptime(caster))
             .addField('Link', `[Click to watch](https://twitch.tv/${streamData.user_name})`)
-            .setImage(streamData.thumbnail_url.replace('{width}x{height}', '1920x1080') + `?r=${this.getRandomInt(0, 999999)}`)
+            .setImage(streamData.thumbnail_url?.replace('{width}x{height}', '1920x1080') + `?r=${this.getRandomInt(0, 999999)}`)
             .setTimestamp()
 
-        return embed;
+        return live;
     },
     getOfflineEmbed(guild, caster) {
-        const embed = new MessageEmbed()
+        const notLive = new MessageEmbed()
             .setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
             .setColor(guild.me.displayHexColor)
             .setDescription(`<:backEndCross:809620114084593675> ${caster} is offline.\n\nKeep an eye on this channel to know when ${caster} is live!`)
             .setTimestamp()
 
-        return embed;
+        return notLive;
     },
     getErrorEmbed(error) {
-        const embed = new MessageEmbed()
+        const errorLive = new MessageEmbed()
             .setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
             .setColor('RED')
             .setDescription(`<:backEndMinus:809616743332708372> Cannot retrieve information! Contact Triz ASAP! <:backEndMinus:809616743332708372>\n\n\`${error}\``)
             .setTimestamp()
 
-        return embed;
+        return errorLive;
     },
     async post(client, caster, guildId, channelId, msgId, rolePingId) {
         if (typeof rolePingId === 'undefined') { rolePingId = '@everyone'; }
@@ -86,7 +88,7 @@ export const TwitchStreamManager = {
             msgGrab.edit('', this.getOfflineEmbed(guildGrab, caster));
             this.rolePingMap.set(caster, true);
         } else {
-            msgGrab.edit('', this.getLiveEmbed(guildGrab, caster, isLive));
+            msgGrab.edit('', await this.getLiveEmbed(guildGrab, caster, isLive));
             if (this.rolePingMap.get(caster) === true) {
                 channelGrab.send(roleGrab.toString()).then(m => {
                     m.delete({ timeout: 2000 });
