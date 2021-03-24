@@ -3,7 +3,7 @@ import * as defaults from '../datapull/defaults.js';
 import { TwitchTokenManager } from '../util/TwitchTokenManager.js';
 import { TwitchStreamManager } from '../util/TwitchStreamManager.js';
 
-export default async function (client, message) {
+export default async function (client) {
     console.log(chalk.cyan.bold(`===> ${chalk.green.bold('READY!')} <===`))
 
     TwitchTokenManager.import();
@@ -26,7 +26,7 @@ export default async function (client, message) {
     // Testing...
     setInterval(() => {
         if (TwitchStreamManager.testing !== true) return;
-        TwitchStreamManager.post(client, 'commanderroot', '768289504603275265', '768956331507580948', '823760937366192159');
+        TwitchStreamManager.post(client, 'commanderroot', '768289504603275265', '768956331507580948', '824088379796619285');
     }, 1000 * 5);
 
     // Real-Deal...
