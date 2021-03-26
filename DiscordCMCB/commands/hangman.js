@@ -7,6 +7,7 @@ export default {
     usage: "n!hangman",
     description: 'Hangman via Reactions. Brought to you by [TurkeyDev](https://discord.gg/DkexpJj).',
     permissions: 'VIEW_CHANNEL',
+    requiredArgs: '',
     hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 1000 })

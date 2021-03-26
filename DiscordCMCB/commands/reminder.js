@@ -5,6 +5,7 @@ export default {
     usage: "n!reminder <msg>",
     description: 'Posts a fancy embed with the reminder youve asked for.',
     permissions: 'MANAGE_MESSAGES',
+    requiredArgs: '[target] <msg>',
     hidden: false,
     async run(client, message, args) {
         message.delete({ timeout: 3000 })
@@ -15,6 +16,8 @@ export default {
 
         const remTarget = message.content.match(/-target "([^"]*)"/)
         const remMsg = message.content.match(/-msg "([^"]*)"/)
+
+        if (!args[0]) return message.reply(`Missing Parameters: \`${this.requiredArgs}\`.`);
 
         const embed = new MessageEmbed()
             .setAuthor(message.author.tag, message.author.displayAvatarURL())

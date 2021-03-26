@@ -5,6 +5,7 @@ export default {
     usage: "n!debug",
     description: 'Shows debug info',
     permissions: 'VIEW_CHANNEL',
+    requiredArgs: '',
     hidden: false,
     run(client, message, args) {
         if (message.author.id !== client.config.botOwnerId) return;

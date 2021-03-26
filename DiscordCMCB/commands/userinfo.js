@@ -5,6 +5,7 @@ export default {
     usage: 'n!userinfo [@user-mention / user_id]',
     description: 'Shows information about a user account.',
     permissions: 'MANAGE_GUILD',
+    requiredArgs: '[user]',
     hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 1000 });

@@ -3,6 +3,7 @@ export default {
     usage: 'n!setpresence <status> <...activity>',
     description: 'Sets custom status for the bot',
     permissions: '@botOwner',
+    requiredArgs: '<status> <activity>',
     hidden: true,
     run(client, message, args) {
         const [pStatus, ...pActivity] = args;
@@ -12,7 +13,7 @@ export default {
         message.delete({ timeout: 1000 })
 
         if (!args[0]) {
-            return message.reply('Gimme the data m9.');
+            return message.reply(`Missing Parameters: \`${this.requiredArgs}\`.`);
         } else {
             return client.user.setPresence({
                 activity: {

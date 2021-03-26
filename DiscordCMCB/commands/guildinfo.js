@@ -5,6 +5,7 @@ export default {
     usage: "n!guildinfo",
     description: 'Shows necessary Guild Info',
     permissions: 'MANAGE_GUILD',
+    requiredArgs: '',
     hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 1000 });

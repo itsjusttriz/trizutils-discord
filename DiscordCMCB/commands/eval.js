@@ -5,11 +5,14 @@ export default {
     usage: "n!eval <query>",
     description: 'Runs the JS eval() function on your Input',
     permissions: '@botOwner',
+    requiredArgs: '<query>',
     hidden: true,
     async run(client, message, args) {
         if (message.author.id !== client.config.botOwnerId) return;
 
         message.delete({ timeout: 1000 })
+
+        if (!args[0]) return message.reply(`Missing Parameters: \`${this.requiredArgs}\``);
 
         let result = await eval(args.join(' '))
 

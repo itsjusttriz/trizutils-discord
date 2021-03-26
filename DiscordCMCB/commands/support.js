@@ -6,6 +6,7 @@ export default {
     usage: "n!support",
     description: 'DMs the link to the CMCB_Official Discord Server',
     permissions: 'VIEW_CHANNEL',
+    requiredArgs: '',
     hidden: false,
     run: function (client, message, args) {
 

@@ -6,6 +6,7 @@ export default {
     usage: "n!invite",
     description: 'DMs you the invite link for the bot',
     permissions: 'VIEW_CHANNEL',
+    requiredArgs: '',
     hidden: false,
     run(client, message, args) {
 

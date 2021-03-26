@@ -21,7 +21,7 @@ const idStorage = [
 export default {
     name: 'fixrolemsg',
     usage: `n!fixrolemsg <option>`,
-    requiredArgs: [],
+    requiredArgs: '<option>',
     description: 'Fixes an embed in various guilds.',
     permissions: '@botOwner',
     hidden: true,
@@ -35,7 +35,7 @@ export default {
 
             let roleChan = message.guild.channels.cache.get(idStorage[0].channelIds[0].channelId);
 
-            if (!args[0] || this.requiredArgs.indexOf(args[0]) < 0) return message.reply(`Please specify an option. \`\`\`\n${this.usage} (Possible Options: ${this.requiredArgs?.join(', ')})\n\`\`\``).then(msg => msg.delete({ timeout: 1000 * 10 })).catch(console.error);
+            if (!args[0]) return message.reply(`Missing Parameters: \`${this.requiredArgs}\`.`);
 
             switch (args[0]) {
                 case 'general':

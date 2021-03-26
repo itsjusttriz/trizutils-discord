@@ -5,6 +5,7 @@ export default {
     usage: "n!serverinfo <...args>",
     description: 'Creates information embed for a game server',
     permissions: 'ADMINISTRATOR',
+    requiredArgs: '<name> [status] <ip> [port] [password] <gameversion> [mpversion] <rules> [download] [issues] [guidance]',
     hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 5000 })
@@ -23,6 +24,7 @@ export default {
         let serverIssueTracker = message.content.match(/-issues "([^"]*)"/)
         let serverGuidance = message.content.match(/-guidance "([^"]*)"/)
 
+        if (!args[0]) return message.reply(`Missing parameters: \`${this.requiredArgs}\` (*<> is required, [] is optional*).`);
 
         const embed = new MessageEmbed()
             .setFooter('NEW!')

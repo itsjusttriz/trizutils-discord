@@ -6,6 +6,7 @@ export default {
     usage: "n!roadmap",
     description: 'DMs the link to the bot roadmap',
     permissions: 'VIEW_CHANNEL',
+    requiredArgs: '',
     hidden: false,
     run(client, message, args) {
         message.delete({ timeout: 1000 })

@@ -3,6 +3,7 @@ export default {
     usage: 'n!kick <user-id> OR n!kick <user-mention>',
     description: 'Kicks a targetted member',
     permissions: ['KICK_MEMBERS'],
+    requiredArgs: '<member>',
     hidden: false,
     run(client, message, args) {
 

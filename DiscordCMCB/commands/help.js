@@ -6,6 +6,7 @@ export default {
     usage: 'n!help [command]',
     description: 'Shows information about commands.',
     permissions: 'VIEW_CHANNEL',
+    requiredArgs: '[command]',
     hidden: true,
     async run(client, message, args) {
         message.delete({ timeout: 3000 });
