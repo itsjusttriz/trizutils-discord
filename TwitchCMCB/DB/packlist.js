@@ -25,7 +25,7 @@ export const packlist = {
     blissfulbuilding: publicPackMsg('Blissful Building', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/blissful-building'),
     chaoticprogression: publicPackMsg('Chaotic Progression', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/chaotic-progression'),
     compactclaustrophobia: publicPackMsg('Compact Claustrophobia', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/compact-claustrophobia'),
-    damageinc: devPackMsg('Damage Inc', 'Kikiisyourfriend'),
+    damageinc: publicPackMsg('Damage Inc', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/damage-inc-expert'),
     ddss: publicPackMsg('Dungeons, Dragons and Space Shuttles', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/dungeons-dragons-and-space-shuttles'),
     dimensionzero: publicPackMsg('Dimension Zero', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/dimension-zero'),
     dw20: publicPackMsg('DireWolf20', 'FTB App', 'https://feed-the-beast.com/modpack/ftb_presents_direwolf20_1_16'),
