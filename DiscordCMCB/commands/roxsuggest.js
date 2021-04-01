@@ -15,7 +15,7 @@ export default {
         if (!args[0]) return message.reply(`Missing Parameters: \`${this.requiredArgs}\`.`);
 
         const embed = new MessageEmbed()
-            .setAuthor(message.author.name, message.author.displayAvatarURL())
+            .setAuthor(message.author.tag, message.author.displayAvatarURL())
             .setTitle('Rox Suggestion')
             .setDescription(args.join(' '))
             .setTimestamp()
