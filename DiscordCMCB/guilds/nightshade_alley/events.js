@@ -3,10 +3,68 @@ import { MessageEmbed } from "discord.js";
 const guildChannelMap = new Map([
 	['mainLogChannel', '509833053171089428'],
 	['roleLogChannel', '763918843021492265'],
-	['joinLogChannel', '482301995408162817']
+	['joinLogChannel', '482301995408162817'],
+	['publicLiveChannel', '509828822200352810']
 ])
 
-export async function handleGuildMemberUpdate(client, oldMember, newMember) {
+const guildLiveStatusMap = new Map();
+
+async function testPresence(client, oldPresence, newPresence) {
+	let channel = oldPresence.guild.channels.cache.get(guildChannelMap.get('mainLogChannel'));
+
+	if (newPresence.user.id !== '228167686293553164') return;
+}
+
+async function isStreaming(client, oldPresence, newPresence) {
+	let channel = oldPresence.guild.channels.cache.get(guildChannelMap.get('publicLiveChannel'));
+
+	if (oldPresence.activities.length >= 1 && newPresence.activities.length >= 1) {
+
+		const oldActivity = oldPresence.activities[0];
+		const newActivity = newPresence.activities[0];
+		const wasLive = oldActivity.name === 'Twitch' && oldActivity.type === 'STREAMING';
+		const isLive = newActivity.name === 'Twitch' && newActivity.type === 'STREAMING';
+
+		if (wasLive == isLive || isLive == wasLive) return;
+
+		if (isLive) {
+
+			let liveEmbed = new MessageEmbed()
+				.setTitle('<:TwitchSymbol:809538716933816321> Twitch Live Stream Notification :bell:')
+				.setColor(newPresence.member.displayHexColor || '#FEFEFE')
+				.addField('Member', newPresence.member)
+				.addField('Channel', newActivity.url.replace('https://www.twitch.tv/', ''))
+				.addField('Stream Title', newActivity.details)
+				.addField('Stream Game', newActivity.state, true)
+				.addField('Link', `[Click to watch](${newActivity.url})`)
+				.setThumbnail(newPresence.user.displayAvatarURL({ size: 512 }))
+				.setTimestamp()
+
+			return channel.send(liveEmbed).then(m => guildLiveStatusMap.set(newPresence.user.id, m.id));
+		}
+
+		if (!isLive) {
+
+			if (!guildLiveStatusMap.has(newPresence.user.id)) return;
+
+			const msgObject = await channel.messages.fetch(guildLiveStatusMap.get(newPresence.user.id));
+
+			let offlineEmbed = new MessageEmbed()
+				.setTitle(':x: Channel Offline :x:')
+				.setColor(client.colorWheel.get('RED'))
+				.addField('Member', newPresence.member)
+				.addField('Channel', msgObject.embeds[0].fields[1].value)
+				.addField('Follow Them Here', `[Link](${msgObject.embeds[0].fields[4].value.match(/\((.*?)\)/i)[1]})`)
+				.setThumbnail(newPresence.user.displayAvatarURL({ size: 512 }))
+
+			return msgObject.edit(offlineEmbed).then(() => guildLiveStatusMap.delete(newPresence.user.id));
+		}
+
+	}
+}
+
+async function roleUpdates(client, oldMember, newMember) {
+
 	let channel = newMember.guild.channels.cache.get(guildChannelMap.get('roleLogChannel'))
 	// If the role(s) are present on the old member object but no longer on the new one (i.e role(s) were removed)
 
@@ -38,6 +96,23 @@ export async function handleGuildMemberUpdate(client, oldMember, newMember) {
 
 		return channel.send(embed2)
 	}
+}
+
+/*
+
+	ACTUAL EVENT HANDLERS
+
+*/
+
+export async function handleGuildMemberUpdate(client, oldMember, newMember) {
+
+	roleUpdates(client, oldMember, newMember);
+}
+
+export async function handlePresenceUpdate(client, oldPresence, newPresence) {
+
+	testPresence(client, oldPresence, newPresence);
+	isStreaming(client, oldPresence, newPresence);
 }
 
 export async function handleGuildMemberAdd(client, member) {
