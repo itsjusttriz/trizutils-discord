@@ -10,17 +10,17 @@ const guildChannelMap = new Map([
 const guildLiveStatusMap = new Map();
 
 async function testPresence(client, oldPresence, newPresence) {
-	let channel = oldPresence.guild.channels.cache.get(guildChannelMap.get('mainLogChannel'));
+	let channel = newPresence.guild.channels.cache.get(guildChannelMap.get('mainLogChannel'));
 
 	if (newPresence.user.id !== '228167686293553164') return;
 }
 
 async function isStreaming(client, oldPresence, newPresence) {
-	let channel = oldPresence.guild.channels.cache.get(guildChannelMap.get('publicLiveChannel'));
+	let channel = newPresence.guild.channels.cache.get(guildChannelMap.get('publicLiveChannel'));
 
-	if (oldPresence.activities.length >= 1 && newPresence.activities.length >= 1) {
+	if (oldPresence?.activities.length >= 1 && newPresence.activities.length >= 1) {
 
-		const oldActivity = oldPresence.activities[0];
+		const oldActivity = oldPresence?.activities[0];
 		const newActivity = newPresence.activities[0];
 		const wasLive = oldActivity.name === 'Twitch' && oldActivity.type === 'STREAMING';
 		const isLive = newActivity.name === 'Twitch' && newActivity.type === 'STREAMING';
