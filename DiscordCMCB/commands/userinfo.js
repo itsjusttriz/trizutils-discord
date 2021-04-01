@@ -17,19 +17,26 @@ export default {
             .setTimestamp()
             .setColor(message.member.displayHexColor)
 
+        let perms, roles = [];
+
         if (!args[0]) {
+
+            roles = message.member.roles.cache.map(r => r.name);
+            perms = message.member.permissions.toArray();
+
             const currentUser = {
                 memArr: [
-                    `• Nickname: ${message.member.nickname ? `\`${message.member.nickname}\`` : 'None'}`,
-                    `• Roles: ${message.member.roles.cache.map(r => `\`${r.name}\``)}`,
-                    `• Joined: ${`\`${message.member.joinedAt}\``}`,
-                    `• Activity: ${message.member.presence.activities ? `\`${message.member.presence.activities[0].name}\`` : '`None`'}`
+                    `• Nickname: \`\`\`${message.member.nickname ? message.member.nickname : 'None'}\`\`\``,
+                    `• Roles: \`\`\`${roles.length > 1 ? roles.sort().join('\n') : roles[0] || 'None'}\`\`\``,
+                    `• Permissions: \`\`\`${perms.sort().join('\n')}\`\`\``,
+                    `• Joined: \`\`\`${message.member.joinedAt}\`\`\``,
+                    `• Activity: \`\`\`${message.member.presence.activities[0] ? message.member.presence.activities[0].name : 'None'}\`\`\``
                 ],
                 userArr: [
-                    `• ID: ${`\`${message.author.id}\``}`,
-                    `• Username: ${`\`${message.author.tag}\``}`,
-                    `• Created: ${`\`${message.author.createdAt}\``}`,
-                    `• Status: ${`${message.member.presence.status ? `\`${message.member.presence.status}\`` : '`None`'}`}`
+                    `• ID: \`\`\`${message.author.id}\`\`\``,
+                    `• Username: \`\`\`${message.author.tag}\`\`\``,
+                    `• Created: \`\`\`${message.author.createdAt}\`\`\``,
+                    `• Status: \`\`\`${message.member.presence.status ? message.member.presence.status : 'None'}\`\`\``
                 ]
             }
 
@@ -41,18 +48,22 @@ export default {
 
             const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
+            roles = member.roles.cache.map(r => r.name);
+            perms = member.permissions.toArray();
+
             const chosenUser = {
                 memArr: [
-                    `• Nickname: ${member.nickname ? `\`${member.nickname}\`` : 'None'}`,
-                    `• Roles: ${member.roles.cache.map(r => `\`${r.name}\``) ?? 'None'}`,
-                    `• Joined: ${`\`${member.joinedAt ?? '-'}\``}`,
-                    `• Activity: ${member.presence && member.presence.activities[0] ? `\`${member.presence.activities[0].name}\`` : 'None'}`
+                    `• Nickname: \`\`\`${member.nickname ? member.nickname : 'None'}\`\`\``,
+                    `• Roles: \`\`\`${roles.length > 1 ? roles.sort().join('\n') : roles[0] || 'None'}\`\`\``,
+                    `• Permissions: \`\`\`${perms.sort().join('\n')}\`\`\``,
+                    `• Join \`\`\`${member.joinedAt || '-'}\`\`\``,
+                    `• Activity: \`\`\`${member.presence && member.presence.activities[0] ? member.presence.activities[0].name : 'None'}\`\`\``
                 ],
                 userArr: [
-                    `• ID: ${`\`${member.user.id}\``}`,
-                    `• Username: ${`\`${member.user.tag}\``}`,
-                    `• Created: ${`\`${member.user.createdAt}\``}`,
-                    `• Status: ${`${member.user.presence.status ? `\`${member.user.presence.status}\`` : 'None'}`}`
+                    `• ID: \`\`\`${member.user.id}\`\`\``,
+                    `• Username: \`\`\`${member.user.tag}\`\`\``,
+                    `• Created: \`\`\`${member.user.createdAt}\`\`\``,
+                    `• Status: \`\`\`${member.user.presence.status ? member.user.presence.status : 'None'}\`\`\``
                 ]
             }
 
