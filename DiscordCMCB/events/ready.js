@@ -36,5 +36,6 @@ export default async function (client) {
         TwitchStreamManager.post(client, 'bmwhd1', '314737648839294986', '780914960401694741', '780915508425261056');
         TwitchStreamManager.post(client, 'domosplace', '155849052850880513', '770293246215192617', '770293386942218270', '797241646454407178');
         TwitchStreamManager.post(client, 'finncapp', '585627689612869645', '770296176565682266', '770302037169930300', '744403558522159144');
+        TwitchStreamManager.post(client, 'blitzyuk', '758341730575319120', '827757443118792734', '827757994078502983')
     }, 1000 * 60 * 5);
 }
