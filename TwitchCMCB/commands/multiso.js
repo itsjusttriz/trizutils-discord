@@ -10,14 +10,14 @@ export default {
         } else {
             chatClient.say(options.channel, "Check out the following nerds! You'll thank me later ;)");
             args.forEach(async streamer => {
-                let stream = await options.apiClient.helix.streams.getStreamByUserName(streamer.toLowerCase())
+                let findUser = await options.apiClient.helix.users.getUserByName(streamer.toLowerCase()) || null;
+                let findChannel = await options.apiClient.helix.channels.getChannelInfo(findUser?.id) || null;
 
-                if (!stream) return chatClient.say(options.channel, `Caster: ${streamer} | Link: https://twitch.tv/${streamer} | Game: Unknown (NOT LIVE)`);
+                if (!findUser) return chatClient.say(options.channel, `User not found: ${streamer}`);
 
-                let caster = (await stream.userDisplayName)
-                let game = (await stream.getGame()).name;
+                if (!findChannel) return chatClient.say(options.channel, `Channel not found: ${streamer}`);
 
-                chatClient.say(options.channel, `Caster: ${caster} | Link: https://twitch.tv/${caster} | Game: ${game} (LIVE)`);
+                return chatClient.say(options.channel, `Caster: ${findChannel?.displayName} | Link: https://twitch.tv/${findChannel?.name} | Latest Category: ${findChannel?.gameName}`);
             });
         }
 
