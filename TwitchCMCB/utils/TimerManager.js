@@ -1,5 +1,12 @@
 import * as fs from 'fs';
 
+const getStream = async (api, username) => {
+    const state = await api.helix.streams.getStreamByUserName(username);
+
+    if (!state) return false;
+    return true;
+}
+
 export const TimerManager = {
     statuses: null,
     path: './DB/JSON-Storage/storedTimerStatuses.json',
@@ -12,7 +19,9 @@ export const TimerManager = {
         this.backup();
     },
     get(channel, timer) {
-        return this.statuses[channel][timer];
+        if (this.statuses[channel]?.[timer] === true) return true;
+
+        return false;
     },
     backup() {
         fs.writeFile(this.path, JSON.stringify(this.statuses), err => {
@@ -36,11 +45,11 @@ export const TimerManager = {
 export const TimerRunner = {
     "#domosplace": {
         "90sCommercial": async (chatClient, apiClient) => {
-            const isLive = await apiClient.helix.streams.getStreamByUserName('domosplace');
+            const caster = 'domosplace';
 
-            setInterval(() => {
-                if (TimerManager.get('#domosplace', '90sCommercial') == false) return;
-                if (!isLive) return;
+            setInterval(async () => {
+                if (!TimerManager.get('#domosplace', '90sCommercial')) return;
+                if (!(await getStream(apiClient, caster))) return;
 
                 chatClient.say('domosplace', '/me Running a 90 second ad..');
                 chatClient.say('domosplace', '/commercial 90');
@@ -50,31 +59,33 @@ export const TimerRunner = {
     },
     "#finncapp": {
         "roxSellout": async (chatClient, apiClient) => {
-            const isLive = await apiClient.helix.streams.getStreamByUserName('finncapp');
+            const caster = 'finncapp';
 
-            setInterval(() => {
-                if (TimerManager.get('#finncapp', 'roxSellout') == false) return;
-                if (!isLive) return;
+            setInterval(async () => {
+                if (!TimerManager.get('#finncapp', 'roxSellout')) return;
+                if (!(await getStream(apiClient, caster))) return;
 
-                chatClient.say('finncapp', 'ROX! GET YOUR ROX HERE!');      // A
+                chatClient.say('finncapp', 'ROX! GET YOUR ROX HERE!');
                 chatClient.say('finncapp', '!rox');
-                setTimeout(() => {
-                    if (!isLive) return;
+                setTimeout(async () => {
+                    if (!TimerManager.get('#finncapp', 'roxSellout')) return;
+                    if (!(await getStream(apiClient, caster))) return;
 
                     chatClient.say('finncapp', 'Wanna make Finn open some RoxBoxes on stream? SUBSCRIBE! And then go to - https://www.rox.gg/users/FinnCapp/roxbox/finncapp-new-house-hype/freeclaim');
                 }, 1000 * 60 * 30);
             }, 1000 * 60 * 60);
         }
     },
-    "#nottriz": {
+    "#itsjusttriz": {
         "testing": async (chatClient, apiClient) => {
-            const isLive = await apiClient.helix.streams.getStreamByUserName('nottriz');
+            const caster = 'itsjusttriz';
 
-            setInterval(() => {
-                if (TimerManager.get('#nottriz', 'testing') == false) return;
-                if (!isLive) return console.log('notlive');
+            setInterval(async () => {
+                if (!TimerManager.get('#itsjusttriz', 'testing')) return;
+                if (!(await getStream(apiClient, caster))) return;
 
-                chatClient.say('nottriz', 'This works?!')
+                console.log('Spam.')
+                // chatClient.say('itsjusttriz', 'This works?!')
             }, 1000 * 5);
         }
     }
