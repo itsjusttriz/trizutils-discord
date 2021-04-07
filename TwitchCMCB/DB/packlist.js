@@ -66,6 +66,9 @@ export const packlist = {
     towncraft: publicPackMsg('TownCraft', 'CurseForge', 'https://minecraft.curseforge.com/projects/towncraft'),
     trillionaire: publicPackMsg('Minecraft Trillionaire', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/minecraft-trillionaire'),
     volcanoblock: publicPackMsg('Volcano Block', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/volcano-block'),
+    vaulthunters: publicPackMsg('Vault Hunters', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/vault-hunters-official-modpack'),
+
+    // Non-Modded
     vanilla: 'This is Vanilla Minecraft. (Ask a Mod/Broadcaster about the version)',
     vanillaplus: 'This is Vanilla Minecraft with a few minor mods added for convenience. (Ask a Mod/Broadcaster about the version)',
     none: 'There is currently no modpack being played, right now.'
