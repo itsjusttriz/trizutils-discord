@@ -78,8 +78,8 @@ export default async function (chatClient, channel, user, subInfo, msg) {
         case '#xobias':
             (await ChannelImports.XOBIAS).handleResub(chatClient, options)
             break;
-        case '#zeroxfusionz':
-            (await ChannelImports.ZEROXFUSIONZ).handleResub(chatClient, options)
-            break;
+        // case '#zeroxfusionz':
+        //     (await ChannelImports.ZEROXFUSIONZ).handleResub(chatClient, options)
+        //     break;
     }
 }

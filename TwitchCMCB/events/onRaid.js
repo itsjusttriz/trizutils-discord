@@ -77,8 +77,8 @@ export default async function (chatClient, channel, user, raidInfo, msg) {
         case '#xobias':
             (await ChannelImports.XOBIAS).handleRaid(chatClient, options)
             break;
-        case '#zeroxfusionz':
-            (await ChannelImports.ZEROXFUSIONZ).handleRaid(chatClient, options)
-            break;
+        // case '#zeroxfusionz':
+        //     (await ChannelImports.ZEROXFUSIONZ).handleRaid(chatClient, options)
+        //     break;
     }
 }
