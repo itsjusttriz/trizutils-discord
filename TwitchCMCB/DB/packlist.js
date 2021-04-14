@@ -1,17 +1,17 @@
 function publicPackMsg(packName, packLauncher, packLink) {
-    let msg = `The current pack is ${packName || '@UNREGISTERED@'}. You can download it from ${packLauncher || 'Nowhere'}. -> ${packLink || '[No Link]'}`;
+    const msg = `The current pack is ${packName || '@UNREGISTERED@'}. You can download it from ${packLauncher || 'Nowhere'}. -> ${packLink || '[No Link]'}`;
 
     return msg;
 }
 
 function betaPackMsg(packName, packLauncher, packLink) {
-    let msg = `The current pack is ${packName || '@UNREGISTERED@'} [BETA]. You can download it from ${packLauncher || 'Nowhere'}. -> ${packLink || '[No Link]'}`;
+    const msg = `The current pack is ${packName || '@UNREGISTERED@'} [BETA]. You can download it from ${packLauncher || 'Nowhere'}. -> ${packLink || '[No Link]'}`;
 
     return msg;
 }
 
 function devPackMsg(packName, packDev = '') {
-    let msg = `The current pack is ${packName}.${packDev ? ` This pack is created by ${packDev}.` : ''} This pack is still in development and cannot be downloaded.`;
+    const msg = `The current pack is ${packName}.${packDev ? ` This pack is created by ${packDev}.` : ''} This pack is still in development and cannot be downloaded.`;
 
     return msg;
 }
@@ -20,6 +20,8 @@ export const packlist = {
     acalltoadventure: devPackMsg('A Call to Adventure', 'EnderGrimm'),
     amnesia: publicPackMsg('Amnesia', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/Amnesia'),
     atm3ex: publicPackMsg('All the Mods 3: Expert Mode', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-3-expert'),
+    atm6: publicPackMsg('All the Mods 6', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-6'),
+    atm6sky: publicPackMsg('All the Mods 6: To The Sky', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-6-to-the-sky-atm6s'),
     antichem: publicPackMsg('Anti-Matter Chemistry', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/antimatter-chemistry'),
     astroblock: publicPackMsg('AstroBlock', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/astroblock'),
     blissfulbuilding: publicPackMsg('Blissful Building', 'CurseForge', 'https://www.curseforge.com/minecraft/modpacks/blissful-building'),
@@ -72,4 +74,4 @@ export const packlist = {
     vanilla: 'This is Vanilla Minecraft. (Ask a Mod/Broadcaster about the version)',
     vanillaplus: 'This is Vanilla Minecraft with a few minor mods added for convenience. (Ask a Mod/Broadcaster about the version)',
     none: 'There is currently no modpack being played, right now.'
-}
+};
