@@ -3,8 +3,8 @@ import chalk from 'chalk';
 import { botAdmin } from '../config.js';
 import * as $ from '../datapull/defaults.js';
 
-let hearts = '<3'
-let filePath = './extcmd/hearts.emotes.txt';
+let hearts = '<3';
+const filePath = './extcmd/hearts.emotes.txt';
 
 fs.readFile(filePath, (err, data) => {
 	try {
@@ -19,7 +19,7 @@ fs.readFile(filePath, (err, data) => {
 });
 
 export function onMessage(chatClient, channel, user, message, msg) {
-	let newMsg = message;
+	const newMsg = message;
 	message = message.toLowerCase();
 	if (message.startsWith('!hearts') || message.startsWith('!heartspam')) {
 		if (!$.isModPlus(msg) && botAdmin.indexOf(user) < 0) return;
@@ -29,6 +29,7 @@ export function onMessage(chatClient, channel, user, message, msg) {
 		fs.open(filePath, 'a', (err, fd) => {
 			try {
 				fs.write(fd, ` ${newMsg.substring(10)}`, (err) => {
+					if (err) return console.error(err);
 					try {
 						hearts = `${hearts} ${newMsg.substring(10)}`;
 					} catch (e) {
@@ -45,8 +46,7 @@ export function onMessage(chatClient, channel, user, message, msg) {
 			try {
 				hearts = data.toString().replace(` ${newMsg.substring(10)}`, '');
 				fs.writeFile(filePath, hearts, (err) => {
-					if (err)
-						return console.log(err);
+					if (err) return console.log(err);
 				});
 			} catch (e) {
 				console.log(chalk.red(e));

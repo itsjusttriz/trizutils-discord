@@ -40,4 +40,4 @@ export const DeathsManager = {
             if (err) return console.error(err);
         });
     }
-}
+};

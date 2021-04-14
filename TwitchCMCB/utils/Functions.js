@@ -2,13 +2,13 @@ import { CooldownManager } from '../utils/CooldownManager.js';
 
 export function planToName(plan) {
     const planStrings = {
-        "1000": "Tier 1",
-        "2000": "Tier 2",
-        "3000": "Tier 3",
-        "Prime": "Prime"
+        '1000': 'Tier 1',
+        '2000': 'Tier 2',
+        '3000': 'Tier 3',
+        'Prime': 'Prime'
     };
 
-    return planStrings[plan] ?? "";
+    return planStrings[plan] ?? '';
 }
 
 export function randomInt(min, max) {
@@ -23,7 +23,7 @@ export function BlacklistedTerms(options) {
     switch (options.channel) {
         case '#immp':
             if (options.message.toLowerCase().includes('respect the grind')) {
-                options.chatClient.ban(options.channel, options.user, '[CMCB Moderation] Blacklisted Phrase.')
+                options.chatClient.ban(options.channel, options.user, '[CMCB Moderation] Blacklisted Phrase.');
             }
             break;
         case '#jayrockbird':
@@ -49,7 +49,7 @@ export async function ExtraCommands(options) {
 
                 CooldownManager.set(exCommand, options.channel, true);
                 setTimeout(() => {
-                    CooldownManager.clear(exCommand, channel);
+                    CooldownManager.clear(exCommand, options.channel);
                     options.chatClient.say(options.logChan, `${exCommand}'s cooldown has ended in ${options.channel}.`);
                 }, 1000 * 30);
 
@@ -66,7 +66,7 @@ export async function ExtraCommands(options) {
 
                 CooldownManager.set(exCommand, options.channel, true);
                 setTimeout(() => {
-                    CooldownManager.clear(exCommand, channel);
+                    CooldownManager.clear(exCommand, options.channel);
                     options.chatClient.say(options.logChan, `${exCommand}'s cooldown has ended in ${options.channel}.`);
                 }, 1000 * 60 * 3);
 
@@ -117,11 +117,11 @@ export async function ExtraCommands(options) {
 
                 if (CooldownManager.get(exCommand, options.channel) == true) return options.chatClient.say(options.channel, 'Cooldown is active.');
 
-                if (!exArgs[0]) return chatClient.say(options.channel, `${options.user}, you must specify a raid target! (e.g. !raid ${options.channel.substr(1)})`);
+                if (!exArgs[0]) return options.chatClient.say(options.channel, `${options.user}, you must specify a raid target! (e.g. !raid ${options.channel.substr(1)})`);
 
-                options.chatClient.action(options.channel, 'Reninsane welcomes you to the madhouse!')
-                options.chatClient.action(options.channel, 'Reninsane welcomes you to the madhouse!')
-                options.chatClient.action(options.channel, 'Reninsane welcomes you to the madhouse!')
+                options.chatClient.action(options.channel, 'Reninsane welcomes you to the madhouse!');
+                options.chatClient.action(options.channel, 'Reninsane welcomes you to the madhouse!');
+                options.chatClient.action(options.channel, 'Reninsane welcomes you to the madhouse!');
                 options.chatClient.say(options.channel, `/raid ${exArgs[0]}`);
 
                 CooldownManager.set(exCommand, options.channel, true);

@@ -34,4 +34,4 @@ export const CooldownManager = {
             if (err) return console.error(err);
         });
     }
-}
+};

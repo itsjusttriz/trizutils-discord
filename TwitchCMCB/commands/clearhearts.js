@@ -7,8 +7,8 @@ export default {
     run(chatClient, message, args, options) {
         if (!options.isBotAdmin) return;
 
-        HeartsManager.clearCache();
+        HeartsManager.clearCache(options);
 
         return chatClient.say(options.logChan, options.logMsg);
     }
-}
+};

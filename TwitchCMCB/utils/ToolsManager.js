@@ -40,4 +40,4 @@ export const ToolsManager = {
             if (err) return console.error(err);
         });
     }
-}
+};

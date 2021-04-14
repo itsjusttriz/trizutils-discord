@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 import { ChannelManager } from '../utils/ChannelManager.js';
 import { DeathsManager } from '../utils/DeathsManager.js';
-import { MoSManager } from "../utils/MoSManager.js";
-import { ToolsManager } from "../utils/ToolsManager.js";
+import { MoSManager } from '../utils/MoSManager.js';
+import { ToolsManager } from '../utils/ToolsManager.js';
 import { CooldownManager } from '../utils/CooldownManager.js';
 import { TimerManager, TimerRunner } from '../utils/TimerManager.js';
-import { HeartsManager } from "../utils/HeartsManager.js";
+import { HeartsManager } from '../utils/HeartsManager.js';
 
 export default async function (chatClient, apiClient, auth) {
     console.log(chalk.cyan.bold(`===> ${chalk.green.bold('READY!')} <===`));
@@ -15,7 +15,7 @@ export default async function (chatClient, apiClient, auth) {
         random() {
             return this.colorList[Math.floor((Math.random() * this.colorList.length))];
         }
-    }
+    };
 
     setInterval(function () {
         chatClient.changeColor(nonTurboColors.random());
@@ -29,8 +29,8 @@ export default async function (chatClient, apiClient, auth) {
     TimerManager.import();
     HeartsManager.import();
 
-    for (let x in TimerRunner) {
-        for (let y in TimerRunner[x]) {
+    for (const x in TimerRunner) {
+        for (const y in TimerRunner[x]) {
             await TimerRunner[x][y](chatClient, apiClient);
         }
     }

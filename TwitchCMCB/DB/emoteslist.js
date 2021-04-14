@@ -11,5 +11,5 @@ export const emoteList = {
     lgbt2020: 'PrideDragon PrideCrown PrideWave PridePaint PrideWorld PrideCute PrideKoala PrideHeyyy PrideLove PrideStrong PrideUnicorn PridePog PrideUwu PrideRhino PridePenguin PrideLGBTea PrideToucan PrideFlower PrideHeartL PrideHeartR PrideLaugh PrideShrug PrideLion PrideRise PrideFloat',
     hyperscape: 'HyperLost HyperCrate HyperSlam HyperReveal HyperParkour HyperMine HyperMayhem HyperJump HyperHex HyperHaste HyperGravity HyperCrown HyperCooldown HyperCheese HyperTiger',
     kpop: 'KPOPselfie KPOPmerch KPOPheart KPOPfan KPOPdance KPOPcheer KPOPTT KPOPvictory KPOPlove KPOPglow',
-    hindsight2020: '2020Celebrate 2020Shhh 2020Victory 2020MaskUp 2020Wish 2020Takeout 2020ByeGuys 2020Unity 2020Shred 2020Forward 2020Unroll 2020Drop 2020Glitchy 2020Partnered 2020Snacking 2020Suspicious 2020Surprise 2020SpeakUp 2020Selfie 2020Rivalry 2020Delivery 2020Gift 2020HomeWork 2020Pajamas 2020Party 2020Capture',
-}
+    hindsight2020: '2020Celebrate 2020Shhh 2020Victory 2020MaskUp 2020Wish 2020Takeout 2020ByeGuys 2020Unity 2020Shred 2020Forward 2020Unroll 2020Drop 2020Glitchy 2020Partnered 2020Snacking 2020Suspicious 2020Surprise 2020SpeakUp 2020Selfie 2020Rivalry 2020Delivery 2020Gift 2020HomeWork 2020Pajamas 2020Party 2020Capture'
+};

@@ -5,7 +5,7 @@ const getStream = async (api, username) => {
 
     if (!state) return false;
     return true;
-}
+};
 
 export const TimerManager = {
     statuses: null,
@@ -40,11 +40,11 @@ export const TimerManager = {
             if (err) return console.error(err);
         });
     }
-}
+};
 
 export const TimerRunner = {
-    "#domosplace": {
-        "90sCommercial": async (chatClient, apiClient) => {
+    '#domosplace': {
+        '90sCommercial': async (chatClient, apiClient) => {
             const caster = 'domosplace';
 
             setInterval(async () => {
@@ -57,8 +57,8 @@ export const TimerRunner = {
             }, 1000 * 60 * 30);
         }
     },
-    "#finncapp": {
-        "roxSellout": async (chatClient, apiClient) => {
+    '#finncapp': {
+        'roxSellout': async (chatClient, apiClient) => {
             const caster = 'finncapp';
 
             setInterval(async () => {
@@ -76,17 +76,17 @@ export const TimerRunner = {
             }, 1000 * 60 * 60);
         }
     },
-    "#itsjusttriz": {
-        "testing": async (chatClient, apiClient) => {
+    '#itsjusttriz': {
+        'testing': async (chatClient, apiClient) => {
             const caster = 'itsjusttriz';
 
             setInterval(async () => {
                 if (!TimerManager.get('#itsjusttriz', 'testing')) return;
                 if (!(await getStream(apiClient, caster))) return;
 
-                console.log('Spam.')
+                console.log('Spam.');
                 // chatClient.say('itsjusttriz', 'This works?!')
             }, 1000 * 5);
         }
     }
-}
+};

@@ -10,7 +10,8 @@ export const ChannelManager = {
             chatClient.join(chanName);
             this.list.push(chanName);
             return this.backup();
-        } else return chatClient.say(options.channel, `${options.user}, '${chanName}' is already stored to the DB.`)
+        }
+        return chatClient.say(options.channel, `${options.user}, '${chanName}' is already stored to the DB.`);
     },
     remove(chatClient, options, chanName) {
         const index = this.list.indexOf(chanName);
@@ -20,14 +21,15 @@ export const ChannelManager = {
             chatClient.part(chanName);
             this.list.splice(index, 1);
             return this.backup();
-        } else return chatClient.say(options.channel, `${options.user}, '${chanName}' is not currently stored in the DB.`);
+        }
+        return chatClient.say(options.channel, `${options.user}, '${chanName}' is not currently stored in the DB.`);
     },
     backup() {
         const path = './DB/JSON-Storage/storedChannels.json';
 
         fs.writeFile(path, JSON.stringify(this.list), (err) => {
-            if (err) return console.error(err)
-        })
+            if (err) return console.error(err);
+        });
     },
     restore(cb) {
         const path = './DB/JSON-Storage/storedChannels.json';
@@ -49,4 +51,4 @@ export const ChannelManager = {
             });
         });
     }
-}
+};

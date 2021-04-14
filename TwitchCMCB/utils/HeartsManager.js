@@ -3,7 +3,7 @@ import * as fs from 'fs';
 export const HeartsManager = {
     heartString: null,
     add(options, heart) {
-        const index = this.heartString.indexOf(heart)
+        const index = this.heartString.indexOf(heart);
 
         if (index < 0) {
             this.heartString.push(heart);
@@ -14,7 +14,7 @@ export const HeartsManager = {
         }
     },
     remove(options, heart) {
-        const index = this.heartString.indexOf(heart)
+        const index = this.heartString.indexOf(heart);
 
         if (index > -1) {
             this.heartString.splice(index, 1);
@@ -24,10 +24,10 @@ export const HeartsManager = {
             return options.chatClient.say(options.channel, `DB doesn't currently contain ${heart}`);
         }
     },
-    clearCache() {
+    clearCache(options) {
         this.heartString = ['<3'];
         this.backup();
-        return options.chatClient.say(options.channel, `Cleared the hearts cache!`);
+        return options.chatClient.say(options.channel, 'Cleared the hearts cache!');
     },
     backup() {
         const path = './DB/JSON-Storage/storedHearts.json';
@@ -50,4 +50,4 @@ export const HeartsManager = {
             if (err) return console.error(err);
         });
     }
-}
+};

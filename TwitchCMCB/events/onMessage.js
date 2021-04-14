@@ -3,7 +3,7 @@ import { config } from '../config.js';
 import { BlacklistedTerms, ExtraCommands } from '../utils/Functions.js';
 
 export default async function onMessage(chatClient, apiClient, channel, user, message, msg) {
-    console.log(`${chalk.blue(`[${channel}]`)} ${chalk.magenta(`<${user}>`)} ${chalk.grey('|')} ${chalk.white.bold(`${message}`)}`)
+    console.log(`${chalk.blue(`[${channel}]`)} ${chalk.magenta(`<${user}>`)} ${chalk.grey('|')} ${chalk.white.bold(`${message}`)}`);
 
     const args = message.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
@@ -25,15 +25,14 @@ export default async function onMessage(chatClient, apiClient, channel, user, me
         disabledCommand: `@${user}, This command has been temporarily disabled.`,
         noSubApiAuth: `Missing Authentication!! Please Authenticate here and try again - ${chatClient.redirects.get('subApiAuth')}`,
         logChan: 'nottriz',
-        logMsg: `[${channel}] <${user}> ${message}`,
-    }
+        logMsg: `[${channel}] <${user}> ${message}`
+    };
 
     BlacklistedTerms(options);
     ExtraCommands(options);
 
     // Ignore messages not starting with the prefix (in config.json)
-    if (!message.startsWith(config.prefix))
-        return;
+    if (!message.startsWith(config.prefix)) return;
 
     // Define 'cmd' and 'exCmd'
     const cmd = await chatClient.commands.get(command);

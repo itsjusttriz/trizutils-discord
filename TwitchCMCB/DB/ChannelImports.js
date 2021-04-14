@@ -19,6 +19,6 @@ export default {
     TECHYGUY: import('../channels/techyguy/events.js'),
     THEIMPERIALBITGOD: import('../channels/theimperialbitgod/events.js'),
     TONSTER46346: import('../channels/tonster46346/events.js'),
-    XOBIAS: import('../channels/xobias/events.js'),
+    XOBIAS: import('../channels/xobias/events.js')
     // ZEROXFUSIONZ: import('../channels/zeroxfusionz/events.js')
-}
+};

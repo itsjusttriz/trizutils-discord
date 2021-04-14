@@ -41,4 +41,4 @@ export const MoSManager = {
             if (err) return console.error(err);
         });
     }
-}
+};
