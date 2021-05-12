@@ -14,8 +14,8 @@ export default {
 
         if (!remChan) return message.reply('Cannot find `#reminders` channel! Create one, and try again!').then(m => m.delete({ timeout: 10000 }))
 
-        const remTarget = message.content.match(/-target "([^"]*)"/)
-        const remMsg = message.content.match(/-msg "([^"]*)"/)
+        const remTarget = message.mentions.members.first() || message.author;
+        const remMsg = message.content.match(/"([^"]*)"/)
 
         if (!args[0]) return message.reply(`Missing Parameters: \`${this.requiredArgs}\`.`);
 
@@ -23,7 +23,7 @@ export default {
             .setAuthor(message.author.tag, message.author.displayAvatarURL())
             .setColor(message.member.displayHexColor)
             .setTimestamp()
-            .addField('Target', remTarget?.[1].toString() ?? message.author.toString())
+            .addField('Target', remTarget)
         if (!remMsg) {
             return message.reply('You cannot add a reminder, without specifying the reminder-msg! (*e.g. `-msg "These are words inside double apostrophes."`*)').then(m => m.delete({ timeout: 5000 }))
         } else {
