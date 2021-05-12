@@ -31,7 +31,7 @@ export async function handleResub(chatClient, options) {
 export async function handleGiftSub(chatClient, options) {
 
     // Default SubGift Response.
-    // chatClient.say(options.channel, options.defSubGift);
+    chatClient.say(options.channel, options.defSubGift);
 
     // Log SubGift Event.
     chatClient.say(options.logChan, options.logSubGift);
@@ -40,11 +40,13 @@ export async function handleGiftSub(chatClient, options) {
 
 export async function handleRaid(chatClient, options) {
 
-    // Default Raid Response.
-    chatClient.say(options.channel, options.defRaid);
+    if (options.raidInfo.viewerCount >= 10) {
+        // Default Raid Response.
+        chatClient.say(options.channel, options.defRaid);
 
-    // Custom response addition.
-    chatClient.say(options.channel, `!so ${options.user}`);
+        // Custom response addition.
+        chatClient.say(options.channel, `!so ${options.user}`);
+    }
 
     // Log Raid Event.
     chatClient.say(options.logChan, options.logRaid);

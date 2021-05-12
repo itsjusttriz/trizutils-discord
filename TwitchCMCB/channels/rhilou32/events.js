@@ -1,7 +1,7 @@
 export async function handleCheer(chatClient, options) {
 
     // Default Cheer Response.
-    // chatClient.say(options.channel, options.defCheer);
+    chatClient.say(options.channel, options.defCheer);
 
     // Log Cheer Event.
     chatClient.say(options.logChan, options.logCheer);
@@ -11,7 +11,7 @@ export async function handleCheer(chatClient, options) {
 export async function handleSub(chatClient, options) {
 
     // Default Sub Response.
-    // chatClient.say(options.channel, options.defSub);
+    chatClient.say(options.channel, options.defSub);
 
     // Log Sub Event.
     chatClient.say(options.logChan, options.logSub);
@@ -21,7 +21,7 @@ export async function handleSub(chatClient, options) {
 export async function handleResub(chatClient, options) {
 
     // Default Resub Response.
-    // chatClient.say(options.channel, options.defResub);
+    chatClient.say(options.channel, options.defResub);
 
     // Log Resub Event.
     chatClient.say(options.logChan, options.logResub);
@@ -31,7 +31,7 @@ export async function handleResub(chatClient, options) {
 export async function handleGiftSub(chatClient, options) {
 
     // Default SubGift Response.
-    // chatClient.say(options.channel, options.defSubGift);
+    chatClient.say(options.channel, options.defSubGift);
 
     // Log SubGift Event.
     chatClient.say(options.logChan, options.logSubGift);

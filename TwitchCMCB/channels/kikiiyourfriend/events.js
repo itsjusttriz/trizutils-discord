@@ -44,8 +44,8 @@ export async function handleRaid(chatClient, options) {
     chatClient.say(options.channel, options.defRaid);
 
     // Custom response addition.
-    chatClient.say(options.channel, `!raid`);
-    chatClient.say(options.channel, `!defend`);
+    chatClient.say(options.channel, '!raid');
+    chatClient.say(options.channel, '!defend');
     chatClient.say(options.channel, `!so ${options.user}`);
 
     // Log Raid Event.
