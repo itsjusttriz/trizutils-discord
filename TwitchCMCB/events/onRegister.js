@@ -6,6 +6,7 @@ import { ToolsManager } from '../utils/ToolsManager.js';
 import { CooldownManager } from '../utils/CooldownManager.js';
 import { TimerManager, TimerRunner } from '../utils/TimerManager.js';
 import { HeartsManager } from '../utils/HeartsManager.js';
+import { HandlerManager } from '../utils/HandlerManager.js';
 
 export default async function (chatClient, apiClient, auth) {
     console.log(chalk.cyan.bold(`===> ${chalk.green.bold('READY!')} <===`));
@@ -28,6 +29,7 @@ export default async function (chatClient, apiClient, auth) {
     CooldownManager.import();
     TimerManager.import();
     HeartsManager.import();
+    HandlerManager.import();
 
     for (const x in TimerRunner) {
         for (const y in TimerRunner[x]) {

@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { config } from '../config.js';
 import { BlacklistedTerms, ExtraCommands } from '../utils/Functions.js';
+import { HandlerManager } from '../utils/HandlerManager.js';
 
 export default async function onMessage(chatClient, apiClient, channel, user, message, msg) {
     console.log(`${chalk.blue(`[${channel}]`)} ${chalk.magenta(`<${user}>`)} ${chalk.grey('|')} ${chalk.white.bold(`${message}`)}`);
@@ -21,7 +22,7 @@ export default async function onMessage(chatClient, apiClient, channel, user, me
         isSubPlus: msg.userInfo.isSubscriber || msg.userInfo.isFounder,
         isModPlus: msg.userInfo.isMod || msg.userInfo.isBroadcaster,
         isCaster: msg.userInfo.isBroadcaster,
-        isBotAdmin: config.botAdmin.indexOf(user) > -1,
+        isBotAdmin: Boolean(config.botAdmin.indexOf(user)),
         disabledCommand: `@${user}, This command has been temporarily disabled.`,
         noSubApiAuth: `Missing Authentication!! Please Authenticate here and try again - ${chatClient.redirects.get('subApiAuth')}`,
         logChan: 'nottriz',
@@ -40,5 +41,7 @@ export default async function onMessage(chatClient, apiClient, channel, user, me
     // If command is known, run command. Otherwise, ignore.
     if (!cmd) return;
 
-    cmd.default.run(chatClient, message, args, options);
+    if (HandlerManager.cache['message']?.[options.channel]) {
+        cmd.default.run(chatClient, message, args, options);
+    }
 }
