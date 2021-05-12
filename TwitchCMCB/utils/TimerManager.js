@@ -44,16 +44,17 @@ export const TimerManager = {
 
 export const TimerRunner = {
     '#domosplace': {
-        '90sCommercial': async (chatClient, apiClient) => {
+        'commercials': async (chatClient, apiClient) => {
             const caster = 'domosplace';
 
             setInterval(async () => {
-                if (!TimerManager.get('#domosplace', '90sCommercial')) return;
+                if (!TimerManager.get('#domosplace', 'commercials')) return;
                 if (!(await getStream(apiClient, caster))) return;
 
-                chatClient.say('domosplace', '/me Running a 90 second ad..');
+                chatClient.say('domosplace', '/me Running 90s worth of ads..');
                 chatClient.say('domosplace', '/commercial 90');
-                chatClient.say('domosplace', 'Sick of the ads? Subscribe to Domo to get Ad-Free viewing experience while also showing off those really cool emotes! https://twitch.tv/domosplace/subscribe');
+                chatClient.say('domosplace', 'We run 3 ads per hour to clear prerolls for 30 mins! If you\'ve just raided, we apologise deeply! Please bare with us. <3');
+                setTimeout(() => chatClient.say('domosplace', 'Sick of the ads? Subscribe to Domo to get Ad-Free viewing experience while also showing off those really cool emotes! https://twitch.tv/domosplace/subscribe'), 1000 * 60 * 1);
             }, 1000 * 60 * 30);
         }
     },
