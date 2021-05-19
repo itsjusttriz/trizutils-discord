@@ -3,7 +3,11 @@ import chalk from 'chalk';
 import * as fs from 'fs';
 import { default as config } from './config.js';
 
-const client = new Discord.Client();
+const CLIENT_OPTIONS = {
+	restRequestTimeout: 1000 * 60 * 2, // 2min delay to prevent User Abort errors.
+}
+
+const client = new Discord.Client(CLIENT_OPTIONS);
 
 client.login(config.token)
 
