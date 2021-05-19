@@ -46,6 +46,7 @@ export const packlist = {
     levitated: newPack({ name: 'Levitated', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/levitated' }).public,
     madpack4: newPack({ name: 'Madpack 4', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/madpack-4/' }).public,
     mceternal: newPack({ name: 'MCEternal', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/minecraft-eternal' }).public,
+    allinone: newPack({ name: 'All in One [Modded One Block]', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/all-in-one-modded-one-block' }).public,
     po3normal: newPack({ name: 'Project Ozone 3 Normal', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward' }).public,
     po3titan: newPack({ name: 'Project Ozone 3 Titan', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward' }).public,
     po3kappa: newPack({ name: 'Project Ozone 3 Kappa', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward' }).public,
