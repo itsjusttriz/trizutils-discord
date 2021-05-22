@@ -12,6 +12,7 @@ function newPack({ name = '[Un-named]', launcher = '[Unknown]', link = '[Link Un
 
 export const packlist = {
     acalltoadventure: newPack({ name: 'A Call to Adventure', dev: 'EnderGrimm' }).wip,
+    allinone: newPack({ name: 'All in One [Modded One Block]', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/all-in-one-modded-one-block' }).public,
     amnesia: newPack({ name: 'Amnesia', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/Amnesia' }).public,
     atm3ex: newPack({ name: 'All the Mods 3: Expert Mode', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-3-expert' }).public,
     atm6: newPack({ name: 'All the Mods 6', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/all-the-mods-6' }).public,
@@ -35,7 +36,7 @@ export const packlist = {
     enigmatica4: newPack({ name: 'Enigmatica 4', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/enigmatica4' }).public,
     enigmatica6: newPack({ name: 'Enigmatica 6', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/enigmatica6' }).public,
     equivalentskies: newPack({ name: 'Equivalent Skies', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/equivalent-skies' }).public,
-    error404: newPack({ name: 'Error404', dev: 'TheCazadorSniper' }).wip,
+    error404: newPack({ name: 'Error404', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/error-404-survival-not-found' }).open_beta,
     ftbacademy: newPack({ name: 'FTB Academy', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/ftb-academy' }).public,
     ftbinteractions: newPack({ name: 'FTB Interactions', launcher: 'FTB App', link: 'https://www.feed-the-beast.com/modpack/ftb_interactions' }).public,
     ftbskyodyssey: newPack({ name: 'FTB Sky Odyssey', launcher: 'CurseForge', link: 'https://www.feed-the-beast.com/projects/ftb-sky-odyssey' }).public,
@@ -46,7 +47,6 @@ export const packlist = {
     levitated: newPack({ name: 'Levitated', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/levitated' }).public,
     madpack4: newPack({ name: 'Madpack 4', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/madpack-4/' }).public,
     mceternal: newPack({ name: 'MCEternal', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/minecraft-eternal' }).public,
-    allinone: newPack({ name: 'All in One [Modded One Block]', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/all-in-one-modded-one-block' }).public,
     po3normal: newPack({ name: 'Project Ozone 3 Normal', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward' }).public,
     po3titan: newPack({ name: 'Project Ozone 3 Titan', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward' }).public,
     po3kappa: newPack({ name: 'Project Ozone 3 Kappa', launcher: 'CurseForge', link: 'https://www.curseforge.com/minecraft/modpacks/project-ozone-3-a-new-way-forward' }).public,
