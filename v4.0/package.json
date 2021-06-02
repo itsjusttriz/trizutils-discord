@@ -1,0 +1,11 @@
+{
+  "name": "nottriz_v4.0",
+  "version": "4.0.0",
+  "description": "^4.0 of the nottriz chatbot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "itsjusttriz",
+  "license": "ISC"
+}
