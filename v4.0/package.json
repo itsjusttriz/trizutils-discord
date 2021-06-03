@@ -4,8 +4,20 @@
   "description": "^4.0 of the nottriz chatbot",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsc && nodemon build/index.js"
   },
+  "type": "module",
   "author": "itsjusttriz",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.7",
+    "twitch": "^4.5.5",
+    "twitch-auth": "^4.5.5",
+    "twitch-auth-tmi": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/tmi.js": "^1.7.1"
+  }
 }
