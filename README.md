@@ -14,7 +14,7 @@
 ## Things to look into
 - Twitch
 > ```diff
-> # None.
+> + Experiment with Tmi-refreshingTokens Setup.
 > ```
 
 - Discord
