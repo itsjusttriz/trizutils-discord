@@ -1,5 +1,7 @@
 # nottriz-dev
 
+> Development directory for the nottriz instance(s).
+
 ## Additions/Removals
 - Twitch
 > ```diff
