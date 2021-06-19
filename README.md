@@ -18,6 +18,6 @@
 > ```
 
 - Discord
-```diff
-+ Usage of buttons on UserPresence.
-```
+> ```diff
+> + Usage of buttons on UserPresence.
+> ```
