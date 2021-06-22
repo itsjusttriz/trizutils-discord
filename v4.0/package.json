@@ -1,10 +1,10 @@
 {
-  "name": "nottriz_v4.0",
+  "name": "nottriz",
   "version": "4.0.0",
   "description": "^4.0 of the nottriz chatbot",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
-    "dev": "tsc && nodemon build/index.js"
+    "dev": "@powershell copy 'src/.env' -Destination './build' && tsc && node build/index.js"
   },
   "type": "module",
   "author": "itsjusttriz",
@@ -12,12 +12,15 @@
   "dependencies": {
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "git": "^0.1.5",
     "nodemon": "^2.0.7",
     "twitch": "^4.5.5",
     "twitch-auth": "^4.5.5",
     "twitch-auth-tmi": "^4.5.5"
   },
   "devDependencies": {
+    "@types/express": "^4.17.12",
     "@types/tmi.js": "^1.7.1"
   }
 }
