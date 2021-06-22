@@ -1,15 +1,16 @@
 import chalk from 'chalk';
 import ClientUtils from './ClientUtils.js'
 
-const TwitchChatOptions = {
+const TwitchLogOptions = {
     LogSymbolColors: new Map([
-        ['Sub', chalk.blue.bold(' Sub ')],
-        ['Mod', chalk.green.bold(' Mod ')],
-        ['Caster', chalk.red.bold(' Caster ')],
-        ['Staff', chalk.yellow.bold(' Staff ')]
+        ['Vip', chalk.magenta.bold('[VIP]')],
+        ['Sub', chalk.blue.bold('[Sub]')],
+        ['Mod', chalk.green.bold('[Mod]')],
+        ['Caster', chalk.red.bold('[Caster]')],
+        ['Staff', chalk.yellow.bold('[Staff]')],
+        ['BotAdmin', chalk.bgRed.white.bold('[BotAdmin]')]
     ]),
-    Log: (options: any) => {
-        // console.log(options);
+    GenericMessageLog: (options: any) => {
 
         const arr: any[] = [];
 
@@ -23,10 +24,12 @@ const TwitchChatOptions = {
         arr.push(chalk.hex('#ffa200')(`[${options['channel']}]`))
 
         //? Badges
-        if (options?.isCaster) arr.push(TwitchChatOptions.LogSymbolColors.get('Caster'));
-        if (options?.isStaff) arr.push(TwitchChatOptions.LogSymbolColors.get('Staff'));
-        if (options?.isMod) arr.push(TwitchChatOptions.LogSymbolColors.get('Mod'));
-        if (options?.isSubOrFounder) arr.push(TwitchChatOptions.LogSymbolColors.get('Sub'));
+        if (options?.isBotAdmin) arr.push(TwitchLogOptions.LogSymbolColors.get('BotAdmin'));
+        if (options?.isCaster) arr.push(TwitchLogOptions.LogSymbolColors.get('Caster'));
+        if (options?.isStaff) arr.push(TwitchLogOptions.LogSymbolColors.get('Staff'));
+        if (options?.isMod) arr.push(TwitchLogOptions.LogSymbolColors.get('Mod'));
+        if (options?.isSubOrFounder) arr.push(TwitchLogOptions.LogSymbolColors.get('Sub'));
+        if (options?.isVip) arr.push(TwitchLogOptions.LogSymbolColors.get('Vip'));
 
         //? Display Name
         arr.push(chalk.hex(options?.['userstate'].color ? options?.['userstate'].color : '#DEADED')(`<${options?.['userstate']?.["display-name"]}>`))
@@ -38,7 +41,22 @@ const TwitchChatOptions = {
         arr.push(options?.message)
 
         return console.log(arr.join(' '));
-    }
-}
+    },
+    GenericJoinLog: (user: string, string: string) => console.log(chalk.hex('#007313').bold(`[${chalk.hex(ClientUtils.Twitch.tagColor).bold('TWITCH')}] ${user} - ${string}`)),
+    GenericPartLog: (user: string, string: string) => console.log(chalk.hex('#6b0501').bold(`[${chalk.hex(ClientUtils.Twitch.tagColor).bold('TWITCH')}] ${user} - ${string}`)),
+    GenericCheerLog: (opts: any) => console.log(chalk.yellow.bold(`[${chalk.hex(ClientUtils.Twitch.tagColor).bold('TWITCH')}] ${opts.userstate['display-name']} cheered ${opts.userstate.bits} in ${opts.channel}!`))
+};
 
-export default { TwitchChatOptions }
+const DiscordLogOptions = {
+    LogSymbolColors: new Map([]),
+    Log: (type: string, stringToLog: any) => {
+
+        switch (type) {
+            case 'debug':
+                return console.log(stringToLog);
+                break;
+        }
+    }
+};
+
+export default { TwitchLogOptions, DiscordLogOptions }
