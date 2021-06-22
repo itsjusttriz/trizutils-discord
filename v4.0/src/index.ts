@@ -1,6 +1,11 @@
+import * as dotEnv from 'dotenv';
 import Twitch from "./Twitch/index.js";
-import * as DotEnv from 'dotenv';
+import Discord from "./Discord/index.js";
 
-DotEnv.config();
+dotEnv.config({ path: 'build/.env' });
 
-Twitch.init();
+// Launch TwitchBot.
+Twitch.init(process.env);
+
+// Launch DiscordBot.
+Discord.init();
