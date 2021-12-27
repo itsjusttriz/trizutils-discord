@@ -1,26 +1,22 @@
 {
-  "name": "nottriz",
-  "version": "4.0.0",
-  "description": "^4.0 of the nottriz chatbot",
-  "main": "build/index.js",
+  "name": "v4.0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "@powershell copy 'src/.env' -Destination './build' && tsc && node build/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
-  "author": "itsjusttriz",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.3",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "git": "^0.1.5",
-    "nodemon": "^2.0.7",
-    "twitch": "^4.5.5",
-    "twitch-auth": "^4.5.5",
-    "twitch-auth-tmi": "^4.5.5"
+    "chalk": "^4.1.2",
+    "discord.js": "^13.1.0",
+    "fs": "^0.0.1-security"
   },
   "devDependencies": {
-    "@types/express": "^4.17.12",
-    "@types/tmi.js": "^1.7.1"
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.12"
   }
 }

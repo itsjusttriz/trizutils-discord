@@ -1,26 +1,23 @@
 # nottriz-dev
 <!-- Words -->
 
-> Development directory for the nottriz instance(s).
+> Development directory for the TrizUtils Bot.
 
-## Additions/Removals
+<br />
+<br />
+
+#  Todo
+
 - Twitch
 > ```diff
-> # None.
+> + Setup Client.
+> ? Re-create events and necessary commands.
+> ? Experiment with Tmi-refreshingTokens Setup.
 > ```
 
 - Discord
 > ```diff
-> # None.
-> ```
-
-## Things to look into
-- Twitch
-> ```diff
-> + Experiment with Tmi-refreshingTokens Setup.
-> ```
-
-- Discord
-> ```diff
-> + Usage of buttons on UserPresence.
+> - Setup Client.
+> + Re-create events and necessary commands.
+> ? Usage of buttons on UserPresence.
 > ```
