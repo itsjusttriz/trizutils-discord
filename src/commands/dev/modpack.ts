@@ -2,6 +2,7 @@ import { CommandInteraction, Constants } from "discord.js";
 import { ICommand } from "wokcommands";
 // @ts-ignore
 import fetch from 'node-fetch';
+import * as config from '../../config.json';
 
 export default {
     category: 'WIP',
@@ -70,7 +71,7 @@ export default {
             type: await getString(msgInt, 'pack-type')
         })
 
-        const api = await fetch(`https://api.triz.link/minecraft/add?${qs}`);
+        const api = await fetch(`${config['API_URLS'].ModpackAPI.add}?${qs}`);
         const text = await api.text();
         await msgInt.reply({
             ephemeral: true,
