@@ -1,5 +1,5 @@
 {
-  "name": "@trizutils/discord",
+  "name": "@trizutils/discord_wok",
   "version": "1.0.0-wok",
   "description": "Discord bot operating on the discord.js framework alongside the WOKCommands Command & Event handler.",
   "main": "src/index.ts",
