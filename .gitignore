@@ -1,5 +1,5 @@
 Archive
-.env
 node_modules
-build
-v4.0/
+.env
+.vscode
+src/config.json

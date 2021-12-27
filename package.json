@@ -1,0 +1,23 @@
+{
+  "name": "@trizutils/discord",
+  "version": "1.0.0-wok",
+  "description": "Discord bot operating on the discord.js framework alongside the WOKCommands Command & Event handler.",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^13.1.0",
+    "mongoose": "^6.0.9",
+    "node-fetch": "^2.6.1",
+    "wokcommands": "^1.5.3"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^3.0.3",
+    "nodemon": "^2.0.12"
+  }
+}
