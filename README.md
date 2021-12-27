@@ -1,1 +1,1 @@
-# TrizUtils Discord bot
+# @trizutils/discord_wok
