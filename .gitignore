@@ -1,6 +1,4 @@
-Archive
-node_modules
-.env
 .vscode
+node_modules
 src/config.json
-src/commands/dev
+src/commands/dev/
