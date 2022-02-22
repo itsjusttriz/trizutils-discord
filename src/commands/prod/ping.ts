@@ -6,11 +6,5 @@ export default {
     slash: true,
     guildOnly: true,
 
-    callback: ({ }) =>
-    {
-        return {
-            content: 'Pong!',
-            ephemeral: true
-        };
-    }
+    callback: () => ({ content: 'Pong!', ephemeral: true })
 } as ICommand

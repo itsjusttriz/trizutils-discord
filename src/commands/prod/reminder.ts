@@ -4,46 +4,24 @@ import { ICommand } from "wokcommands";
 export default {
     category: 'Utility',
     description: 'Posts embedded reminders.',
-
     slash: true,
     guildOnly: true,
-
     options: [
-        {
-            name: 'message',
-            description: 'A Message to post.',
-            required: true,
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'target',
-            type: Constants.ApplicationCommandOptionTypes.USER,
-            required: false,
-            description: 'A User to mention.'
-        }
+        { name: 'message', description: 'A Message to post.', required: true, type: Constants.ApplicationCommandOptionTypes.STRING },
+        { name: 'target', type: Constants.ApplicationCommandOptionTypes.USER, required: false, description: 'A User to mention.' }
     ],
 
-    callback: async ({ interaction }) => {
-        const target = interaction.options.getMember('target') as GuildMember || interaction.member as GuildMember;
+    callback: async ({ interaction }) =>
+    {
+        const member = interaction.member as GuildMember;
+        const target = interaction.options.getMember('target') as GuildMember || member;
         const m = interaction.options.getString('message');
-        const e = new MessageEmbed({
-            author: {
-                "name": (interaction.member as GuildMember)?.user.username as string,
-                "iconURL": (interaction.member as GuildMember)?.user.displayAvatarURL()
-            },
-            description:
-                '**To:**\n'
-                + target?.user.username + '\n\n'
-                + '**Reminder:**\n'
-                + m as string,
-            thumbnail: {
-                url: target?.user.displayAvatarURL()
-            },
-            timestamp: new Date()
-        })
+        const e = new MessageEmbed()
+            .setAuthor({ "name": member?.user.username as string, "iconURL": member?.user.displayAvatarURL() })
+            .setDescription(`**To:**\n${target}\n\n**Reminder:**\n${m}`)
+            .setThumbnail(target?.user.displayAvatarURL())
+            .setTimestamp()
 
-        interaction.reply({
-            embeds: [e]
-        })
+        return e;
     }
 } as ICommand

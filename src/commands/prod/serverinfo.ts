@@ -9,98 +9,46 @@ export default {
     guildOnly: true,
 
     options: [
-        {
-            name: 'gamename',
-            required: true,
-            description: 'Name of Game/Modpack/DLC',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'ip',
-            required: true,
-            description: 'IP of the Server',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'gameversion',
-            required: true,
-            description: 'Version of the Base game.',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'password',
-            required: false,
-            description: 'Password of the Server',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'addonversion',
-            required: false,
-            description: 'Version of the Modpack/DLC.',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'map',
-            required: false,
-            description: 'Designated Map for Game/Modpack/DLC',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'thumbnail',
-            required: false,
-            description: 'Thumbnail of instance.',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        },
-        {
-            name: 'notes',
-            required: false,
-            description: 'Additional Notes.',
-            type: Constants.ApplicationCommandOptionTypes.STRING
-        }
+        { name: 'gamename', required: true, description: 'Name of Game/Modpack/DLC', type: 'STRING' },
+        { name: 'ip', required: true, description: 'IP of the Server', type: 'STRING' },
+        { name: 'gameversion', required: true, description: 'Version of the Base game.', type: 'STRING' },
+        { name: 'password', required: false, description: 'Password of the Server', type: 'STRING' },
+        { name: 'addonversion', required: false, description: 'Version of the Modpack/DLC.', type: 'STRING' },
+        { name: 'map', required: false, description: 'Designated Map for Game/Modpack/DLC', type: 'STRING' },
+        { name: 'thumbnail', required: false, description: 'Thumbnail of instance.', type: 'STRING' },
+        { name: 'notes', required: false, description: 'Additional Notes.', type: 'STRING' }
     ],
 
     callback: ({ interaction }) =>
     {
-        const nameOfGame = interaction.options.getString('gamename');
-        const ip = interaction.options.getString('ip');
-        const password = interaction.options.getString('password');
-        const gameVersion = interaction.options.getString('gameversion');
-        const dlcVersion = interaction.options.getString('addonversion');
-        const map = interaction.options.getString('map');
-        const thumbnail = interaction.options.getString('thumbnail');
-        const notes = interaction.options.getString('notes');
+        const nameOfGame = interaction.options.getString('gamename') as string;
+        const ip = interaction.options.getString('ip') as string;
+        const password = interaction.options.getString('password') as string;
+        const gameVersion = interaction.options.getString('gameversion') as string;
+        const dlcVersion = interaction.options.getString('addonversion') as string;
+        const map = interaction.options.getString('map') as string;
+        const thumbnail = interaction.options.getString('thumbnail') as string;
+        const notes = interaction.options.getString('notes') as string;
 
-        const embed = new MessageEmbed()
-            .setDescription(`**${nameOfGame} Server Info**`)
-            .setTimestamp()
+        const e = new MessageEmbed().setDescription(`**${nameOfGame} Server Info**`).setTimestamp()
 
         if (ip)
-        {
-            embed.addField('IP', ip as string, false)
-        }
+            e.addField('IP', ip, false)
         if (password)
-        {
-            embed.addField('Password', `||\`${password}\`||`, false)
-        }
+            e.addField('Password', `||\`${password}\`||`, false)
         if (gameVersion)
-        {
-            embed.addField('Game Version', gameVersion as string, true)
-        }
+            e.addField('Game Version', gameVersion, true)
         if (dlcVersion)
-        {
-            embed.addField('Modpack/DLC Version', dlcVersion as string, true)
-        }
+            e.addField('Modpack/DLC Version', dlcVersion, true)
         if (map)
-        {
-            embed.addField('Map', map as string, true)
-        }
+            e.addField('Map', map, true)
         if (thumbnail)
         {
-            const urlProtocol = (thumbnail as string).startsWith('http') ? '' : 'https://';
-            embed.setThumbnail(urlProtocol + thumbnail as string)
+            const urlProtocol = thumbnail.startsWith('http') ? '' : 'https://';
+            e.setThumbnail(urlProtocol + thumbnail)
         }
-        embed.addField('Notes', `>>> - General Rules apply.\n ${notes?.split(', ')?.join('\n-') || ''}`, false)
+        e.addField('Notes', `>>> - General Rules apply.\n ${notes?.split(', ')?.join('\n-') || ''}`, false)
 
-        return embed
+        return e
     }
 } as ICommand

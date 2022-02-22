@@ -1,12 +1,11 @@
 import { model, Schema } from "mongoose";
+import { NotReqString } from "./Util";
 
-const pollSchema = new Schema({
-    guildId: String,
-    authorId: String,
+export const Poll = model('Poll', new Schema({
+    guildId: NotReqString,
+    authorId: NotReqString,
     data: {
-        question: String,
-        choices: []
+        question: NotReqString,
+        choices: [NotReqString]
     }
-})
-
-export const Poll = model('Poll', pollSchema)
+}))

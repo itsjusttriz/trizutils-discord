@@ -1,4 +1,5 @@
 import { Client, Message, MessageActionRow, MessageButton, MessageEmbed, TextChannel } from 'discord.js'
+import { findChannelByName, findRoleByName, StreamInfo } from '../Utils/Util';
 import WOKCommands from 'wokcommands'
 
 let liveCache = new Map<string, boolean>();
@@ -12,10 +13,10 @@ export default (client: Client, instance: WOKCommands) =>
 
         const isStreaming = current.activities.find(a => a.type === 'STREAMING' && a.name === 'Twitch');
         const wasStreaming = prev?.activities.find(a => a.type === 'STREAMING' && a.name === 'Twitch');
+        const { member } = prev || current;
 
-        const member = prev?.member || current?.member;
-        let channel = current.guild?.channels.cache.find(c => c.name === 'self-promotion' || c.name === 'testing') as TextChannel;
-        let role = current.guild?.roles.cache.find(r => r.name === 'LIVE');
+        let channel = (findChannelByName(current?.guild, 'self-promotion') || findChannelByName(current?.guild, 'testing')) as TextChannel;
+        let role = findRoleByName(current?.guild, 'LIVE')
 
         const mapKey = `${member?.user.id}_${member?.guild.id}`;
 
@@ -36,48 +37,27 @@ export default (client: Client, instance: WOKCommands) =>
                     color: '#a85af6'
                 });
 
-            const streamInfo = {
-                Title: isStreaming?.['details'] || 'Unknown Title',
-                Category: isStreaming?.['state'] || 'Unknown Category',
-                url: isStreaming?.['url'] || 'https://dev.triz.link/notfound',
-                image: isStreaming?.['assets']?.largeImageURL({ size: 4096 }) || 'https://blog.twitch.tv/assets/uploads/03-glitch.jpg'
-            }
+            const streamInfo = new StreamInfo(isStreaming);
 
             if (role && !current.member?.roles.cache.has(role.id))
                 await current.member?.roles.add(role.id)
 
             if (!msgCache.get(mapKey))
             {
-                const m = await channel?.send({
-                    embeds: [
-                        new MessageEmbed()
-                            .setTitle(current.user?.tag + ' is streaming!')
-                            .addFields([
-                                {
-                                    name: 'Title',
-                                    value: streamInfo.Title
-                                },
-                                {
-                                    name: 'Category',
-                                    value: streamInfo.Category
-                                },
-                                {
-                                    name: 'Started',
-                                    value: `<t:${Math.floor(Date.now() / 1000)}>`
-                                }
-                            ])
-                            .setImage(streamInfo.image)
-                            .setThumbnail(current.user?.displayAvatarURL({ format: 'png', size: 128 }) as string)
-                    ],
-                    components: [
-                        new MessageActionRow().addComponents(
-                            new MessageButton()
-                                .setURL(streamInfo.url)
-                                .setStyle('LINK')
-                                .setLabel('Watch')
-                        )
-                    ]
-                })
+                const e = new MessageEmbed()
+                    .setTitle(current.user?.tag + ' is streaming!')
+                    .setDescription('_Click the button below to open the stream!_')
+                    .addFields([
+                        { name: 'Title', value: streamInfo.title },
+                        { name: 'Category', value: streamInfo.category },
+                        { name: 'Started', value: `<t:${Math.floor(Date.now() / 1000)}>` }
+                    ])
+                    .setImage(streamInfo.image)
+                    .setThumbnail(current.user?.displayAvatarURL({ format: 'png', size: 128 }) as string)
+
+                const b = new MessageButton().setURL(streamInfo.url).setStyle('LINK').setLabel('Watch');
+                const r = new MessageActionRow().addComponents(b);
+                const m = await channel?.send({ embeds: [e], components: [r] })
                 if (!liveCache.get(mapKey))
                 {
                     msgCache.set(mapKey, m)
@@ -96,8 +76,7 @@ export default (client: Client, instance: WOKCommands) =>
             {
                 setTimeout(async () =>
                 {
-                    if (liveCache.get(mapKey))
-                        return;
+                    if (liveCache.get(mapKey)) return;
                     await (msgCache.get(mapKey))?.delete().catch(console.error)
                     msgCache.delete(mapKey)
                 }, 1000 * 60 * 2);
